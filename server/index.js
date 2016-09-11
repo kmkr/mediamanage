@@ -1,5 +1,6 @@
 const http = require('http');
 const querystring = require('querystring');
+const path = require('path');
 
 const config = require('./config.json');
 const PORT = config.port;
@@ -16,7 +17,7 @@ function play(wd, file) {
 
     if (matches.length === 1) {
         const {destination} = matches[0];
-        const filePath = `${destination}/${file}`;
+        const filePath = path.resolve(destination, file);
         localMediaPlayer.play(filePath);
     } else {
         // todo
