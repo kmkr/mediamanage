@@ -1,8 +1,8 @@
 const inquirer = require('inquirer');
 
-const config = require('./config.json');
 const fileFinder = require('./files/finder');
 const fileRenamer = require('./files/renamer');
+const processSelectionPrompt = require('./prompts/process-selection');
 
 function processOneByOne() {
     const fileNames = fileFinder.video();
@@ -14,62 +14,7 @@ function processOneByOne() {
             choices: fileNames
         }
     ]).then(({fileName}) => {
-        processOne(fileName).then(processOneByOne);
-    });
-}
-
-function setPerformerNames(fileName) {
-    return inquirer.prompt([
-        {
-            message: 'Enter performer name(s) separated by underscores',
-            name: 'performerNames'
-        }
-    ]).then(({performerNames}) => {
-        return fileRenamer.setPerformerNames(performerNames, fileName);
-    });
-}
-
-function setCategories(fileName) {
-    return inquirer.prompt([
-        {
-            message: 'Enter categories',
-            type: 'checkbox',
-            name: 'categories',
-            choices: config.categories
-        }
-    ]).then(({categories}) => {
-        return fileRenamer.setCategories(categories, fileName);
-    });
-}
-
-function processOne(fileName) {
-    inquirer.prompt([
-        {
-            message: `What do you want to do with ${fileName}?`,
-            name: 'action',
-            type: 'list',
-            choices: [
-                'Set performer names',
-                'Set categories',
-                'Extract ts',
-                'Extract scenes',
-                'Extract audio',
-                'Delete file',
-                'Go back'
-            ]
-        }
-    ]).then(({action}) => {
-        switch (action) {
-        case 'Set performer names':
-            return setPerformerNames(fileName);
-        case 'Set categories':
-            return setCategories(fileName);
-        case 'Extract ts':
-            //return extractTs(fileName);
-            return;
-        default:
-            console.log(`Unhandled input ${action}`);
-        }
+        processSelectionPrompt(fileName).then(processOneByOne);
     });
 }
 
