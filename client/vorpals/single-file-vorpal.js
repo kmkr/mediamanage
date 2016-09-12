@@ -26,11 +26,30 @@ module.exports = function (fileName, onComplete) {
                 type: 'checkbox',
                 name: 'categories',
                 choices: config.categories
-            }, function (result) {
-                const newTitle = fileRenamer.setCategories(result.categories, fileName);
+            }, function ({categories}) {
+                const newTitle = fileRenamer.setCategories(categories, fileName);
                 fileName = newTitle;
                 vorpal.delimiter(fileName);
                 callback();
+            });
+        });
+
+    vorpal.command('t', 'Extract ts')
+        .action((args, callback) => {
+            vorpal.activeCommand.prompt({
+                message: 'Start at and ends at in format <performer1<_performer2>><_[category]>@>hh:mm:ss hh:mm:ss (blank to finish)',
+                name: 'extractPoint'
+            }, function ({extractPoint}) {
+                console.log(extractPoint);
+                if (extractPoint) {
+                    /* todo:
+                        find extractor supporting file
+                        run extractor
+                            parse extract point in extractor
+                    */
+                } else {
+                    callback();
+                }
             });
         });
 
