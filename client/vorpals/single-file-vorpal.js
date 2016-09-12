@@ -14,7 +14,8 @@ module.exports = function (fileName, onComplete) {
         .action((args, callback) => {
             const performerNames = args.names;
             const newTitle = fileRenamer.setPerformerNames(performerNames, fileName);
-            // todo: overwrite fileName ?
+            fileName = newTitle;
+            vorpal.delimiter(fileName);
             callback();
         });
 
@@ -27,7 +28,8 @@ module.exports = function (fileName, onComplete) {
                 choices: config.categories
             }, function (result) {
                 const newTitle = fileRenamer.setCategories(result.categories, fileName);
-                // todo: overwrite fileName ?
+                fileName = newTitle;
+                vorpal.delimiter(fileName);
                 callback();
             });
         });

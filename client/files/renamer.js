@@ -5,8 +5,9 @@ const renamerHelper = require('./renamer-helper');
 function rename(sourceFileName, newFileName) {
     const sourceFilePath = path.resolve(process.cwd(), sourceFileName);
     const destFilePath = path.resolve(process.cwd(), newFileName);
-    console.log(`Skal rename ${sourceFilePath} til ${destFilePath}`);
-    //fs.renameSync(fileNames)
+    fs.renameSync(sourceFilePath, destFilePath);
+    console.log(`Renamed ${sourceFilePath} to ${destFilePath}`);
+    return newFileName;
 }
 
 exports.setTitle = (title, fileNames) => {
@@ -18,10 +19,10 @@ exports.setTitle = (title, fileNames) => {
 
 exports.setPerformerNames = (performerNames, fileName) => {
     const newFileName = renamerHelper.setPerformerNames(performerNames, fileName);
-    rename(fileName, newFileName);
+    return rename(fileName, newFileName);
 };
 
 exports.setCategories = (categories, fileName) => {
     const newFileName = renamerHelper.setCategories(categories, fileName);
-    rename(fileName, newFileName);
+    return rename(fileName, newFileName);
 };
