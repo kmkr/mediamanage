@@ -2,6 +2,7 @@ const Vorpal = require('vorpal');
 
 const fileRenamer = require('../files/renamer');
 const config = require('../config.json');
+const {extractFormat, extractAudio, extractVideo} = require('./extractor');
 
 module.exports = function (fileName, onComplete) {
     // todo: play video
@@ -37,16 +38,33 @@ module.exports = function (fileName, onComplete) {
     vorpal.command('t', 'Extract ts')
         .action((args, callback) => {
             vorpal.activeCommand.prompt({
-                message: 'Start at and ends at in format <performer1<_performer2>><_[category]>@>hh:mm:ss hh:mm:ss (blank to finish)',
+                message: `${extractFormat} (blank to finish)`,
                 name: 'extractPoint'
             }, function ({extractPoint}) {
-                console.log(extractPoint);
                 if (extractPoint) {
-                    /* todo:
-                        find extractor supporting file
-                        run extractor
-                            parse extract point in extractor
-                    */
+                    extractVideo({
+                        dest: 'ts',
+                        fileName,
+                        extractPoint
+                    });
+                } else {
+                    callback();
+                }
+            });
+        });
+
+    vorpal.command('a', 'Extract audio')
+        .action((args, callback) => {
+            vorpal.activeCommand.prompt({
+                message: `${extractFormat} (blank to finish)`,
+                name: 'extractPoint'
+            }, function ({extractPoint}) {
+                if (extractPoint) {
+                    extractAudio({
+                        dest: 'audio',
+                        fileName,
+                        extractPoint
+                    });
                 } else {
                     callback();
                 }
