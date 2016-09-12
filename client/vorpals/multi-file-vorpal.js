@@ -37,7 +37,7 @@ module.exports = function (onGoToFile) {
             callback();
         });
 
-    vorpal.delimiter('mm$');
+    vorpal.delimiter('mediamanage $');
 
     return vorpal;
 };
