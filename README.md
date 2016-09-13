@@ -1,4 +1,12 @@
-Let's you organize media.
+Let's you organize media by:
+
+- Prefixing all files in current folder
+- Playing file, one by one
+- Extracting parts of media, both audio and video, to separate sub folders
+- Adding categories to file name
+- Adding actors/actresses to file name (called performer names)
+- Bulk moving media files when complete
+- Cleaning up source by deleting non-moved files when complete
 
 ## Server
 
@@ -10,5 +18,15 @@ Let's you organize media.
 	            "source": ".*remote-path-regexp",
 	            "destination": "/home/you/my-mount/"
 	        }
+	    ]
+	}
+
+## Client
+
+	{
+	    "categories": [
+	        "action",
+	        "drama",
+	        "thriller"
 	    ]
 	}
