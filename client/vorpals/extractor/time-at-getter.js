@@ -1,4 +1,5 @@
 const secondsFromStringParser = require('./seconds-from-string-parser');
+const performerNameCleaner = require('../performers/name-cleaner');
 
 module.exports = extractPoint => {
     let performerInfo, times;
@@ -13,7 +14,7 @@ module.exports = extractPoint => {
     const endsAtSeconds = secondsFromStringParser(endsAt);
 
     return {
-        performerInfo,
+        performerInfo: performerNameCleaner(performerInfo),
         startsAtSeconds,
         endsAtSeconds
     };
