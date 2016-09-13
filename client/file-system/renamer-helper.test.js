@@ -67,3 +67,21 @@ test('overwrite performers', t => {
     const actual = renamerHelper.setPerformerNames('noff', fileName);
     t.is(actual, '(t:my.title)_(p:noff)_(c:[woz])__file.mp4');
 });
+
+test('clean file name', t => {
+    const fileName = '(t:my.title)_(p:ole.brumm)_(c:[woz])__file.mp4';
+    const actual = renamerHelper.cleanFileName(fileName);
+    t.is(actual, 'my.title_ole.brumm_[woz].mp4');
+});
+
+test('indexify without index', t => {
+    const fileName = 'foo-bar.mp4';
+    const actual = renamerHelper.indexify(fileName);
+    t.is(actual, 'foo-bar_(1).mp4');
+});
+
+test('indexify with index', t => {
+    const fileName = 'foo-bar_(10).mp4';
+    const actual = renamerHelper.indexify(fileName);
+    t.is(actual, 'foo-bar_(11).mp4');
+});
