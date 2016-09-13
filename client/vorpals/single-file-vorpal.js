@@ -2,7 +2,7 @@ const Vorpal = require('vorpal');
 
 const fileRenamer = require('../file-system/renamer');
 const config = require('../config.json');
-const {extractFormat, extractAudio, extractVideo} = require('./extractor');
+const {extractFormat, extractAudio, extractVideo} = require('../media-extract');
 
 module.exports = function (fileName, onComplete) {
     // todo: play video
