@@ -48,9 +48,8 @@ module.exports = function (fileName, onComplete) {
                         fileName,
                         extractPoint
                     });
-                } else {
-                    callback();
                 }
+                callback();
             });
         });
 
@@ -66,9 +65,8 @@ module.exports = function (fileName, onComplete) {
                         fileName,
                         extractPoint
                     });
-                } else {
-                    callback();
                 }
+                callback();
             });
         });
 
