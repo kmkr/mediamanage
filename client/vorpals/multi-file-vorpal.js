@@ -2,6 +2,7 @@ const Vorpal = require('vorpal');
 
 const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
+const moveMedia = require('../move-media');
 
 module.exports = function (onGoToFile) {
     const vorpal = new Vorpal();
@@ -27,6 +28,17 @@ module.exports = function (onGoToFile) {
         .action((args, callback) => {
             fileRenamer.setTitle(args.title, fileFinder.video());
             callback();
+        });
+
+    vorpal
+        .command('m', 'Movie media')
+        .action((args, callback) => {
+            moveMedia(vorpal).then(() => {
+                callback();
+            }).catch(err => {
+
+                vorpal.log(err);
+            });
         });
 
     vorpal

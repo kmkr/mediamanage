@@ -15,5 +15,22 @@
             "destination": "scenes",
             "type": "video"
         }
+    ],
+    "moveMediaOptions": [
+        {
+            "fromDir": ".",
+            "toDir": "/tmp/videos",
+            "type": "video"
+        },
+        {
+            "fromDir": "audio",
+            "toDir": "/tmp/audio",
+            "type": "audio"
+        },
+        {
+            "fromDir": "scenes",
+            "toDir": "/tmp/scenes",
+            "type": "video"
+        }
     ]
 }

@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.6",
     "eslint": "^3.5.0",
     "vorpal": "^1.11.4"
   },
