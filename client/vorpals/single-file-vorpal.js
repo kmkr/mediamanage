@@ -1,6 +1,7 @@
 const Vorpal = require('vorpal');
 
 const fileRenamer = require('../file-system/renamer');
+const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
 const {extractFormat, extractAudio, extractVideo} = require('../media-extract');
 
@@ -13,7 +14,7 @@ module.exports = function (fileName, onComplete) {
     vorpal
         .command('names [names]', 'Set performer names')
         .action((args, callback) => {
-            const performerNames = args.names;
+            const performerNames = performerNameCleaner(args.names);
             const newTitle = fileRenamer.setPerformerNames(performerNames, fileName);
             fileName = newTitle;
             vorpal.delimiter(fileName);
