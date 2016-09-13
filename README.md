@@ -10,23 +10,33 @@ Let's you organize media by:
 
 ## Server
 
-	{
-	    "port": 2000,
-	    "player": "/usr/bin/smplayer",
-	    "mappings": [
-	        {
-	            "source": ".*remote-path-regexp",
-	            "destination": "/home/you/my-mount/"
-	        }
-	    ]
-	}
+    {
+        "port": 2000,
+        "player": "/usr/bin/smplayer",
+        "mappings": [
+            {
+                "source": ".*remote-path-regexp",
+                "destination": "/home/you/my-mount/"
+            }
+        ]
+    }
 
 ## Client
 
-	{
-	    "categories": [
-	        "action",
-	        "drama",
-	        "thriller"
-	    ]
-	}
+    {
+        "categories": [
+            "action",
+            "drama",
+            "thriller"
+        ],
+        "extractOptions": [
+            {
+                "destination": "audio",
+                "type": "audio"
+            },
+            {
+                "destination": "scenes",
+                "type": "video"
+            }
+        ]
+    }

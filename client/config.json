@@ -3,5 +3,17 @@
         "action",
         "drama",
         "thriller"
+    ],
+    "extractOptions": [
+        {
+            "commandKey": "a",
+            "destination": "audio",
+            "type": "audio"
+        },
+        {
+            "commandKey": "s",
+            "destination": "scenes",
+            "type": "video"
+        }
     ]
 }

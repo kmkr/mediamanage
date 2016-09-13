@@ -36,39 +36,25 @@ module.exports = function (fileName, onComplete) {
             });
         });
 
-    vorpal.command('t', 'Extract ts')
-        .action((args, callback) => {
-            vorpal.activeCommand.prompt({
-                message: `${extractFormat} (blank to finish)`,
-                name: 'extractPoint'
-            }, function ({extractPoint}) {
-                if (extractPoint) {
-                    extractVideo({
-                        dest: 'ts',
-                        fileName,
-                        extractPoint
-                    });
-                }
-                callback();
+    config.extractOptions.forEach(({commandKey, destination, type}) => {
+        vorpal.command(commandKey, `Extract to ${destination}`)
+            .action((args, callback) => {
+                vorpal.activeCommand.prompt({
+                    message: `${extractFormat} (blank to finish)`,
+                    name: 'extractPoint'
+                }, function ({extractPoint}) {
+                    if (extractPoint) {
+                        const fn = type === 'video' ? extractVideo : extractAudio;
+                        fn({
+                            dest: destination,
+                            fileName,
+                            extractPoint
+                        });
+                    }
+                    callback();
+                });
             });
-        });
-
-    vorpal.command('a', 'Extract audio')
-        .action((args, callback) => {
-            vorpal.activeCommand.prompt({
-                message: `${extractFormat} (blank to finish)`,
-                name: 'extractPoint'
-            }, function ({extractPoint}) {
-                if (extractPoint) {
-                    extractAudio({
-                        dest: 'audio',
-                        fileName,
-                        extractPoint
-                    });
-                }
-                callback();
-            });
-        });
+    });
 
     vorpal.command('n', 'Go back')
         .action((args, callback) => {
