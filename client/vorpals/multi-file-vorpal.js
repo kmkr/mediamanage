@@ -1,7 +1,7 @@
 const Vorpal = require('vorpal');
 
-const fileFinder = require('../files/finder');
-const fileRenamer = require('../files/renamer');
+const fileFinder = require('../file-system/finder');
+const fileRenamer = require('../file-system/renamer');
 
 module.exports = function (onGoToFile) {
     const vorpal = new Vorpal();

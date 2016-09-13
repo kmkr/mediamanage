@@ -1,6 +1,6 @@
 const Vorpal = require('vorpal');
 
-const fileRenamer = require('../files/renamer');
+const fileRenamer = require('../file-system/renamer');
 const config = require('../config.json');
 const {extractFormat, extractAudio, extractVideo} = require('./extractor');
 
