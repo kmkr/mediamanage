@@ -15,8 +15,9 @@ Let's you organize media. Made to more easily organize videos split in multiple 
     ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
     ├── surfing.rocks_some.surfer.guy_another.surfer.guy_[northpole].mp4
     └── surfing.rocks_surfer.girl_[another-category].mp4
+    
     /media/clips/my-favorite-big-wave-clips
-    ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
+    └── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
     
 Setting title, categories and actor/actress/performers are all optional. So is extracting audio and clips. You can decide what to set and what to skip.
     
