@@ -1,3 +1,5 @@
+https://travis-ci.org/kmkr/mediamanage.svg?branch=master
+
 Let's you organize media. Made to more easily organize movies split in multiple files.
 
 Mediamanage supports the following operations.
