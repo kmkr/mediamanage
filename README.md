@@ -1,12 +1,16 @@
-Let's you organize media by:
+Let's you organize media. Made to more easily organize movies split in multiple files.
 
-- Prefixing all files in current folder
-- Playing file, one by one
-- Extracting parts of media, both audio and video, to separate sub folders
-- Adding categories to file name
-- Adding actors/actresses to file name (called performer names)
-- Bulk moving media files when complete
-- Cleaning up source by deleting non-moved files when complete
+Mediamanage supports the following operations.
+
+Let's you:
+
+- Set movie name to all files in currect directory.
+- Play movies via customized media player.
+- Extract parts of media - both audio and video.
+- Set categories for each file (e.g. drama, action). Will be set in file title.
+- Set actors/actresses (called performer names) for each file. Will be set in file title.
+- Bulk moving media files (including extracted media) from current directory.
+- Cleaning up source by deleting non-moved files (such as screenshots, covers and unwanted files) after moving media.
 
 ## Server
 
@@ -31,12 +35,32 @@ Let's you organize media by:
         ],
         "extractOptions": [
             {
+                "commandKey": "a",
                 "destination": "audio",
                 "type": "audio"
             },
             {
+                "commandKey": "s",
                 "destination": "scenes",
+                "type": "video"
+            }
+        ],
+        "moveMediaOptions": [
+            {
+                "fromDir": ".",
+                "toDir": "/tmp/videos",
+                "type": "video"
+            },
+            {
+                "fromDir": "audio",
+                "toDir": "/tmp/audio",
+                "type": "audio"
+            },
+            {
+                "fromDir": "scenes",
+                "toDir": "/tmp/scenes",
                 "type": "video"
             }
         ]
     }
+
