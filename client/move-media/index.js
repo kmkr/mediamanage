@@ -1,7 +1,10 @@
 const fs = require('fs');
+const path = require('path');
 const Promise = require('bluebird');
+
 const config = require('../config.json');
 const fileFinder = require('../file-system/finder');
+const fileMover = require('../file-system/mover');
 
 module.exports = vorpalInstance => {
     return Promise.reduce(config.moveMediaOptions, (t, moveMediaOption) => (
@@ -41,11 +44,15 @@ module.exports = vorpalInstance => {
                     type: 'list',
                     choices: destinationAlternatives
                 }, function ({moveDestination}) {
-                    vorpalInstance.log(`todo: move to ${moveDestination}`);
+                    const sourceDirPath = path.resolve(moveMediaOption.fromDir);
+                    const destDirPath = path.resolve(moveMediaOption.toDir, moveDestination);
+                    fileMover.moveAll(fileNames, sourceDirPath, destDirPath);
                     return resolve();
                 });
             } else {
-                vorpalInstance.log(`todo: move to ${moveMediaOption.toDir}`);
+                const sourceDirPath = path.resolve(moveMediaOption.fromDir);
+                const destDirPath = path.resolve(moveMediaOption.toDir);
+                fileMover.moveAll(fileNames, sourceDirPath, destDirPath);
                 return resolve();
             }
 

@@ -2,12 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const renamerHelper = require('./renamer-helper');
 
-function rename(sourceFileName, newFileName) {
-    const sourceFilePath = path.resolve(process.cwd(), sourceFileName);
-    const destFilePath = path.resolve(process.cwd(), newFileName);
+function rename(sourceFileName, destFileName) {
+    const sourceFilePath = path.resolve(sourceFileName);
+    const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
     console.log(`Renamed ${sourceFilePath} to ${destFilePath}`);
-    return newFileName;
+    return destFileName;
 }
 
 exports.setTitle = (title, fileNames) => {

@@ -11,7 +11,7 @@ const extractors = [
 
 exports.extractFormat = 'Start at and ends at in format <performer1<_performer2>><_[category]>@>hh:mm:ss hh:mm:ss';
 
-exports.extractVideo = ({dest, fileName, extractPoint}) => {
+exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
     // todo: validate extractPoint
     const extractor = extractors.find(extractor => extractor.supportsVideo(fileName));
 
@@ -21,9 +21,9 @@ exports.extractVideo = ({dest, fileName, extractPoint}) => {
 
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
     // todo: handle performer info
-    const destFilePath = getDestFilePath(dest, fileName, '.mp3');
+    const destFilePath = getDestFilePath(destinationDir, fileName);
     try {
-        fs.mkdirSync(dest);
+        fs.mkdirSync(destinationDir);
     } catch (e) {
     }
     extractor.extractVideo({
@@ -34,7 +34,7 @@ exports.extractVideo = ({dest, fileName, extractPoint}) => {
     });
 };
 
-exports.extractAudio = ({dest, fileName, extractPoint}) => {
+exports.extractAudio = ({destinationDir, fileName, extractPoint}) => {
     // todo: validate extractPoint
     const extractor = extractors.find(extractor => extractor.supportsAudio(fileName));
 
@@ -44,10 +44,10 @@ exports.extractAudio = ({dest, fileName, extractPoint}) => {
 
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
     // todo: handle performer info
-    const sourceFilePath = path.resolve(process.cwd(), fileName);
-    const destFilePath = getDestFilePath(dest, fileName, '.mp3');
+    const sourceFilePath = path.resolve(fileName);
+    const destFilePath = getDestFilePath(destinationDir, fileName, '.mp3');
     try {
-        fs.mkdirSync(dest);
+        fs.mkdirSync(destinationDir);
     } catch (e) {
     }
     extractor.extractAudio({
@@ -58,12 +58,12 @@ exports.extractAudio = ({dest, fileName, extractPoint}) => {
     });
 };
 
-function getDestFilePath(dest, sourceFilePath, fileExtension) {
+function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {
     let destFilePath = cleanFileName(sourceFilePath);
     if (fileExtension) {
         destFilePath = destFilePath.replace(path.extname(destFilePath), fileExtension);
     }
 
-    destFilePath = path.resolve(dest, destFilePath);
+    destFilePath = path.resolve(destinationDir, destFilePath);
     return indexifyIfExists(destFilePath);
 }

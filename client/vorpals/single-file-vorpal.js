@@ -46,7 +46,7 @@ module.exports = function (fileName, onComplete) {
                     if (extractPoint) {
                         const fn = type === 'video' ? extractVideo : extractAudio;
                         fn({
-                            dest: destination,
+                            destinationDir: destination,
                             fileName,
                             extractPoint
                         });

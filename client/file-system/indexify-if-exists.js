@@ -8,6 +8,9 @@ module.exports = filePath => {
         console.log(`Found file ${filePath} to be present. Indexifying...`);
         return indexify(filePath);
     } catch (e) {
-        return filePath;
+        if (e.code === 'ENOENT') {
+            return filePath;
+        }
+        throw e;
     }
 };
