@@ -1,16 +1,29 @@
-https://travis-ci.org/kmkr/mediamanage.svg?branch=master
 
-Let's you organize media. Made to more easily organize movies split in multiple files.
+[![Build Status](https://travis-ci.org/kmkr/mediamanage.svg?branch=master)](https://travis-ci.org/kmkr/mediamanage.svg?branch=master)
+
+Let's you organize media. Made to more easily organize videos split in multiple files (e.g. videos with distinct scenes). That means getting from here:
+
+    downloads
+    └── surfing-rocks[2016]-something-anotherthing-(fetched-from-that-place)
+        ├── 102334_01.mp4
+        ├── 102334_02.mp4
+        └── 102334_03.mp4
+        
+To here:
+
+    my-videos
+    ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
+    ├── foo.bar.video_some.surfer.guy_another.surfer.guy_[northpole].mp4
+    └── foo-bar-video_surfer.girl_[another-category].mp4
+    
 
 Mediamanage supports the following operations.
 
-Let's you:
-
 - Set movie name to all files in currect directory.
-- Play movies via customized media player.
+- Play movies via customized media player to see what you're organizing.
 - Extract parts of media - both audio and video.
-- Set categories for each file (e.g. drama, action). Will be set in file title.
-- Set actors/actresses (called performer names) for each file. Will be set in file title.
+- Set categories for each file (e.g. drama, action, wing-suit, australia, mountains, rivers or whatever). Will be set in file title as shown above.
+- Set actors/actresses (called performer names) for each file. Will be set in file title as shown above.
 - Bulk moving media files (including extracted media) from current directory.
 - Cleaning up source by deleting non-moved files (such as screenshots, covers and unwanted files) after moving media.
 
@@ -31,9 +44,12 @@ Let's you:
 
     {
         "categories": [
-            "action",
+            "big-waves",
             "drama",
-            "thriller"
+            "thriller",
+            "australia",
+            "diving",
+            "surfing"
         ],
         "extractOptions": [
             {
