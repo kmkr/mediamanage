@@ -5,6 +5,7 @@ Let's you organize media. Made to more easily organize videos split in multiple 
 
     /media/temp/downloads
     └── surfing-rocks[2016]-something-anotherthing-(fetched-from-that-place)
+        ├── some-cover-i-dont-care-about.jpg
         ├── 102334_01.mp4
         ├── 102334_02.mp4
         └── 102334_03.mp4
