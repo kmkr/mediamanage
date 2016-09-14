@@ -3,18 +3,22 @@
 
 Let's you organize media. Made to more easily organize videos split in multiple files (e.g. videos with distinct scenes). That means getting from here in this made up example from a film about surfing:
 
-    downloads
+    /media/temp/downloads
     └── surfing-rocks[2016]-something-anotherthing-(fetched-from-that-place)
         ├── 102334_01.mp4
         ├── 102334_02.mp4
         └── 102334_03.mp4
         
-To here:
+... to here:
 
-    my-videos
+    /media/videos/surfing
     ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
     ├── surfing.rocks_some.surfer.guy_another.surfer.guy_[northpole].mp4
     └── surfing.rocks_surfer.girl_[another-category].mp4
+    /media/clips/my-favorite-big-wave-clips
+    ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
+    
+Setting title, categories and actor/actress/performers are all optional. So is extracting audio and clips. You can decide what to set and what to skip.
     
 
 Mediamanage supports the following operations.
