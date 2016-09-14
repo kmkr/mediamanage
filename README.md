@@ -1,7 +1,7 @@
 
 [![Build Status](https://travis-ci.org/kmkr/mediamanage.svg?branch=master)](https://travis-ci.org/kmkr/mediamanage.svg?branch=master)
 
-Let's you organize media. Made to more easily organize videos split in multiple files (e.g. videos with distinct scenes). That means getting from here:
+Let's you organize media. Made to more easily organize videos split in multiple files (e.g. videos with distinct scenes). That means getting from here in this made up example from a film about surfing:
 
     downloads
     └── surfing-rocks[2016]-something-anotherthing-(fetched-from-that-place)
@@ -13,8 +13,8 @@ To here:
 
     my-videos
     ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
-    ├── foo.bar.video_some.surfer.guy_another.surfer.guy_[northpole].mp4
-    └── foo-bar-video_surfer.girl_[another-category].mp4
+    ├── surfing.rocks_some.surfer.guy_another.surfer.guy_[northpole].mp4
+    └── surfing.rocks_surfer.girl_[another-category].mp4
     
 
 Mediamanage supports the following operations.
