@@ -1,7 +1,7 @@
 
 [![Build Status](https://travis-ci.org/kmkr/mediamanage.svg?branch=master)](https://travis-ci.org/kmkr/mediamanage.svg?branch=master)
 
-Let's you organize media. Made to more easily organize videos split in multiple files (e.g. videos with distinct scenes). That means getting from here in this made up example from a film about surfing:
+Let's you organize media. Made to more easily organize videos split in multiple files (e.g. videos with distinct scenes). That means getting from here in this fictional example for a film about surfing:
 
     /media/temp/downloads
     └── surfing-rocks[2016]-something-anotherthing-(fetched-from-that-place)
@@ -9,19 +9,22 @@ Let's you organize media. Made to more easily organize videos split in multiple 
         ├── 102334_01.mp4
         ├── 102334_02.mp4
         └── 102334_03.mp4
-        
+
 ... to here:
 
     /media/videos/surfing
     ├── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
     ├── surfing.rocks_some.surfer.guy_another.surfer.guy_[northpole].mp4
     └── surfing.rocks_surfer.girl_[another-category].mp4
-    
+
     /media/clips/my-favorite-big-wave-clips
     └── surfing.rocks_some.surfer.guy_[bigwaves][australia].mp4
-    
+
+    /media/audio/wave-sounds
+    └── surfing.rocks_surfer.girl_[another-category].mp3
+
 Setting title, categories and actor/actress/performers are all optional. So is extracting audio and clips. You can decide what to set and what to skip.
-    
+
 
 Mediamanage supports the following operations.
 
