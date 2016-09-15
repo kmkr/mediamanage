@@ -31,7 +31,7 @@ module.exports = function (onGoToFile) {
         });
 
     vorpal
-        .command('m', 'Movie media')
+        .command('m', 'Move media')
         .action((args, callback) => {
             moveMedia(vorpal).then(() => {
                 callback();
