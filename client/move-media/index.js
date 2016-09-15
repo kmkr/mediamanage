@@ -9,13 +9,19 @@ const fileMover = require('../file-system/mover');
 module.exports = vorpalInstance => {
     return Promise.reduce(config.moveMediaOptions, (t, moveMediaOption) => (
         new Promise((resolve, reject) => {
+            console.log(`Inne i move media promise ${t} ${moveMediaOption}`);
             const fn = fileFinder[moveMediaOption.type];
-            let destinationAlternatives, fileNames;
+            if (!fn) {
+                return reject(`No such type ${moveMediaOption.type} - must be either video or audio`);
+            }
+
+            let fileNames;
 
             try {
                 fileNames = fn(moveMediaOption.fromDir);
             } catch (err) {
                 if (err.code === 'ENOENT') {
+                    vorpalInstance.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
                     return resolve();
                 }
                 return reject(err);
@@ -26,8 +32,12 @@ module.exports = vorpalInstance => {
                 return resolve();
             }
 
+            let destinationDirAlternatives;
             try {
-                destinationAlternatives = fs.readdirSync(moveMediaOption.toDir);
+                destinationDirAlternatives = fs.readdirSync(moveMediaOption.toDir)
+                    .filter(file => (
+                        fs.statSync(path.join(moveMediaOption.toDir, file)).isDirectory()
+                    ));
             } catch (err) {
                 if (err.code === 'ENOENT') {
                     vorpalInstance.log(`Unable to move files - ${moveMediaOption.toDir} does not exist!`);
@@ -37,23 +47,21 @@ module.exports = vorpalInstance => {
                 return reject(err);
             }
 
-            if (destinationAlternatives.length) {
+            if (destinationDirAlternatives.length) {
                 vorpalInstance.activeCommand.prompt({
                     message: `Where do you want to move ${fileNames.join(', ')}`,
                     name: 'moveDestination',
                     type: 'list',
-                    choices: destinationAlternatives
+                    choices: destinationDirAlternatives
                 }, function ({moveDestination}) {
                     const sourceDirPath = path.resolve(moveMediaOption.fromDir);
                     const destDirPath = path.resolve(moveMediaOption.toDir, moveDestination);
-                    fileMover.moveAll(fileNames, sourceDirPath, destDirPath);
-                    return resolve();
+                    resolve(fileMover.moveAll({fileNames, sourceDirPath, destDirPath, vorpalInstance}));
                 });
             } else {
                 const sourceDirPath = path.resolve(moveMediaOption.fromDir);
                 const destDirPath = path.resolve(moveMediaOption.toDir);
-                fileMover.moveAll(fileNames, sourceDirPath, destDirPath);
-                return resolve();
+                resolve(fileMover.moveAll({fileNames, sourceDirPath, destDirPath, vorpalInstance}));
             }
 
         })

@@ -36,7 +36,6 @@ module.exports = function (onGoToFile) {
             moveMedia(vorpal).then(() => {
                 callback();
             }).catch(err => {
-
                 vorpal.log(err);
             });
         });

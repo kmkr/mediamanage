@@ -1,37 +1,57 @@
 const fs = require('fs');
 const path = require('path');
+const Promise = require('bluebird');
 
 const {cleanFileName} = require('./renamer-helper');
 
-exports.moveAll = (fileNames, sourceDirPath, destDirPath) => {
-    fileNames.forEach(fileName => {
+exports.moveAll = ({fileNames, sourceDirPath, destDirPath, vorpalInstance}) => {
+    return Promise.reduce(fileNames, (t, fileName) => {
         const cleanedFileName = cleanFileName(fileName);
-        move(path.join(sourceDirPath, fileName), path.join(destDirPath, cleanedFileName));
-    });
+        return move(
+            path.join(sourceDirPath, fileName),
+            path.join(destDirPath, cleanedFileName),
+            vorpalInstance
+        );
+    }, null);
 };
 
-function move(sourceFilePath, destFilePath) {
-    if (!path.isAbsolute(sourceFilePath) || !path.extname(sourceFilePath)) {
-        throw new Error(`Source file must be an absolute pathed file. Was ${sourceFilePath}`);
-    }
-
-    if (!path.isAbsolute(destFilePath) || !path.extname(destFilePath)) {
-        throw new Error(`Dest file must be an absolute pathed file. Was ${destFilePath}`);
-    }
-
-    // Force throw unless source exists
-    fs.statSync(sourceFilePath);
-
-    try {
-        fs.statSync(destFilePath);
-        throw new Error('todo: Dest file exists - prompt for overwrite');
-    } catch (e) {
-        if (e.code === 'ENOENT') {
-            fs.renameSync(sourceFilePath, destFilePath);
-            console.log(`Moved ${sourceFilePath} to ${destFilePath}`);
-            return;
+function move(sourceFilePath, destFilePath, vorpalInstance) {
+    return new Promise((resolve, reject) => {
+        if (!path.isAbsolute(sourceFilePath) || !path.extname(sourceFilePath)) {
+            return reject(`Source file must be an absolute pathed file. Was ${sourceFilePath}`);
         }
 
-        throw e;
-    }
+        if (!path.isAbsolute(destFilePath) || !path.extname(destFilePath)) {
+            return reject(`Dest file must be an absolute pathed file. Was ${destFilePath}`);
+        }
+
+        // Force throw unless source exists
+        fs.statSync(sourceFilePath);
+
+        try {
+            fs.statSync(destFilePath);
+            vorpalInstance.activeCommand.prompt({
+                message: `${destFilePath} exists - do you want to overwrite?`,
+                name: 'overwrite',
+                type: 'confirm'
+            }, ({overwrite}) => {
+                if (overwrite) {
+                    fs.renameSync(sourceFilePath, destFilePath);
+                    vorpalInstance.log(`Moved ${sourceFilePath} to ${destFilePath} (replaced existing file)`);
+                } else {
+                    vorpalInstance.log(`Will not replace ${destFilePath}, continuing ...`);
+                }
+
+                return resolve();
+            });
+        } catch (e) {
+            if (e.code === 'ENOENT') {
+                fs.renameSync(sourceFilePath, destFilePath);
+                vorpalInstance.log(`Moved ${sourceFilePath} to ${destFilePath}`);
+                return resolve();
+            }
+
+            return reject(e);
+        }
+    });
 }
