@@ -1,4 +1,5 @@
 const fs = require('fs');
+// todo: fjern denne avhengigheten (utdatert)
 const fsTools = require('fs-tools');
 const path = require('path');
 

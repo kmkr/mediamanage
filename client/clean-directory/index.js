@@ -1,4 +1,4 @@
-const fsTools = require('fs-tools');
+const rimraf = require('rimraf');
 const Promise = require('bluebird');
 
 const fileFinder = require('../file-system/finder');
@@ -27,7 +27,7 @@ module.exports = vorpalInstance => (
             default: false
         }, function ({confirmDelete}) {
             if (confirmDelete) {
-                fsTools.removeSync(rootDir);
+                rimraf.sync(rootDir);
                 vorpalInstance.log(`Removed ${fileNames.length} files`);
             }
             return resolve();
