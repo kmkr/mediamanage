@@ -1,4 +1,5 @@
 const fs = require('fs');
+const fsTools = require('fs-tools');
 const path = require('path');
 
 function isAudio(filePath) {
@@ -9,20 +10,29 @@ function isVideo(filePath) {
     return filePath.match(/\.(mkv|mp4|avi|mpeg|iso|wmv)$/i);
 }
 
-// todo: vurder å alltid gi full path her
-exports.video = (dirPath = process.cwd()) => {
+function allFiles(dirPath = process.cwd(), recursive = false) {
     if (!path.isAbsolute(dirPath)) {
         dirPath = path.resolve(dirPath);
     }
+
+    if (recursive) {
+        const files = [];
+        fsTools.walkSync(dirPath, filePath => {
+            files.push(filePath);
+        });
+        return files;
+    }
+    // todo: vurder å alltid gi full path her
     return fs.readdirSync(dirPath)
         .filter(isVideo);
+}
+
+exports.allFiles = allFiles;
+
+exports.video = (dirPath = process.cwd(), recursive = false) => {
+    return allFiles(dirPath, recursive).filter(isVideo);
 };
 
-// todo: vurder å alltid gi full path her
-exports.audio = (dirPath = process.cwd()) => {
-    if (!path.isAbsolute(dirPath)) {
-        dirPath = path.resolve(dirPath);
-    }
-    return fs.readdirSync(dirPath)
-        .filter(isAudio);
+exports.audio = (dirPath = process.cwd(), recursive = false) => {
+    return allFiles(dirPath, recursive).filter(isAudio);
 };

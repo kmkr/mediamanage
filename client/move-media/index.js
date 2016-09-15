@@ -9,7 +9,6 @@ const fileMover = require('../file-system/mover');
 module.exports = vorpalInstance => {
     return Promise.reduce(config.moveMediaOptions, (t, moveMediaOption) => (
         new Promise((resolve, reject) => {
-            console.log(`Inne i move media promise ${t} ${moveMediaOption}`);
             const fn = fileFinder[moveMediaOption.type];
             if (!fn) {
                 return reject(`No such type ${moveMediaOption.type} - must be either video or audio`);
@@ -28,7 +27,7 @@ module.exports = vorpalInstance => {
             }
 
             if (!fileNames.length) {
-                vorpalInstance.log(`No files found in ${moveMediaOption.fromDir} - continuing`);
+                vorpalInstance.log(`No ${moveMediaOption.type} files found in ${moveMediaOption.fromDir} - continuing`);
                 return resolve();
             }
 

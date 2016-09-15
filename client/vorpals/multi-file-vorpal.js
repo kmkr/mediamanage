@@ -3,6 +3,7 @@ const Vorpal = require('vorpal');
 const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
 const moveMedia = require('../move-media');
+const cleanDirectory = require('../clean-directory');
 
 module.exports = function (onGoToFile) {
     const vorpal = new Vorpal();
@@ -33,11 +34,16 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('m', 'Move media')
         .action((args, callback) => {
-            moveMedia(vorpal).then(() => {
-                callback();
-            }).catch(err => {
-                vorpal.log(err);
-            });
+            moveMedia(vorpal)
+                .then(() => (
+                    cleanDirectory(vorpal)
+                ))
+                .then(() => {
+                    callback();
+                    process.exit();
+                }).catch(err => {
+                    vorpal.log(err);
+                });
         });
 
     vorpal
