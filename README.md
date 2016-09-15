@@ -29,10 +29,10 @@ Setting title, categories and actor/actress/performers are all optional. So is e
 Mediamanage supports the following operations.
 
 - Set movie name to all files in currect directory.
-- Play movies via customized media player to see what you're organizing.
+- Play movies via customized media player to observe what you're organizing.
 - Extract parts of media - both audio and video.
 - Set categories for each file (e.g. drama, action, wing-suit, australia, mountains, rivers or whatever). Will be set in file title as shown above.
-- Set actors/actresses (called performer names) for each file. Will be set in file title as shown above.
+- Set actors/actresses/performer names for each file. Will be set in file title as shown above.
 - Bulk moving media files (including extracted media) from current directory.
 - Cleaning up source by deleting non-moved files (such as screenshots, covers and unwanted files) after moving media.
 
