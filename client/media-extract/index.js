@@ -35,8 +35,9 @@ exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
     try {
         fs.mkdirSync(destinationDir);
     } catch (e) {
-        // todo: handle errors EXCEPT existing dir
-        console.log(e);
+        if (e.code !== 'EEXIST') {
+            throw e;
+        }
     }
     extractor.extractVideo({
         sourceFilePath: fileName,
