@@ -35,7 +35,13 @@ http.createServer((req, res) => {
     } else if (url.match('/play')) {
         const query = url.replace(/.*\?/, '');
         const {wd, file} = querystring.parse(query);
-        play(wd, file);
+        if (wd && file) {
+            play(wd, file);
+        } else {
+            console.log(`Both wd and file are required in query to play. Wd: ${wd}, file: ${file}`);
+        }
+    } else {
+        console.log('Unknown request');
     }
     res.end();
 }).listen(PORT);

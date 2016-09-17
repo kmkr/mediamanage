@@ -1,12 +1,13 @@
 const Vorpal = require('vorpal');
 
+const mediaPlayer = require('../media-player');
 const fileRenamer = require('../file-system/renamer');
 const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
 const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
 
 module.exports = function (fileName, onComplete) {
-    // todo: play video
+    mediaPlayer.play(process.cwd(), fileName);
 
     const vorpal = new Vorpal();
     vorpal.delimiter(fileName);
@@ -59,6 +60,7 @@ module.exports = function (fileName, onComplete) {
 
     vorpal.command('n', 'Go back')
         .action((args, callback) => {
+            mediaPlayer.stop();
             onComplete();
             callback();
         });

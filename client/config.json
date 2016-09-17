@@ -32,5 +32,8 @@
             "toDir": "/tmp/scenes",
             "type": "video"
         }
-    ]
+    ],
+    "mediaPlayer": {
+        "remote": "127.0.0.1:2000"
+    }
 }
