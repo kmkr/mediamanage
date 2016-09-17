@@ -21,6 +21,7 @@ function play(wd, file) {
         localMediaPlayer.play(filePath);
     } else {
         // todo
+        console.log(`Unable to find match for wd ${wd} - file ${file} cannot be played`);
     }
 }
 
@@ -38,10 +39,13 @@ http.createServer((req, res) => {
         if (wd && file) {
             play(wd, file);
         } else {
-            console.log(`Both wd and file are required in query to play. Wd: ${wd}, file: ${file}`);
+            const message = `Both wd and file are required in query to play. Wd: ${wd}, file: ${file}`;
+            console.log(message);
+
+            res.writeHead(400, message);
         }
     } else {
-        console.log('Unknown request');
+        res.writeHead(404);
     }
     res.end();
 }).listen(PORT);
