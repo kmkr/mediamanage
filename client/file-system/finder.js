@@ -24,8 +24,7 @@ function allFiles(dirPath = process.cwd(), recursive = false) {
         return files;
     }
     // todo: vurder å alltid gi full path her
-    return fs.readdirSync(dirPath)
-        .filter(isVideo);
+    return fs.readdirSync(dirPath);
 }
 
 exports.allFiles = allFiles;
