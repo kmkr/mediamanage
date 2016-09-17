@@ -3,7 +3,7 @@ const Vorpal = require('vorpal');
 const fileRenamer = require('../file-system/renamer');
 const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
-const {extractFormat, extractAudio, extractVideo} = require('../media-extract');
+const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
 
 module.exports = function (fileName, onComplete) {
     // todo: play video
@@ -41,7 +41,8 @@ module.exports = function (fileName, onComplete) {
             .action((args, callback) => {
                 vorpal.activeCommand.prompt({
                     message: `${extractFormat} (blank to finish)`,
-                    name: 'extractPoint'
+                    name: 'extractPoint',
+                    validate: extractFormatValidator
                 }, function ({extractPoint}) {
                     if (extractPoint) {
                         const fn = type === 'video' ? extractVideo : extractAudio;

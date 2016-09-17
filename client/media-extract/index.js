@@ -9,10 +9,20 @@ const extractors = [
     require('./ffmpeg-extractor')
 ];
 
-exports.extractFormat = 'Start at and ends at in format <performer1<_performer2>><_[category]>@>hh:mm:ss hh:mm:ss';
+exports.extractFormat = 'Start at and ends at in format <performerinfo@>hh:mm:ss hh:mm:ss';
+exports.extractFormatValidator = input => {
+    if (!input || !input.match(/\s/)) {
+        return false;
+    }
+    const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(input);
+    if (!startsAtSeconds || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
+        return false;
+    }
+
+    return true;
+};
 
 exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
-    // todo: validate extractPoint
     const extractor = extractors.find(extractor => extractor.supportsVideo(fileName));
 
     if (!extractor) {
@@ -25,6 +35,8 @@ exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
     try {
         fs.mkdirSync(destinationDir);
     } catch (e) {
+        // todo: handle errors EXCEPT existing dir
+        console.log(e);
     }
     extractor.extractVideo({
         sourceFilePath: fileName,
@@ -35,7 +47,6 @@ exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
 };
 
 exports.extractAudio = ({destinationDir, fileName, extractPoint}) => {
-    // todo: validate extractPoint
     const extractor = extractors.find(extractor => extractor.supportsAudio(fileName));
 
     if (!extractor) {
