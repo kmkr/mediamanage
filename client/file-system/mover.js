@@ -26,12 +26,15 @@ function move(sourceFilePath, destFilePath, vorpalInstance) {
         }
 
         // Force throw unless source exists
-        fs.statSync(sourceFilePath);
+        const sourceStats = fs.statSync(sourceFilePath);
+        const sourceSize = sourceStats.size;
 
         try {
-            fs.statSync(destFilePath);
+            const destinationStats = fs.statSync(destFilePath);
+            const destinationSize = destinationStats.size;
+            const ratio = Math.floor((sourceSize / destinationSize) * 100);
             vorpalInstance.activeCommand.prompt({
-                message: `${destFilePath} exists - do you want to overwrite?`,
+                message: `${destFilePath} exists, do you want to overwrite? Source size ${sourceSize} vs destination ${destinationSize} (${ratio}%)?`,
                 name: 'overwrite',
                 type: 'confirm'
             }, ({overwrite}) => {
