@@ -8,6 +8,11 @@ test('set title', t => {
     t.is(actual, '(t:my.title)__file.mp4');
 });
 
+test('set title with path throws', t => {
+    const fileName = '/a/path/file.mp4';
+    t.throws(() => renamerHelper.setTitle('my.title', fileName));
+});
+
 test('overwrite title', t => {
     const fileName = '(t:my.title)__file.mp4';
     const actual = renamerHelper.setTitle('my.new.title', fileName);
@@ -42,6 +47,11 @@ test('set categories', t => {
     const fileName = '(p:brumm)__file.mp4';
     const actual = renamerHelper.setCategories(['woz'], fileName);
     t.is(actual, '(p:brumm)_(c:[woz])__file.mp4');
+});
+
+test('set categories with path throws', t => {
+    const fileName = '/(p:brumm)__file.mp4';
+    t.throws(() => renamerHelper.setCategories(['woz'], fileName));
 });
 
 test('overwrite categories', t => {
