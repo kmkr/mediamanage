@@ -2,11 +2,12 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const renamerHelper = require('./renamer-helper');
+const logger = require('../vorpals/logger');
 
 function rename(sourceFilePath, destFileName) {
     const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
-    console.log(`Renamed ${sourceFilePath} to ${destFilePath}`);
+    logger.log(`Renamed ${sourceFilePath} to ${destFilePath}`);
     return destFilePath;
 }
 

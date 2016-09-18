@@ -1,4 +1,5 @@
 const exec = require('child_process').exec;
+const logger = require('../vorpals/logger');
 
 const secondsToTimeParser = require('./seconds-to-time-parser')();
 
@@ -22,10 +23,10 @@ exports.extractAudio = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSe
 };
 
 function run(command) {
-    console.log(`Running ${command}`);
+    logger.log(`Running ${command}`);
     exec(command, (error, stdout, stderr) => {
-        error && console.log(error);
-        stdout && console.log(`stdout: ${stdout}`);
-        stderr && console.log(`stderr: ${stderr}`);
+        error && logger.log(error);
+        stdout && logger.log(`stdout: ${stdout}`);
+        stderr && logger.log(`stderr: ${stderr}`);
     });
 }

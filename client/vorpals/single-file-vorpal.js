@@ -1,6 +1,7 @@
 const Vorpal = require('vorpal');
 const path = require('path');
 
+const logger = require('./logger');
 const mediaPlayer = require('../media-player');
 const fileRenamer = require('../file-system/renamer');
 const performerNameCleaner = require('../performers/name-cleaner');
@@ -13,6 +14,7 @@ module.exports = function (filePath, onComplete) {
     mediaPlayer.play(filePath);
 
     const vorpal = new Vorpal();
+    logger.setLogger(vorpal.log.bind(vorpal));
     vorpal.delimiter(fileName);
 
     vorpal
@@ -48,7 +50,7 @@ module.exports = function (filePath, onComplete) {
         vorpal.command(commandKey, `Extract to ${destination}`)
             .action((args, callback) => {
                 vorpal.activeCommand.prompt({
-                    message: `${extractFormat} (blank to finish)`,
+                    message: `${extractFormat} (blank to finish) `,
                     name: 'extractPoint',
                     validate: extractFormatValidator
                 }, function ({extractPoint}) {

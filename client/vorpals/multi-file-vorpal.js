@@ -4,28 +4,31 @@ const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
 const moveMedia = require('../move-media');
 const cleanDirectory = require('../clean-directory');
+const logger = require('./logger');
 
 function videoFileNamesWithoutPath() {
     return fileFinder.video()
         .map(filePath => filePath.replace(process.cwd(), '.'));
 }
 
-module.exports = function (onGoToFile) {
-    const vorpal = new Vorpal();
+function logFileNames() {
     const fileNames = videoFileNamesWithoutPath();
     fileNames.forEach((fileName, index) => {
-        vorpal.log(`${index}) ${fileName}`);
+        logger.log(`${index}) ${fileName}`);
     });
-    vorpal.log('Select with s [index]');
+    logger.log('Select with s [index]');
+}
+
+module.exports = function (onGoToFile) {
+    const vorpal = new Vorpal();
+    logger.setLogger(vorpal.log.bind(vorpal));
+
+    logFileNames();
 
     vorpal
         .command('l', 'List media')
         .action((args, callback) => {
-            const fileNames = videoFileNamesWithoutPath();
-            fileNames.forEach((fileName, index) => {
-                vorpal.log(`${index}) ${fileName}`);
-            });
-            vorpal.log('Select with s [index]');
+            logFileNames();
             callback();
         });
 
@@ -47,7 +50,7 @@ module.exports = function (onGoToFile) {
                     callback();
                     process.exit();
                 }).catch(err => {
-                    vorpal.log(err);
+                    logger.log(err);
                 });
         });
 

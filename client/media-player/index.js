@@ -2,6 +2,7 @@ const path = require('path');
 const http = require('http');
 const querystring = require('querystring');
 
+const logger = require('../vorpals/logger');
 const config = require('../config.json');
 
 const remote = config.mediaPlayer.remote;
@@ -12,19 +13,19 @@ exports.play = filePath => {
     const fileName = path.parse(filePath).base;
     const url = `http://${hostname}:${port}/play?wd=${querystring.escape(wd)}&file=${querystring.escape(fileName)}`;
     http.get(url, res => {
-        console.log(`Got response: ${res.statusCode}`);
+        logger.log(`Got response: ${res.statusCode}`);
         res.resume();
     }).on('error', (e) => {
-        console.log(`Got error: ${e.message}`);
+        logger.log(`Got error: ${e.message}`);
     });
 };
 
 exports.stop = () => {
     const url = `http://${hostname}:${port}/stop`;
     http.get(url, res => {
-        console.log(`Got response: ${res.statusCode}`);
+        logger.log(`Got response: ${res.statusCode}`);
         res.resume();
     }).on('error', (e) => {
-        console.log(`Got error: ${e.message}`);
+        logger.log(`Got error: ${e.message}`);
     });
 };

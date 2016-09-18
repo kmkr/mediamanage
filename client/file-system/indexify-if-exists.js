@@ -1,4 +1,5 @@
 const fs = require('fs');
+const logger = require('../vorpals/logger');
 
 const {indexify} = require('./renamer-helper');
 
@@ -17,7 +18,7 @@ function exists(filePath) {
 module.exports = filePath => {
     while (true) {
         if (exists(filePath)) {
-            console.log(`Found file ${filePath} to be present. Indexifying...`);
+            logger.log(`Found file ${filePath} to be present. Indexifying...`);
             filePath = indexify(filePath);
         } else {
             return filePath;
