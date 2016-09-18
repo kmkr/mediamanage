@@ -1,4 +1,5 @@
 const Vorpal = require('vorpal');
+const path = require('path');
 
 const mediaPlayer = require('../media-player');
 const fileRenamer = require('../file-system/renamer');
@@ -6,8 +7,10 @@ const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
 const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
 
-module.exports = function (fileName, onComplete) {
-    mediaPlayer.play(process.cwd(), fileName);
+module.exports = function (filePath, onComplete) {
+    let fileName = path.parse(filePath).base;
+
+    mediaPlayer.play(filePath);
 
     const vorpal = new Vorpal();
     vorpal.delimiter(fileName);
@@ -18,7 +21,8 @@ module.exports = function (fileName, onComplete) {
         .action((args, callback) => {
             const joinedNames = args.names.join('_');
             const performerNames = performerNameCleaner(joinedNames);
-            const newTitle = fileRenamer.setPerformerNames(performerNames, fileName);
+            const newPath = fileRenamer.setPerformerNames(performerNames, fileName);
+            const newTitle = path.parse(newPath).base;
             fileName = newTitle;
             vorpal.delimiter(fileName);
             callback();
@@ -32,7 +36,8 @@ module.exports = function (fileName, onComplete) {
                 name: 'categories',
                 choices: config.categories
             }, function ({categories}) {
-                const newTitle = fileRenamer.setCategories(categories, fileName);
+                const newPath = fileRenamer.setCategories(categories, fileName);
+                const newTitle = path.parse(newPath).base;
                 fileName = newTitle;
                 vorpal.delimiter(fileName);
                 callback();
@@ -51,7 +56,7 @@ module.exports = function (fileName, onComplete) {
                         const fn = type === 'video' ? extractVideo : extractAudio;
                         fn({
                             destinationDir: destination,
-                            fileName,
+                            filePath,
                             extractPoint
                         });
                     }

@@ -1,3 +1,4 @@
+const assert = require('assert');
 const path = require('path');
 
 const TITLE = /\(t:([\w\.]+)\)/;
@@ -43,7 +44,14 @@ exports.cleanFileName = uncleaned => {
         .replace(/__.*/, extension);
 };
 
+function assertContainingWithNoPaths(fileName) {
+    assert(fileName, 'File name cannot be empty');
+    assert(!fileName.includes(path.sep), `File name cannot contain paths. Was ${fileName}`);
+}
+
 exports.setTitle = (title, fileName) => {
+    assertContainingWithNoPaths(fileName);
+
     if (hasTitle(fileName)) {
         return normalize(fileName.replace(TITLE, `(t:${title})`));
     }
@@ -51,6 +59,8 @@ exports.setTitle = (title, fileName) => {
 };
 
 exports.setPerformerNames = (performers, fileName) => {
+    assertContainingWithNoPaths(fileName);
+
     if (hasPerformers(fileName)) {
         return normalize(fileName.replace(PERFORMERS, `(p:${performers})`));
     }
@@ -58,6 +68,8 @@ exports.setPerformerNames = (performers, fileName) => {
 };
 
 exports.setCategories = (categories, fileName) => {
+    assertContainingWithNoPaths(fileName);
+
     const categoryStr = `[${categories.join('][')}]`;
     if (hasCategories(fileName)) {
         return normalize(fileName.replace(CATEGORIES, `(c:${categoryStr})`));
@@ -66,6 +78,8 @@ exports.setCategories = (categories, fileName) => {
 };
 
 exports.indexify = filePath => {
+    assert(filePath, `File path cannot be empty. Was ${filePath}`);
+
     const extension = path.extname(filePath);
     const regExp = new RegExp(`\\((\\d+)\\)${extension}`);
     if (filePath.match(regExp)) {

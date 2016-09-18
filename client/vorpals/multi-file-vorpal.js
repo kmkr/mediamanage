@@ -5,9 +5,14 @@ const fileRenamer = require('../file-system/renamer');
 const moveMedia = require('../move-media');
 const cleanDirectory = require('../clean-directory');
 
+function videoFileNamesWithoutPath() {
+    return fileFinder.video()
+        .map(filePath => filePath.replace(process.cwd(), '.'));
+}
+
 module.exports = function (onGoToFile) {
     const vorpal = new Vorpal();
-    const fileNames = fileFinder.video();
+    const fileNames = videoFileNamesWithoutPath();
     fileNames.forEach((fileName, index) => {
         vorpal.log(`${index}) ${fileName}`);
     });
@@ -16,7 +21,7 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('l', 'List media')
         .action((args, callback) => {
-            const fileNames = fileFinder.video();
+            const fileNames = videoFileNamesWithoutPath();
             fileNames.forEach((fileName, index) => {
                 vorpal.log(`${index}) ${fileName}`);
             });
@@ -27,7 +32,7 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('t <title>', 'Set title')
         .action((args, callback) => {
-            fileRenamer.setTitle(args.title, fileFinder.video());
+            fileRenamer.setTitle(args.title, videoFileNamesWithoutPath());
             callback();
         });
 
@@ -49,8 +54,8 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('s [index]', 'Select file')
         .action((args, callback) => {
-            const fileName = fileFinder.video()[Number(args.index) || 0];
-            onGoToFile(fileName);
+            const filePath = fileFinder.video()[Number(args.index) || 0];
+            onGoToFile(filePath);
             callback();
         });
 

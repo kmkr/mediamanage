@@ -14,10 +14,10 @@ module.exports = vorpalInstance => {
                 return reject(`No such type ${moveMediaOption.type} - must be either video or audio`);
             }
 
-            let fileNames;
+            let filePaths;
 
             try {
-                fileNames = fn(moveMediaOption.fromDir);
+                filePaths = fn(moveMediaOption.fromDir);
             } catch (err) {
                 if (err.code === 'ENOENT') {
                     vorpalInstance.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
@@ -26,16 +26,20 @@ module.exports = vorpalInstance => {
                 return reject(err);
             }
 
-            if (!fileNames.length) {
+            if (!filePaths.length) {
                 vorpalInstance.log(`No ${moveMediaOption.type} files found in ${moveMediaOption.fromDir} - continuing`);
                 return resolve();
             }
 
+            filePaths.forEach(filePath => {
+                vorpalInstance.log(`Preparing to move ${filePath}`);
+            });
+
             let destinationDirAlternatives;
             try {
                 destinationDirAlternatives = fs.readdirSync(moveMediaOption.toDir)
-                    .filter(file => (
-                        fs.statSync(path.join(moveMediaOption.toDir, file)).isDirectory()
+                    .filter(fileNameCandidate => (
+                        fs.statSync(path.join(moveMediaOption.toDir, fileNameCandidate)).isDirectory()
                     ));
             } catch (err) {
                 if (err.code === 'ENOENT') {
@@ -48,19 +52,17 @@ module.exports = vorpalInstance => {
 
             if (destinationDirAlternatives.length) {
                 vorpalInstance.activeCommand.prompt({
-                    message: `Where do you want to move ${fileNames.join(', ')}`,
+                    message: `Where do you want to move ${filePaths.join(', ')}`,
                     name: 'moveDestination',
                     type: 'list',
                     choices: destinationDirAlternatives
                 }, function ({moveDestination}) {
-                    const sourceDirPath = path.resolve(moveMediaOption.fromDir);
                     const destDirPath = path.resolve(moveMediaOption.toDir, moveDestination);
-                    resolve(fileMover.moveAll({fileNames, sourceDirPath, destDirPath, vorpalInstance}));
+                    resolve(fileMover.moveAll({filePaths, destDirPath, vorpalInstance}));
                 });
             } else {
-                const sourceDirPath = path.resolve(moveMediaOption.fromDir);
                 const destDirPath = path.resolve(moveMediaOption.toDir);
-                resolve(fileMover.moveAll({fileNames, sourceDirPath, destDirPath, vorpalInstance}));
+                resolve(fileMover.moveAll({filePaths, destDirPath, vorpalInstance}));
             }
 
         })

@@ -32,39 +32,38 @@ function mkdir(dirName) {
     }
 }
 
-exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
-    const extractor = extractors.find(extractor => extractor.supportsVideo(fileName));
+exports.extractVideo = ({destinationDir, filePath, extractPoint}) => {
+    const extractor = extractors.find(extractor => extractor.supportsVideo(filePath));
 
     if (!extractor) {
-        throw new Error(`Unable to find extractor for ${fileName}`);
+        throw new Error(`Unable to find extractor for ${filePath}`);
     }
 
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
     // todo: handle performer info
-    const destFilePath = getDestFilePath(destinationDir, fileName);
+    const destFilePath = getDestFilePath(destinationDir, filePath);
     mkdir(destinationDir);
     extractor.extractVideo({
-        sourceFilePath: fileName,
+        sourceFilePath: filePath,
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
     });
 };
 
-exports.extractAudio = ({destinationDir, fileName, extractPoint}) => {
-    const extractor = extractors.find(extractor => extractor.supportsAudio(fileName));
+exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
+    const extractor = extractors.find(extractor => extractor.supportsAudio(filePath));
 
     if (!extractor) {
-        throw new Error(`Unable to find extractor for ${fileName}`);
+        throw new Error(`Unable to find extractor for ${filePath}`);
     }
 
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
     // todo: handle performer info
-    const sourceFilePath = path.resolve(fileName);
-    const destFilePath = getDestFilePath(destinationDir, fileName, '.mp3');
+    const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
     mkdir(destinationDir);
     extractor.extractAudio({
-        sourceFilePath,
+        sourceFilePath: filePath,
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
@@ -72,11 +71,12 @@ exports.extractAudio = ({destinationDir, fileName, extractPoint}) => {
 };
 
 function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {
-    let destFilePath = cleanFileName(sourceFilePath);
+    const fileName = path.parse(sourceFilePath).base;
+    let cleanedFileName = cleanFileName(fileName);
     if (fileExtension) {
-        destFilePath = destFilePath.replace(path.extname(destFilePath), fileExtension);
+        cleanedFileName = cleanedFileName.replace(path.extname(cleanedFileName), fileExtension);
     }
 
-    destFilePath = path.resolve(destinationDir, destFilePath);
+    const destFilePath = path.resolve(destinationDir, cleanedFileName);
     return indexifyIfExists(destFilePath);
 }

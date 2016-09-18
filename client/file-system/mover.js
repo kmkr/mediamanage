@@ -5,11 +5,12 @@ const Promise = require('bluebird');
 
 const {cleanFileName} = require('./renamer-helper');
 
-exports.moveAll = ({fileNames, sourceDirPath, destDirPath, vorpalInstance}) => {
-    return Promise.reduce(fileNames, (t, fileName) => {
-        const cleanedFileName = cleanFileName(fileName);
+exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
+    return Promise.reduce(filePaths, (t, filePath) => {
+        const cleanedFilePath = cleanFileName(filePath);
+        const cleanedFileName = path.parse(cleanedFilePath).base;
         return move(
-            path.join(sourceDirPath, fileName),
+            filePath,
             path.join(destDirPath, cleanedFileName),
             vorpalInstance
         );
