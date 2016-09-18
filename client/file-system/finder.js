@@ -1,5 +1,6 @@
 const fs = require('fs');
 // todo: fjern denne avhengigheten (utdatert)
+// vurder https://www.npmjs.com/package/fs-extra
 const fsTools = require('fs-tools');
 const path = require('path');
 
