@@ -9,7 +9,7 @@ const PLAYER = config.player;
 const LocalMediaPlayer = require('./media-player/local-media-player');
 const localMediaPlayer = new LocalMediaPlayer(PLAYER);
 
-function play(wd, file) {
+function getFilePath(wd, file) {
     const matches = MAPPINGS.filter(m => {
         const source = m.source;
         return new RegExp(source).test(wd);
@@ -18,32 +18,40 @@ function play(wd, file) {
     if (matches.length === 1) {
         const {destination} = matches[0];
         const filePath = path.resolve(destination, file);
-        localMediaPlayer.play(filePath);
-    } else {
-        // todo
-        console.log(`Unable to find match for wd ${wd} - file ${file} cannot be played`);
+        return filePath;
     }
-}
-
-function stop() {
-    localMediaPlayer.stop();
 }
 
 http.createServer((req, res) => {
     const {url} = req;
     if (url.match('/stop')) {
-        stop();
+        localMediaPlayer.stop();
     } else if (url.match('/play')) {
         const query = url.replace(/.*\?/, '');
         const {wd, file} = querystring.parse(query);
-        if (wd && file) {
-            play(wd, file);
-        } else {
+
+        if (!wd || !file) {
             const message = `Both wd and file are required in query to play. Wd: ${wd}, file: ${file}`;
             console.log(message);
 
             res.writeHead(400, message);
+            res.end();
+            return;
         }
+
+        const filePath = getFilePath(wd, file);
+
+        if (!filePath) {
+            const message = `Unable to find match for wd ${wd} - file ${file} cannot be played`;
+            console.log(message);
+
+            res.writeHead(400, message);
+            res.end();
+            return;
+        }
+
+        localMediaPlayer.play(filePath);
+
     } else {
         res.writeHead(404);
     }
