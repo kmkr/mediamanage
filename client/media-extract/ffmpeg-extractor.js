@@ -24,10 +24,8 @@ exports.extractAudio = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSe
 function run(command) {
     console.log(`Running ${command}`);
     exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.log(error);
-        }
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
+        error && console.log(error);
+        stdout && console.log(`stdout: ${stdout}`);
+        stderr && console.log(`stderr: ${stderr}`);
     });
 }
