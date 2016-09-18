@@ -33,6 +33,7 @@ Mediamanage supports the following operations.
 - Extract parts of media - both audio and video.
 - Set categories for each file (e.g. drama, action, wing-suit, australia, mountains, rivers or whatever). Will be set in file title as shown above.
 - Set actors/actresses/performer names for each file. Will be set in file title as shown above.
+- Autocompletion when setting performer names.
 - Bulk moving media files (including extracted media) from current directory.
 - Cleaning up source by deleting non-moved files (such as screenshots, covers and unwanted files) after moving media.
 
@@ -52,6 +53,11 @@ Mediamanage supports the following operations.
 ## Client
 
     {
+        "autocomplete": {
+            "performerNames": [
+                "winnie.the.pooh", "piglet"
+            ]
+        },
         "categories": [
             "big-waves",
             "drama",

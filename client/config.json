@@ -4,6 +4,11 @@
         "drama",
         "thriller"
     ],
+    "autocomplete": {
+        "performerNames": [
+            "ole.brumm", "nasse.noff"
+        ]
+    },
     "extractOptions": [
         {
             "commandKey": "a",

@@ -13,9 +13,11 @@ module.exports = function (fileName, onComplete) {
     vorpal.delimiter(fileName);
 
     vorpal
-        .command('names [names]', 'Set performer names')
+        .command('names <names...>', 'Set performer names')
+        .autocomplete(config.autocomplete.performerNames)
         .action((args, callback) => {
-            const performerNames = performerNameCleaner(args.names);
+            const joinedNames = args.names.join('_');
+            const performerNames = performerNameCleaner(joinedNames);
             const newTitle = fileRenamer.setPerformerNames(performerNames, fileName);
             fileName = newTitle;
             vorpal.delimiter(fileName);
