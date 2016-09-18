@@ -1,6 +1,5 @@
 const PERFORMER_SEPARATOR = '_';
-const NAME_SEPARATOR = '.';
-const ALLOWED_CHARS = /^[\w\._']*$/;
+const ALLOWED_CHARS = /^[\w\._']*$/i;
 
 module.exports = (uncleaned = '') => {
     const cleaned = uncleaned.replace(/\s/g, PERFORMER_SEPARATOR);

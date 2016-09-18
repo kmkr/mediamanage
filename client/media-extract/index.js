@@ -22,6 +22,16 @@ exports.extractFormatValidator = input => {
     return true;
 };
 
+function mkdir(dirName) {
+    try {
+        fs.mkdirSync(dirName);
+    } catch (e) {
+        if (e.code !== 'EEXIST') {
+            throw e;
+        }
+    }
+}
+
 exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
     const extractor = extractors.find(extractor => extractor.supportsVideo(fileName));
 
@@ -32,13 +42,7 @@ exports.extractVideo = ({destinationDir, fileName, extractPoint}) => {
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
     // todo: handle performer info
     const destFilePath = getDestFilePath(destinationDir, fileName);
-    try {
-        fs.mkdirSync(destinationDir);
-    } catch (e) {
-        if (e.code !== 'EEXIST') {
-            throw e;
-        }
-    }
+    mkdir(destinationDir);
     extractor.extractVideo({
         sourceFilePath: fileName,
         destFilePath,
@@ -58,10 +62,7 @@ exports.extractAudio = ({destinationDir, fileName, extractPoint}) => {
     // todo: handle performer info
     const sourceFilePath = path.resolve(fileName);
     const destFilePath = getDestFilePath(destinationDir, fileName, '.mp3');
-    try {
-        fs.mkdirSync(destinationDir);
-    } catch (e) {
-    }
+    mkdir(destinationDir);
     extractor.extractAudio({
         sourceFilePath,
         destFilePath,
