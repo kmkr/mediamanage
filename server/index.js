@@ -10,14 +10,14 @@ const LocalMediaPlayer = require('./media-player/local-media-player');
 const localMediaPlayer = new LocalMediaPlayer(PLAYER);
 
 function getFilePath(wd, file) {
-    const matches = MAPPINGS.filter(m => {
-        const source = m.source;
+    const matches = MAPPINGS.filter(mapping => {
+        const source = mapping.source;
         return new RegExp(source).test(wd);
     });
 
     if (matches.length === 1) {
-        const {destination} = matches[0];
-        const filePath = path.resolve(destination, file);
+        const {source, destination} = matches[0];
+        const filePath = path.resolve(wd.replace(new RegExp(source), destination), file);
         return filePath;
     }
 }
