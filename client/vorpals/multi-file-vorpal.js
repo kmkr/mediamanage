@@ -8,7 +8,9 @@ const logger = require('./logger');
 
 function videoFileNamesWithoutPath() {
     return fileFinder.video()
-        .map(filePath => filePath.replace(process.cwd(), '.'));
+        .map(filePath => filePath
+            .replace(process.cwd(), '')
+            .replace(/^\//, ''));
 }
 
 function logFileNames() {
