@@ -11,10 +11,6 @@ module.exports = vorpalInstance => (
         const videoFileNames = fileFinder.video(rootDir, recursive);
         const audioFileNames = fileFinder.audio(rootDir, recursive);
 
-        if (!filePaths.length) {
-            return resolve();
-        }
-
         filePaths
             .forEach(filePath => vorpalInstance.log(filePath));
         const message = `${filePaths.length} files left (${videoFileNames.length} videos, ${audioFileNames.length} audio). Delete?`;
