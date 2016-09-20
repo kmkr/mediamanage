@@ -11,7 +11,10 @@ const extractors = [
 
 exports.extractFormat = 'Start at and ends at in format <performerinfo@>hh:mm:ss hh:mm:ss';
 exports.extractFormatValidator = input => {
-    if (!input || !input.match(/\s/)) {
+    if (!input) {
+        return true;
+    }
+    if (!input.match(/\s/)) {
         return false;
     }
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(input);
