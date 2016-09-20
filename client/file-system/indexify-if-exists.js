@@ -18,7 +18,7 @@ function exists(filePath) {
 module.exports = filePath => {
     while (true) {
         if (exists(filePath)) {
-            logger.log(`Found file ${filePath} to be present. Indexifying...`);
+            logger.log(`Found file ${filePath.replace(process.cwd(), '')} to be present. Indexifying...`);
             filePath = indexify(filePath);
         } else {
             return filePath;
