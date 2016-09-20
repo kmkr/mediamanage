@@ -4,6 +4,7 @@ const path = require('path');
 const logger = require('./logger');
 const mediaPlayer = require('../media-player');
 const fileRenamer = require('../file-system/renamer');
+const {cleanFileName} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
@@ -11,6 +12,11 @@ const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = requ
 
 function getFileName(filePath) {
     return path.parse(filePath).base;
+}
+
+function getFormattedFileName(filePath) {
+    const fileName = getFileName(filePath);
+    return cleanFileName(fileName).replace(path.parse(fileName).ext, '');
 }
 
 function updateFilePath(existingFilePath, newFileName) {
@@ -36,7 +42,7 @@ module.exports = function (filePath, onComplete) {
             const newPath = fileRenamer.setPerformerNames(performerNames, getFileName(filePath));
             const newTitle = path.parse(newPath).base;
             filePath = updateFilePath(filePath, newTitle);
-            vorpal.delimiter(getFileName(filePath));
+            vorpal.delimiter(getFormattedFileName(filePath));
             callback();
         });
 
@@ -51,7 +57,7 @@ module.exports = function (filePath, onComplete) {
                 const newPath = fileRenamer.setCategories(categories, getFileName(filePath));
                 const newTitle = path.parse(newPath).base;
                 filePath = updateFilePath(filePath, newTitle);
-                vorpal.delimiter(getFileName(filePath));
+                vorpal.delimiter(getFormattedFileName(filePath));
                 callback();
             });
         });
