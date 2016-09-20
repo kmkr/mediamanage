@@ -7,7 +7,9 @@ const logger = require('../vorpals/logger');
 function rename(sourceFilePath, destFileName) {
     const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
-    logger.log(`Renamed ${sourceFilePath.replace(process.cwd(), '')} to ${destFilePath.replace(process.cwd(), '')}`);
+    logger.log('Renamed from / to');
+    logger.log(sourceFilePath.replace(process.cwd(), ''));
+    logger.log(destFilePath.replace(process.cwd(), ''));
     return destFilePath;
 }
 
