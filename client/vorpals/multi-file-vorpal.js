@@ -5,14 +5,12 @@ const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
 const moveMedia = require('../move-media');
 const cleanDirectory = require('../clean-directory');
+const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 
 const logger = require('./logger');
 
 function videoFileNamesWithoutPath() {
-    return fileFinder.video()
-        .map(filePath => filePath
-            .replace(process.cwd(), '')
-            .replace(/^\//, ''));
+    return fileFinder.video().map(removeCurrentWdHelper);
 }
 
 function logFileNames() {

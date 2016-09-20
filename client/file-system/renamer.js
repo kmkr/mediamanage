@@ -3,13 +3,14 @@ const fs = require('fs');
 const path = require('path');
 const renamerHelper = require('./renamer-helper');
 const logger = require('../vorpals/logger');
+const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 
 function rename(sourceFilePath, destFileName) {
     const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
     logger.log('Renamed from / to');
-    logger.log(sourceFilePath.replace(process.cwd(), ''));
-    logger.log(destFilePath.replace(process.cwd(), ''));
+    logger.log(removeCurrentWdHelper(sourceFilePath));
+    logger.log(removeCurrentWdHelper(destFilePath));
     return destFilePath;
 }
 
