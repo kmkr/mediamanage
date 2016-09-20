@@ -8,14 +8,23 @@ const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
 const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
 
+function getFileName(filePath) {
+    return path.parse(filePath).base;
+}
+
+function updateFilePath(existingFilePath, newFileName) {
+    const existingFileName = getFileName(existingFilePath);
+
+    return existingFilePath.replace(existingFileName, newFileName);
+}
+
 module.exports = function (filePath, onComplete) {
-    let fileName = path.parse(filePath).base;
 
     mediaPlayer.play(filePath);
 
     const vorpal = new Vorpal();
     logger.setLogger(vorpal.log.bind(vorpal));
-    vorpal.delimiter(fileName);
+    vorpal.delimiter(getFileName(filePath));
 
     vorpal
         .command('names <names...>', 'Set performer names')
@@ -23,10 +32,10 @@ module.exports = function (filePath, onComplete) {
         .action((args, callback) => {
             const joinedNames = args.names.join('_');
             const performerNames = performerNameCleaner(joinedNames);
-            const newPath = fileRenamer.setPerformerNames(performerNames, fileName);
+            const newPath = fileRenamer.setPerformerNames(performerNames, getFileName(filePath));
             const newTitle = path.parse(newPath).base;
-            fileName = newTitle;
-            vorpal.delimiter(fileName);
+            filePath = updateFilePath(filePath, newTitle);
+            vorpal.delimiter(getFileName(filePath));
             callback();
         });
 
@@ -38,10 +47,10 @@ module.exports = function (filePath, onComplete) {
                 name: 'categories',
                 choices: config.categories
             }, function ({categories}) {
-                const newPath = fileRenamer.setCategories(categories, fileName);
+                const newPath = fileRenamer.setCategories(categories, getFileName(filePath));
                 const newTitle = path.parse(newPath).base;
-                fileName = newTitle;
-                vorpal.delimiter(fileName);
+                filePath = updateFilePath(filePath, newTitle);
+                vorpal.delimiter(getFileName(filePath));
                 callback();
             });
         });
