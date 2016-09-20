@@ -31,7 +31,7 @@ module.exports = function (filePath, onComplete) {
 
     const vorpal = new Vorpal();
     logger.setLogger(vorpal.log.bind(vorpal));
-    vorpal.delimiter(getFileName(filePath));
+    vorpal.delimiter(getFormattedFileName(filePath));
 
     vorpal
         .command('names <names...>', 'Set performer names')

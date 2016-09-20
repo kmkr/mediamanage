@@ -52,7 +52,7 @@ module.exports = vorpalInstance => {
 
             if (destinationDirAlternatives.length) {
                 vorpalInstance.activeCommand.prompt({
-                    message: `Where do you want to move ${filePaths.join(', ')}`,
+                    message: `Where do you want to move these ${filePaths.length} files?`,
                     name: 'moveDestination',
                     type: 'list',
                     choices: destinationDirAlternatives
