@@ -1,9 +1,11 @@
 const Vorpal = require('vorpal');
 
+const noDownload = require('../no-download');
 const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
 const moveMedia = require('../move-media');
 const cleanDirectory = require('../clean-directory');
+
 const logger = require('./logger');
 
 function videoFileNamesWithoutPath() {
@@ -39,6 +41,12 @@ module.exports = function (onGoToFile) {
         .action((args, callback) => {
             fileRenamer.setTitle(args.title, videoFileNamesWithoutPath());
             callback();
+        });
+
+    vorpal
+        .command('nodl', 'Add to no download')
+        .action((args, callback) => {
+            noDownload(vorpal).then(callback);
         });
 
     vorpal

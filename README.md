@@ -34,6 +34,7 @@ Mediamanage supports the following operations.
 - Set categories for each file (e.g. drama, action, wing-suit, australia, mountains, rivers or whatever). Will be set in file title as shown above.
 - Set actors/actresses/performer names for each file. Will be set in file title as shown above.
 - Autocompletion when setting performer names.
+- Touching files in a directory with the same name as the first video file in the current directory. Handy to build up a blacklist of files to indicate that you should never download this video again.
 - Bulk moving media files (including extracted media) from current directory.
 - Cleaning up source by deleting non-moved files (such as screenshots, covers and unwanted files) after moving media.
 
@@ -94,6 +95,13 @@ Mediamanage supports the following operations.
                 "toDir": "/tmp/scenes",
                 "type": "video"
             }
-        ]
+        ],
+        "nodownload": {
+            "path": "/tmp/nodl",
+            "reasons": [
+                "boring",
+                "dull"
+            ]
+        }
     }
 

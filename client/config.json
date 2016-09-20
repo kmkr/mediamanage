@@ -1,14 +1,14 @@
 {
-    "categories": [
-        "action",
-        "drama",
-        "thriller"
-    ],
     "autocomplete": {
         "performerNames": [
             "ole.brumm", "nasse.noff"
         ]
     },
+    "categories": [
+        "action",
+        "drama",
+        "thriller"
+    ],
     "extractOptions": [
         {
             "commandKey": "a",
@@ -40,5 +40,12 @@
     ],
     "mediaPlayer": {
         "remote": "127.0.0.1:2000"
+    },
+    "nodownload": {
+        "path": "/tmp/nodl",
+        "reasons": [
+            "boring",
+            "dull"
+        ]
     }
 }
