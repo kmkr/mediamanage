@@ -4,6 +4,7 @@ const path = require('path');
 const logger = require('./logger');
 const mediaPlayer = require('../media-player');
 const fileRenamer = require('../file-system/renamer');
+const fileDeleter = require('../file-system/deleter');
 const performerNameCleaner = require('../performers/name-cleaner');
 const config = require('../config.json');
 const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
@@ -75,6 +76,20 @@ module.exports = function (filePath, onComplete) {
                 });
             });
     });
+
+    vorpal.command('d', 'Delete file')
+        .action((args, callback) => {
+            vorpal.activeCommand.prompt({
+                message: 'Delete file - are you sure?',
+                type: 'confirm',
+                name: 'confirmDelete'
+            }, function ({confirmDelete}) {
+                if (confirmDelete) {
+                    fileDeleter(filePath);
+                }
+                callback();
+            });
+        });
 
     vorpal.command('n', 'Go back')
         .action((args, callback) => {
