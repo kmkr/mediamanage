@@ -7,6 +7,7 @@ const fileRenamer = require('../file-system/renamer');
 const {cleanFileName} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 const performerNameCleaner = require('../performers/name-cleaner');
+const performerNameList = require('../performers/performer-name-list');
 const config = require('../config.json');
 const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
 
@@ -35,9 +36,12 @@ module.exports = function (filePath, onComplete) {
 
     vorpal
         .command('names <names...>', 'Set performer names')
-        .autocomplete(config.autocomplete.performerNames)
-        .action((args, callback) => {
-            const joinedNames = args.names.join('_');
+        .autocomplete({
+            data: performerNameList.list
+        })
+        .action(({names}, callback) => {
+            performerNameList.updateWith(names);
+            const joinedNames = names.join('_');
             const performerNames = performerNameCleaner(joinedNames);
             const newPath = fileRenamer.setPerformerNames(performerNames, getFileName(filePath));
             const newTitle = path.parse(newPath).base;
