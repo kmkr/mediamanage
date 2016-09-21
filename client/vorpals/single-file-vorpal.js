@@ -1,3 +1,4 @@
+const assert = require('assert');
 const Vorpal = require('vorpal');
 const path = require('path');
 
@@ -23,6 +24,15 @@ function updateFilePath(existingFilePath, newFileName) {
     return existingFilePath.replace(existingFileName, newFileName);
 }
 
+function setPerformerNames(names, filePath) {
+    assert(names.constructor === Array, `Names must be an array. Was ${names}`);
+    const joinedNames = names.join('_');
+    const performerNames = performerNameCleaner(joinedNames);
+    const newPath = fileRenamer.setPerformerNames(performerNames, filePath);
+    const newTitle = path.parse(newPath).base;
+    return newTitle;
+}
+
 module.exports = function (filePath, onComplete) {
     mediaPlayer.play(filePath);
 
@@ -37,10 +47,7 @@ module.exports = function (filePath, onComplete) {
         })
         .action(({names}, callback) => {
             performerNameList.updateWith(names);
-            const joinedNames = names.join('_');
-            const performerNames = performerNameCleaner(joinedNames);
-            const newPath = fileRenamer.setPerformerNames(performerNames, filePath);
-            const newTitle = path.parse(newPath).base;
+            const newTitle = setPerformerNames(names, filePath);
             filePath = updateFilePath(filePath, newTitle);
             vorpal.delimiter(getFormattedFileName(filePath));
             logger.log('\n');
@@ -79,8 +86,12 @@ module.exports = function (filePath, onComplete) {
                             filePath,
                             extractPoint
                         })
-                        .then(() => {
+                        .then(({destFilePath, performerInfo}) => {
                             logger.log('Extraction complete\n');
+                            if (performerInfo) {
+                                const names = performerInfo.split('_');
+                                setPerformerNames(names, destFilePath);
+                            }
                             callback();
                         })
                         .catch(err => {

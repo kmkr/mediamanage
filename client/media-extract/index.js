@@ -16,7 +16,7 @@ exports.extractFormatValidator = input => {
     if (!input.match(/\s/)) {
         return false;
     }
-    const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(input);
+    const {startsAtSeconds, endsAtSeconds} = timeAtGetter(input);
     if (typeof startsAtSeconds === 'undefined' || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
         return false;
     }
@@ -42,7 +42,6 @@ exports.extractVideo = ({destinationDir, filePath, extractPoint}) => {
     }
 
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
-    // todo: handle performer info
     const destFilePath = getDestFilePath(destinationDir, filePath);
     mkdir(destinationDir);
     return extractor.extractVideo({
@@ -50,6 +49,8 @@ exports.extractVideo = ({destinationDir, filePath, extractPoint}) => {
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
+    }).then(() => {
+        return {destFilePath, performerInfo};
     });
 };
 
@@ -61,7 +62,6 @@ exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
     }
 
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
-    // todo: handle performer info
     const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
     mkdir(destinationDir);
     return extractor.extractAudio({
@@ -69,6 +69,8 @@ exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
+    }).then(() => {
+        return {destFilePath, performerInfo};
     });
 };
 
