@@ -24,7 +24,6 @@ function updateFilePath(existingFilePath, newFileName) {
 }
 
 module.exports = function (filePath, onComplete) {
-
     mediaPlayer.play(filePath);
 
     const vorpal = new Vorpal();
@@ -44,6 +43,7 @@ module.exports = function (filePath, onComplete) {
             const newTitle = path.parse(newPath).base;
             filePath = updateFilePath(filePath, newTitle);
             vorpal.delimiter(getFormattedFileName(filePath));
+            logger.log('\n');
             callback();
         });
 
@@ -59,6 +59,7 @@ module.exports = function (filePath, onComplete) {
                 const newTitle = path.parse(newPath).base;
                 filePath = updateFilePath(filePath, newTitle);
                 vorpal.delimiter(getFormattedFileName(filePath));
+                logger.log('\n');
                 callback();
             });
         });
@@ -78,7 +79,10 @@ module.exports = function (filePath, onComplete) {
                             filePath,
                             extractPoint
                         })
-                        .then(callback)
+                        .then(() => {
+                            logger.log('Extraction complete\n');
+                            callback();
+                        })
                         .catch(err => {
                             logger.log(err);
                         });
@@ -97,6 +101,7 @@ module.exports = function (filePath, onComplete) {
                 if (confirmDelete) {
                     fileDeleter(filePath);
                 }
+                logger.log('\n');
                 callback();
             });
         });
@@ -105,6 +110,7 @@ module.exports = function (filePath, onComplete) {
         .action((args, callback) => {
             mediaPlayer.stop();
             onComplete();
+            logger.log('\n');
             callback();
         });
 

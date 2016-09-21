@@ -11,7 +11,6 @@ const logger = require('./logger');
 
 function logFileNames() {
     const fileNames = fileFinder.video({recursive: true}).map(removeCurrentWdHelper);
-    logger.log('\n');
     fileNames.forEach((fileName, index) => {
         logger.log(`${index}) ${fileName}`);
     });
@@ -28,6 +27,7 @@ module.exports = function (onGoToFile) {
         .command('l', 'List media')
         .action((args, callback) => {
             logFileNames();
+            logger.log('\n');
             callback();
         });
 
@@ -35,6 +35,7 @@ module.exports = function (onGoToFile) {
         .command('t <title>', 'Set title')
         .action((args, callback) => {
             fileRenamer.setTitle(args.title, fileFinder.video({recursive: true}));
+            logger.log('\n');
             callback();
         });
 
@@ -64,6 +65,7 @@ module.exports = function (onGoToFile) {
         .action((args, callback) => {
             const filePath = fileFinder.video({recursive: true})[Number(args.index) || 0];
             onGoToFile(filePath);
+            logger.log('\n');
             callback();
         });
 
