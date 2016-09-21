@@ -8,31 +8,31 @@ const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 function rename(sourceFilePath, destFileName) {
     const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
-    logger.log('Renamed from / to');
+    logger.log('Renamed from / to:');
     logger.log(removeCurrentWdHelper(sourceFilePath));
     logger.log(removeCurrentWdHelper(destFilePath));
     return destFilePath;
 }
 
 exports.setTitle = (title, filePaths) => {
-    filePaths.forEach(fileName => {
-        assert(!path.isAbsolute(fileName), `File path cannot be absolute. Was: ${fileName}`);
+    filePaths.forEach(filePath => {
+        assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
 
-        const newFileName = renamerHelper.setTitle(title, fileName);
-        rename(fileName, newFileName);
+        const newFileName = renamerHelper.setTitle(title, filePath);
+        rename(filePath, newFileName);
     });
 };
 
-exports.setPerformerNames = (performerNames, fileName) => {
-    assert(!path.isAbsolute(fileName), `File path cannot be absolute. Was: ${fileName}`);
+exports.setPerformerNames = (performerNames, filePath) => {
+    assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
 
-    const newFileName = renamerHelper.setPerformerNames(performerNames, fileName);
-    return rename(fileName, newFileName);
+    const newFileName = renamerHelper.setPerformerNames(performerNames, filePath);
+    return rename(filePath, newFileName);
 };
 
-exports.setCategories = (categories, fileName) => {
-    assert(!path.isAbsolute(fileName), `File path cannot be absolute. Was: ${fileName}`);
+exports.setCategories = (categories, filePath) => {
+    assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
 
-    const newFileName = renamerHelper.setCategories(categories, fileName);
-    return rename(fileName, newFileName);
+    const newFileName = renamerHelper.setCategories(categories, filePath);
+    return rename(filePath, newFileName);
 };

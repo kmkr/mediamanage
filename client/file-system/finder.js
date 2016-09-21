@@ -12,7 +12,7 @@ function isVideo(filePath) {
     return filePath.match(/\.(mkv|mp4|avi|mpeg|iso|wmv)$/i);
 }
 
-function allFiles(dirPath = process.cwd(), recursive = false) {
+function allFiles({dirPath = process.cwd(), recursive = false}) {
     if (!path.isAbsolute(dirPath)) {
         dirPath = path.resolve(dirPath);
     }
@@ -30,10 +30,10 @@ function allFiles(dirPath = process.cwd(), recursive = false) {
 
 exports.allFiles = allFiles;
 
-exports.video = (dirPath = process.cwd(), recursive = false) => {
-    return allFiles(dirPath, recursive).filter(isVideo);
+exports.video = ({dirPath = process.cwd(), recursive = false}) => {
+    return allFiles({dirPath, recursive}).filter(isVideo);
 };
 
-exports.audio = (dirPath = process.cwd(), recursive = false) => {
-    return allFiles(dirPath, recursive).filter(isAudio);
+exports.audio = ({dirPath = process.cwd(), recursive = false}) => {
+    return allFiles({dirPath, recursive}).filter(isAudio);
 };

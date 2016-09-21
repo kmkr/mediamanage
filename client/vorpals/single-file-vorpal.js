@@ -8,20 +8,17 @@ const {cleanFileName} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 const performerNameCleaner = require('../performers/name-cleaner');
 const performerNameList = require('../performers/performer-name-list');
+const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
 const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
 
-function getFileName(filePath) {
-    return path.parse(filePath).base;
-}
-
 function getFormattedFileName(filePath) {
-    const fileName = getFileName(filePath);
+    const fileName = removeCurrentWd(filePath);
     return cleanFileName(fileName).replace(path.parse(fileName).ext, '');
 }
 
 function updateFilePath(existingFilePath, newFileName) {
-    const existingFileName = getFileName(existingFilePath);
+    const existingFileName = removeCurrentWd(existingFilePath);
 
     return existingFilePath.replace(existingFileName, newFileName);
 }
@@ -43,7 +40,7 @@ module.exports = function (filePath, onComplete) {
             performerNameList.updateWith(names);
             const joinedNames = names.join('_');
             const performerNames = performerNameCleaner(joinedNames);
-            const newPath = fileRenamer.setPerformerNames(performerNames, getFileName(filePath));
+            const newPath = fileRenamer.setPerformerNames(performerNames, filePath);
             const newTitle = path.parse(newPath).base;
             filePath = updateFilePath(filePath, newTitle);
             vorpal.delimiter(getFormattedFileName(filePath));
@@ -58,7 +55,7 @@ module.exports = function (filePath, onComplete) {
                 name: 'categories',
                 choices: config.categories
             }, function ({categories}) {
-                const newPath = fileRenamer.setCategories(categories, getFileName(filePath));
+                const newPath = fileRenamer.setCategories(categories, filePath);
                 const newTitle = path.parse(newPath).base;
                 filePath = updateFilePath(filePath, newTitle);
                 vorpal.delimiter(getFormattedFileName(filePath));

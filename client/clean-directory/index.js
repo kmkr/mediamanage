@@ -7,13 +7,13 @@ module.exports = vorpalInstance => (
     new Promise(resolve => {
         const rootDir = process.cwd();
         const recursive = true;
-        const filePaths = fileFinder.allFiles(rootDir, recursive);
-        const videoFileNames = fileFinder.video(rootDir, recursive);
-        const audioFileNames = fileFinder.audio(rootDir, recursive);
+        const filePaths = fileFinder.allFiles({dirPath: rootDir, recursive});
+        const videoFileNames = fileFinder.video({dirPath: rootDir, recursive});
+        const audioFileNames = fileFinder.audio({dirPath: rootDir, recursive});
 
         filePaths
             .forEach(filePath => vorpalInstance.log(filePath));
-        const message = `${filePaths.length} files left (${videoFileNames.length} videos, ${audioFileNames.length} audio). Delete?`;
+        const message = `${filePaths.length} file(s) left (${videoFileNames.length} video, ${audioFileNames.length} audio). Delete?`;
 
         vorpalInstance.activeCommand.prompt({
             message,
@@ -23,7 +23,7 @@ module.exports = vorpalInstance => (
         }, function ({confirmDelete}) {
             if (confirmDelete) {
                 rimraf.sync(rootDir);
-                vorpalInstance.log(`Removed ${filePaths.length} files`);
+                vorpalInstance.log(`Removed ${filePaths.length} file(s) and containing dir`);
             }
             return resolve();
         });

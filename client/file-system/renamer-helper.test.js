@@ -8,9 +8,10 @@ test('set title', t => {
     t.is(actual, '(t:my.title)__file.mp4');
 });
 
-test('set title with path throws', t => {
+test('set title with path', t => {
     const fileName = '/a/path/file.mp4';
-    t.throws(() => renamerHelper.setTitle('my.title', fileName));
+    const actual = renamerHelper.setTitle('my.title', fileName);
+    t.is(actual, '/a/path/(t:my.title)__file.mp4');
 });
 
 test('overwrite title', t => {
@@ -49,9 +50,10 @@ test('set categories', t => {
     t.is(actual, '(p:brumm)_(c:[woz])__file.mp4');
 });
 
-test('set categories with path throws', t => {
+test('set categories with path', t => {
     const fileName = '/(p:brumm)__file.mp4';
-    t.throws(() => renamerHelper.setCategories(['woz'], fileName));
+    const actual = renamerHelper.setCategories(['woz'], fileName);
+    t.is(actual, '/(p:brumm)_(c:[woz])__file.mp4');
 });
 
 test('overwrite categories', t => {
@@ -64,6 +66,12 @@ test('set performer', t => {
     const fileName = '(c:[woz])__file.mp4';
     const actual = renamerHelper.setPerformerNames('olebrumm', fileName);
     t.is(actual, '(p:olebrumm)_(c:[woz])__file.mp4');
+});
+
+test('set performer with path', t => {
+    const fileName = '/wizzy/(c:[woz])__file.mp4';
+    const actual = renamerHelper.setPerformerNames('olebrumm', fileName);
+    t.is(actual, '/wizzy/(p:olebrumm)_(c:[woz])__file.mp4');
 });
 
 test('set performers', t => {

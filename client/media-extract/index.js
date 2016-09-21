@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const {cleanFileName} = require('../file-system/renamer-helper');
 const indexifyIfExists = require('../file-system/indexify-if-exists');
 const timeAtGetter = require('./time-at-getter');
 
@@ -74,12 +73,11 @@ exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
 };
 
 function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {
-    const fileName = path.parse(sourceFilePath).base;
-    let cleanedFileName = cleanFileName(fileName);
+    let fileName = path.parse(sourceFilePath).base;
     if (fileExtension) {
-        cleanedFileName = cleanedFileName.replace(path.extname(cleanedFileName), fileExtension);
+        fileName = fileName.replace(path.extname(fileName), fileExtension);
     }
 
-    const destFilePath = path.resolve(destinationDir, cleanedFileName);
+    const destFilePath = path.resolve(destinationDir, fileName);
     return indexifyIfExists(destFilePath);
 }

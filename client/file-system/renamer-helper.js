@@ -17,7 +17,7 @@ function hasCategories(fileName) {
     return fileName.match(CATEGORIES);
 }
 
-function normalize(fileName) {
+function normalize(directory, fileName) {
     const title = (fileName.match(TITLE) || [])[0];
     const performers = (fileName.match(PERFORMERS) || [])[0];
     const categories = (fileName.match(CATEGORIES) || [])[0];
@@ -31,7 +31,14 @@ function normalize(fileName) {
         .filter(e => e)
         .join('_');
 
-    return `${mainTitle}__${rest}`;
+    let prefix = '';
+
+    if (directory === '/') {
+        prefix = '/';
+    } else if (directory) {
+        prefix = `${directory}/`;
+    }
+    return `${prefix}${mainTitle}__${rest}`;
 }
 
 exports.cleanFileName = uncleaned => {
@@ -44,37 +51,42 @@ exports.cleanFileName = uncleaned => {
         .replace(/__.*/, extension);
 };
 
-function assertContainingWithNoPaths(fileName) {
+function assertNotBlank(fileName) {
     assert(fileName, 'File name cannot be empty');
-    assert(!fileName.includes(path.sep), `File name cannot contain paths. Was ${fileName}`);
 }
 
-exports.setTitle = (title, fileName) => {
-    assertContainingWithNoPaths(fileName);
+exports.setTitle = (title, filePath) => {
+    assertNotBlank(filePath);
+    const fileName = path.parse(filePath).base;
+    const directory = path.parse(filePath).dir;
 
     if (hasTitle(fileName)) {
-        return normalize(fileName.replace(TITLE, `(t:${title})`));
+        return normalize(directory, fileName.replace(TITLE, `(t:${title})`));
     }
-    return normalize(`(t:${title})${fileName}`);
+    return normalize(directory, `(t:${title})${fileName}`);
 };
 
-exports.setPerformerNames = (performers, fileName) => {
-    assertContainingWithNoPaths(fileName);
+exports.setPerformerNames = (performers, filePath) => {
+    assertNotBlank(filePath);
+    const fileName = path.parse(filePath).base;
+    const directory = path.parse(filePath).dir;
 
     if (hasPerformers(fileName)) {
-        return normalize(fileName.replace(PERFORMERS, `(p:${performers})`));
+        return normalize(directory, fileName.replace(PERFORMERS, `(p:${performers})`));
     }
-    return normalize(`(p:${performers})${fileName}`);
+    return normalize(directory, `(p:${performers})${fileName}`);
 };
 
-exports.setCategories = (categories, fileName) => {
-    assertContainingWithNoPaths(fileName);
+exports.setCategories = (categories, filePath) => {
+    assertNotBlank(filePath);
+    const fileName = path.parse(filePath).base;
+    const directory = path.parse(filePath).dir;
 
     const categoryStr = `[${categories.join('][')}]`;
     if (hasCategories(fileName)) {
-        return normalize(fileName.replace(CATEGORIES, `(c:${categoryStr})`));
+        return normalize(directory, fileName.replace(CATEGORIES, `(c:${categoryStr})`));
     }
-    return normalize(`(c:${categoryStr})${fileName}`);
+    return normalize(directory, `(c:${categoryStr})${fileName}`);
 };
 
 exports.indexify = filePath => {

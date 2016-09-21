@@ -3,7 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const Promise = require('bluebird');
 
+const removeCurrentWdHelper = require('../helpers/remove-current-wd');
+const logger = require('../vorpals/logger');
 const {cleanFileName} = require('./renamer-helper');
+const indexifyIfExists = require('./indexify-if-exists');
 
 exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
     return Promise.reduce(filePaths, (t, filePath) => {
@@ -42,16 +45,26 @@ function move(sourceFilePath, destFilePath, vorpalInstance) {
 
         const destinationSize = destinationStats.size;
         const ratio = Math.floor((sourceSize / destinationSize) * 100);
+        logger.log(`\nProcessing ${removeCurrentWdHelper(sourceFilePath)}`);
         vorpalInstance.activeCommand.prompt({
-            message: `${destFilePath} exists, do you want to overwrite? Source size ${sourceSize} vs destination ${destinationSize} (${ratio}%)?`,
-            name: 'overwrite',
-            type: 'confirm'
-        }, ({overwrite}) => {
-            if (overwrite) {
+            message: `${destFilePath} exists, what do you want to do? Source size ${sourceSize} vs destination ${destinationSize} (${ratio}%)?`,
+            name: 'choice',
+            type: 'list',
+            choices: ['Indexify', 'Overwrite', 'Skip file']
+        }, ({choice}) => {
+            if (choice === 'Indexify') {
+                const indexifiedDestFilePath = indexifyIfExists(destFilePath);
+                fs.renameSync(sourceFilePath, indexifiedDestFilePath);
+                logger.log('Moved from / to:');
+                logger.log(removeCurrentWdHelper(sourceFilePath));
+                logger.log(indexifiedDestFilePath);
+            } else if (choice === 'Overwrite') {
                 fs.renameSync(sourceFilePath, destFilePath);
-                vorpalInstance.log(`Moved ${sourceFilePath} to ${destFilePath} (replaced existing file)`);
+                logger.log('Moved from / to (replaced existing file):');
+                logger.log(removeCurrentWdHelper(sourceFilePath));
+                logger.log(destFilePath);
             } else {
-                vorpalInstance.log(`Will not replace ${destFilePath}, continuing ...`);
+                logger.log(`Will not replace ${destFilePath}, continuing ...`);
             }
 
             return resolve();

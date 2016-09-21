@@ -17,7 +17,7 @@ module.exports = vorpalInstance => {
             let filePaths;
 
             try {
-                filePaths = fn(moveMediaOption.fromDir);
+                filePaths = fn({dirPath: moveMediaOption.fromDir});
             } catch (err) {
                 if (err.code === 'ENOENT') {
                     vorpalInstance.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
