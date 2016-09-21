@@ -45,7 +45,7 @@ exports.extractVideo = ({destinationDir, filePath, extractPoint}) => {
     // todo: handle performer info
     const destFilePath = getDestFilePath(destinationDir, filePath);
     mkdir(destinationDir);
-    extractor.extractVideo({
+    return extractor.extractVideo({
         sourceFilePath: filePath,
         destFilePath,
         startsAtSeconds,
@@ -64,7 +64,7 @@ exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
     // todo: handle performer info
     const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
     mkdir(destinationDir);
-    extractor.extractAudio({
+    return extractor.extractAudio({
         sourceFilePath: filePath,
         destFilePath,
         startsAtSeconds,

@@ -77,9 +77,12 @@ module.exports = function (filePath, onComplete) {
                             destinationDir: destination,
                             filePath,
                             extractPoint
+                        })
+                        .then(callback)
+                        .catch(err => {
+                            logger.log(err);
                         });
                     }
-                    callback();
                 });
             });
     });

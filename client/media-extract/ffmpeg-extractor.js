@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const exec = require('child_process').exec;
 const logger = require('../vorpals/logger');
 
@@ -13,20 +14,26 @@ exports.extractVideo = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSe
     // todo: handle performer info
     // https://github.com/kmkr/moviemanage/blob/master/app/splitter/post_split_processor.rb
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
-    run(`ffmpeg -ss ${startsAtSeconds} -i "${sourceFilePath}" -t ${lengthInSeconds} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
+    return run(`ffmpeg -ss ${startsAtSeconds} -i "${sourceFilePath}" -t ${lengthInSeconds} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
 };
 
 exports.extractAudio = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds}) => {
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
 
-    run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -t ${secondsToTimeParser(lengthInSeconds)} -i "${sourceFilePath}" -acodec libmp3lame -ab 196k "${destFilePath}" -loglevel warning`);
+    return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -t ${secondsToTimeParser(lengthInSeconds)} -i "${sourceFilePath}" -acodec libmp3lame -ab 196k "${destFilePath}" -loglevel warning`);
 };
 
 function run(command) {
-    logger.log(`Running ${command}`);
-    exec(command, (error, stdout, stderr) => {
-        error && logger.log(error);
-        stdout && logger.log(`stdout: ${stdout}`);
-        stderr && logger.log(`stderr: ${stderr}`);
+    return new Promise((resolve, reject) => {
+        logger.log(`Running ${command}`);
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                return reject(error);
+            }
+            stdout && logger.log(`stdout: ${stdout}`);
+            stderr && logger.log(`stderr: ${stderr}`);
+
+            return resolve();
+        });
     });
 }
