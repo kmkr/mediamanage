@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.6",
+    "cli-table": "^0.3.1",
     "eslint": "^3.5.0",
     "fs-tools": "^0.2.11",
     "rimraf": "^2.5.4",
