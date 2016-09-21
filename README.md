@@ -40,6 +40,8 @@ Mediamanage supports the following operations.
 
 ## Server
 
+todo: write content
+
     {
         "port": 2000,
         "player": "/usr/bin/smplayer",
@@ -96,6 +98,9 @@ Mediamanage supports the following operations.
                 "type": "video"
             }
         ],
+        "mediaPlayer": {
+            "remote": "10.45.12.42:2000"
+        },
         "nodownload": {
             "path": "/tmp/nodl",
             "reasons": [
