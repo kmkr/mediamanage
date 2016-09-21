@@ -1,4 +1,5 @@
 const assert = require('assert');
+const chalk = require('vorpal')().chalk;
 const fs = require('fs');
 const path = require('path');
 const renamerHelper = require('./renamer-helper');
@@ -9,8 +10,8 @@ function rename(sourceFilePath, destFileName) {
     const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
     logger.log('Renamed from / to:');
-    logger.log(removeCurrentWdHelper(sourceFilePath));
-    logger.log(removeCurrentWdHelper(destFilePath));
+    logger.log(chalk.bgRed(removeCurrentWdHelper(sourceFilePath)));
+    logger.log(chalk.bgGreen(removeCurrentWdHelper(destFilePath)));
     return destFilePath;
 }
 

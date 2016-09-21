@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Vorpal = require('vorpal');
+const chalk = Vorpal().chalk;
 const path = require('path');
 
 const logger = require('./logger');
@@ -35,10 +36,13 @@ function setPerformerNames(names, filePath) {
 
 module.exports = function (filePath, onComplete) {
     mediaPlayer.play(filePath);
-
     const vorpal = new Vorpal();
+
+    function setDelimiter() {
+        vorpal.delimiter(`${chalk.cyan(getFormattedFileName(filePath))} $`);
+    }
+    setDelimiter();
     logger.setLogger(vorpal.log.bind(vorpal));
-    vorpal.delimiter(getFormattedFileName(filePath));
 
     vorpal
         .command('names <names...>', 'Set performer names')
@@ -49,7 +53,7 @@ module.exports = function (filePath, onComplete) {
             performerNameList.updateWith(names);
             const newTitle = setPerformerNames(names, filePath);
             filePath = updateFilePath(filePath, newTitle);
-            vorpal.delimiter(getFormattedFileName(filePath));
+            setDelimiter();
             logger.log('\n');
             callback();
         });
@@ -65,7 +69,7 @@ module.exports = function (filePath, onComplete) {
                 const newPath = fileRenamer.setCategories(categories, filePath);
                 const newTitle = path.parse(newPath).base;
                 filePath = updateFilePath(filePath, newTitle);
-                vorpal.delimiter(getFormattedFileName(filePath));
+                setDelimiter();
                 logger.log('\n');
                 callback();
             });

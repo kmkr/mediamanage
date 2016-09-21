@@ -1,4 +1,5 @@
 const Vorpal = require('vorpal');
+const chalk = Vorpal().chalk;
 
 const noDownload = require('../no-download');
 const fileFinder = require('../file-system/finder');
@@ -69,7 +70,7 @@ module.exports = function (onGoToFile) {
             callback();
         });
 
-    vorpal.delimiter('mediamanage $');
+    vorpal.delimiter(`${chalk.yellow('mediamanage')} $`);
 
     return vorpal;
 };
