@@ -17,7 +17,7 @@ exports.extractFormatValidator = input => {
         return false;
     }
     const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(input);
-    if (!startsAtSeconds || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
+    if (typeof startsAtSeconds === 'undefined' || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
         return false;
     }
 
