@@ -68,13 +68,15 @@ exports.setTitle = (title, filePath) => {
 
 exports.setPerformerNames = (performers, filePath) => {
     assertNotBlank(filePath);
+    assert(performers.constructor === Array, `Performers must be an array. Was ${performers}`);
+    const performersStr = performers.join('_');
     const fileName = path.parse(filePath).base;
     const directory = path.parse(filePath).dir;
 
     if (hasPerformers(fileName)) {
-        return normalize(directory, fileName.replace(PERFORMERS, `(p:${performers})`));
+        return normalize(directory, fileName.replace(PERFORMERS, `(p:${performersStr})`));
     }
-    return normalize(directory, `(p:${performers})${fileName}`);
+    return normalize(directory, `(p:${performersStr})${fileName}`);
 };
 
 exports.setCategories = (categories, filePath) => {

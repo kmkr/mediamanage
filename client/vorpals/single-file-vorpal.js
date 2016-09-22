@@ -84,8 +84,7 @@ module.exports = function (filePath, onComplete) {
                     destinationDir: destination,
                     filePath,
                     from,
-                    to,
-                    performerNames
+                    to
                 })
                 .then(({destFilePath}) => {
                     logger.log('Extraction complete\n');
