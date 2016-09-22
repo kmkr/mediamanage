@@ -22,11 +22,11 @@ function rename(sourceFilePath, destFileName) {
 }
 
 exports.setTitle = (title, filePaths) => {
-    filePaths.forEach(filePath => {
+    return filePaths.map(filePath => {
         assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
 
         const newFileName = renamerHelper.setTitle(title, filePath);
-        rename(filePath, newFileName);
+        return rename(filePath, newFileName);
     });
 };
 

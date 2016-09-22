@@ -114,6 +114,16 @@ module.exports = function (filePath, onComplete) {
             });
         });
 
+    vorpal
+        .command('t <title>', `Set title ${chalk.bgRed('for single file only')}`)
+        .action((args, callback) => {
+            const newTitle = fileRenamer.setTitle(args.title, [filePath])[0];
+            filePath = updateFilePath(filePath, newTitle);
+            setDelimiter();
+            logger.log('\n');
+            callback();
+        });
+
     vorpal.command('n', 'Go back')
         .action((args, callback) => {
             mediaPlayer.stop();
