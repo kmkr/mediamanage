@@ -83,25 +83,27 @@ module.exports = function (filePath, onComplete) {
                     name: 'extractPoint',
                     validate: extractFormatValidator
                 }, function ({extractPoint}) {
-                    if (extractPoint) {
-                        const fn = type === 'video' ? extractVideo : extractAudio;
-                        fn({
-                            destinationDir: destination,
-                            filePath,
-                            extractPoint
-                        })
-                        .then(({destFilePath, performerInfo}) => {
-                            logger.log('Extraction complete\n');
-                            if (performerInfo) {
-                                const names = performerInfo.split('_');
-                                setPerformerNames(names, destFilePath);
-                            }
-                            callback();
-                        })
-                        .catch(err => {
-                            logger.log(err);
-                        });
+                    if (!extractPoint) {
+                        return callback();
                     }
+
+                    const fn = type === 'video' ? extractVideo : extractAudio;
+                    fn({
+                        destinationDir: destination,
+                        filePath,
+                        extractPoint
+                    })
+                    .then(({destFilePath, performerInfo}) => {
+                        logger.log('Extraction complete\n');
+                        if (performerInfo) {
+                            const names = performerInfo.split('_');
+                            setPerformerNames(names, destFilePath);
+                        }
+                        callback();
+                    })
+                    .catch(err => {
+                        logger.log(err);
+                    });
                 });
             });
     });
