@@ -30,6 +30,12 @@ function allFiles({dirPath = process.cwd(), recursive = false}) {
 
 exports.allFiles = allFiles;
 
+exports.mediaFiles = ({dirPath = process.cwd(), recursive = false}) => {
+    return allFiles({dirPath, recursive}).filter(filePath => {
+        return isAudio(filePath) || isVideo(filePath);
+    });
+};
+
 exports.video = ({dirPath = process.cwd(), recursive = false}) => {
     return allFiles({dirPath, recursive}).filter(isVideo);
 };
