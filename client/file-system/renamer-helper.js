@@ -1,7 +1,7 @@
 const assert = require('assert');
 const path = require('path');
 
-const TITLE = /\(t:([\w\.]+)\)/;
+const TITLE = /\(t:([^\)]+)\)/;
 const PERFORMERS = /\(p:([\w\._]+)\)/;
 const CATEGORIES = /\(c:([\[\w\]]+)\)/;
 

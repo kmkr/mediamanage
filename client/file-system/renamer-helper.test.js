@@ -8,6 +8,12 @@ test('set title', t => {
     t.is(actual, '(t:my.title)__file.mp4');
 });
 
+test('set title with special chars', t => {
+    const fileName = 'wobzy.#..[bibzy].mp4';
+    const actual = renamerHelper.setTitle('my.title', fileName);
+    t.is(actual, '(t:my.title)__wobzy.#..[bibzy].mp4');
+});
+
 test('set title with path', t => {
     const fileName = '/a/path/file.mp4';
     const actual = renamerHelper.setTitle('my.title', fileName);
