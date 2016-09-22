@@ -11,8 +11,6 @@ exports.supportsVideo = fileName => fileName.match(SUPPORT_VIDEO_EXTRACT_REGEXP)
 exports.supportsAudio = fileName => fileName.match(SUPPORT_AUDIO_EXTRACT_REGEXP);
 
 exports.extractVideo = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds}) => {
-    // todo: handle performer info
-    // https://github.com/kmkr/moviemanage/blob/master/app/splitter/post_split_processor.rb
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
     return run(`ffmpeg -ss ${startsAtSeconds} -i "${sourceFilePath}" -t ${lengthInSeconds} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
 };

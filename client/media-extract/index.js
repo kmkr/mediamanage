@@ -1,28 +1,13 @@
+const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 
 const indexifyIfExists = require('../file-system/indexify-if-exists');
-const timeAtGetter = require('./time-at-getter');
+const secondsFromStringParser = require('./seconds-from-string-parser');
 
 const extractors = [
     require('./ffmpeg-extractor')
 ];
-
-exports.extractFormat = 'Start at and ends at in format <performerinfo@>hh:mm:ss hh:mm:ss';
-exports.extractFormatValidator = input => {
-    if (!input) {
-        return true;
-    }
-    if (!input.match(/\s/)) {
-        return false;
-    }
-    const {startsAtSeconds, endsAtSeconds} = timeAtGetter(input);
-    if (typeof startsAtSeconds === 'undefined' || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
-        return false;
-    }
-
-    return true;
-};
 
 function mkdir(dirName) {
     try {
@@ -34,14 +19,28 @@ function mkdir(dirName) {
     }
 }
 
-exports.extractVideo = ({destinationDir, filePath, extractPoint}) => {
+function map(from, to) {
+    const startsAtSeconds = secondsFromStringParser(`${from}`);
+    const endsAtSeconds = secondsFromStringParser(`${to}`);
+
+    if (typeof startsAtSeconds === 'undefined' || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
+        throw new Error(`Something is wrong with from ${from} ${to}`);
+    }
+
+    return {
+        startsAtSeconds,
+        endsAtSeconds
+    };
+}
+
+exports.extractVideo = ({destinationDir, filePath, from, to}) => {
     const extractor = extractors.find(extractor => extractor.supportsVideo(filePath));
 
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
     }
 
-    const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
+    const {startsAtSeconds, endsAtSeconds} = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath);
     mkdir(destinationDir);
     return extractor.extractVideo({
@@ -50,18 +49,18 @@ exports.extractVideo = ({destinationDir, filePath, extractPoint}) => {
         startsAtSeconds,
         endsAtSeconds
     }).then(() => {
-        return {destFilePath, performerInfo};
+        return {destFilePath};
     });
 };
 
-exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
+exports.extractAudio = ({destinationDir, filePath, from, to}) => {
     const extractor = extractors.find(extractor => extractor.supportsAudio(filePath));
 
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
     }
 
-    const {performerInfo, startsAtSeconds, endsAtSeconds} = timeAtGetter(extractPoint);
+    const {startsAtSeconds, endsAtSeconds} = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
     mkdir(destinationDir);
     return extractor.extractAudio({
@@ -70,7 +69,7 @@ exports.extractAudio = ({destinationDir, filePath, extractPoint}) => {
         startsAtSeconds,
         endsAtSeconds
     }).then(() => {
-        return {destFilePath, performerInfo};
+        return {destFilePath};
     });
 };
 

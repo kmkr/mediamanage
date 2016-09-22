@@ -8,11 +8,10 @@ const mediaPlayer = require('../media-player');
 const fileRenamer = require('../file-system/renamer');
 const {cleanFileName} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
-const performerNameCleaner = require('../performers/name-cleaner');
 const performerNameList = require('../performers/performer-name-list');
 const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
-const {extractFormat, extractFormatValidator, extractAudio, extractVideo} = require('../media-extract');
+const {extractAudio, extractVideo} = require('../media-extract');
 
 function getFormattedFileName(filePath) {
     const fileName = removeCurrentWd(filePath);
@@ -25,10 +24,8 @@ function updateFilePath(existingFilePath, newFileName) {
     return existingFilePath.replace(existingFileName, newFileName);
 }
 
-function setPerformerNames(names, filePath) {
-    assert(names.constructor === Array, `Names must be an array. Was ${names}`);
-    const joinedNames = names.join('_');
-    const performerNames = performerNameCleaner(joinedNames);
+function setPerformerNames(performerNames, filePath) {
+    assert(performerNames.constructor === Array, `Names must be an array. Was ${performerNames}`);
     const newPath = fileRenamer.setPerformerNames(performerNames, filePath);
     const newTitle = path.parse(newPath).base;
     return newTitle;
@@ -76,34 +73,29 @@ module.exports = function (filePath, onComplete) {
         });
 
     config.extractOptions.forEach(({commandKey, destination, type}) => {
-        vorpal.command(commandKey, `Extract to ${destination}`)
-            .action((args, callback) => {
-                vorpal.activeCommand.prompt({
-                    message: `${extractFormat} (blank to finish) `,
-                    name: 'extractPoint',
-                    validate: extractFormatValidator
-                }, function ({extractPoint}) {
-                    if (!extractPoint) {
-                        return callback();
+        const commandPrompt = `${commandKey} <from> <to> [performerNames...]`;
+        vorpal.command(commandPrompt, `Extract to ${destination}`)
+            .autocomplete({
+                data: performerNameList.list
+            })
+            .action(({from, to, performerNames}, callback) => {
+                const fn = type === 'video' ? extractVideo : extractAudio;
+                fn({
+                    destinationDir: destination,
+                    filePath,
+                    from,
+                    to,
+                    performerNames
+                })
+                .then(({destFilePath}) => {
+                    logger.log('Extraction complete\n');
+                    if (performerNames) {
+                        setPerformerNames(performerNames, destFilePath);
                     }
-
-                    const fn = type === 'video' ? extractVideo : extractAudio;
-                    fn({
-                        destinationDir: destination,
-                        filePath,
-                        extractPoint
-                    })
-                    .then(({destFilePath, performerInfo}) => {
-                        logger.log('Extraction complete\n');
-                        if (performerInfo) {
-                            const names = performerInfo.split('_');
-                            setPerformerNames(names, destFilePath);
-                        }
-                        callback();
-                    })
-                    .catch(err => {
-                        logger.log(err);
-                    });
+                    callback();
+                })
+                .catch(err => {
+                    logger.log(err);
                 });
             });
     });
