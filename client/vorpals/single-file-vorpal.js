@@ -120,6 +120,7 @@ module.exports = function (filePath, onComplete) {
             }, function ({confirmDelete}) {
                 if (confirmDelete) {
                     fileDeleter(filePath);
+                    onComplete();
                 }
                 logger.log('\n');
                 callback();
