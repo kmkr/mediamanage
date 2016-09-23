@@ -12,7 +12,7 @@ const fileDeleter = require('../file-system/deleter');
 const performerNameList = require('../performers/performer-name-list');
 const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
-const {extractAudio, extractVideo} = require('../media-extract');
+const {extractAudio, extractVideo, validate} = require('../media-extract');
 
 function getFormattedFileName(filePath) {
     const fileName = removeCurrentWd(filePath);
@@ -76,6 +76,13 @@ module.exports = function (filePath, onComplete) {
     config.extractOptions.forEach(({commandKey, destination, type}) => {
         const commandPrompt = `${commandKey} <from> <to> [performerNames...]`;
         vorpal.command(commandPrompt, `Extract to ${destination}`)
+            .validate(({from, to, performerNames}) => {
+                const isValid = validate({from, to, performerNames});
+                if (!isValid) {
+                    logger.log('Invalid input');
+                }
+                return isValid;
+            })
             .autocomplete({
                 data: performerNameList.list
             })

@@ -1,4 +1,3 @@
-const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 
@@ -32,6 +31,25 @@ function map(from, to) {
         endsAtSeconds
     };
 }
+
+exports.validate = ({from, to, performerNames}) => {
+    const startsAtSeconds = secondsFromStringParser(`${from}`);
+    const endsAtSeconds = secondsFromStringParser(`${to}`);
+
+    if (performerNames && performerNames.constructor !== Array) {
+        return false;
+    }
+
+    if (startsAtSeconds >= endsAtSeconds) {
+        return false;
+    }
+
+    if (from < 0 || to < 0) {
+        return false;
+    }
+
+    return true;
+};
 
 exports.extractVideo = ({destinationDir, filePath, from, to}) => {
     const extractor = extractors.find(extractor => extractor.supportsVideo(filePath));
