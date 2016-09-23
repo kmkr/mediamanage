@@ -13,7 +13,7 @@ exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
     return Promise.reduce(filePaths, (t, filePath) => {
         const cleanedFilePath = cleanFilePath(filePath);
         const cleanedFileName = path.parse(cleanedFilePath).base;
-        return move(
+        return prepareMove(
             filePath,
             path.join(destDirPath, cleanedFileName),
             vorpalInstance
@@ -21,7 +21,28 @@ exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
     }, null);
 };
 
-function move(sourceFilePath, destFilePath, vorpalInstance) {
+function move(sourceFilePath, destFilePath) {
+    return new Promise((resolve, reject) => {
+        return fs.renameAsync(sourceFilePath, destFilePath)
+            .catch(e => {
+                if (e.code === 'EXDEV') {
+                    logger.log('Moving cross-device');
+                    const is = fs.createReadStream(sourceFilePath);
+                    const os = fs.createWriteStream(destFilePath);
+
+                    is.pipe(os);
+                    is.on('end', function () {
+                        fs.unlinkSync(sourceFilePath);
+                        return resolve();
+                    });
+                } else {
+                    return reject(e);
+                }
+            });
+    });
+}
+
+function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     return new Promise((resolve, reject) => {
         assert(path.isAbsolute(sourceFilePath) && path.extname(sourceFilePath), `Source file must be an absolute pathed file. Was ${sourceFilePath}`);
         assert(path.isAbsolute(destFilePath) && path.extname(destFilePath), `Dest file must be an absolute pathed file. Was ${destFilePath}`);
@@ -36,9 +57,9 @@ function move(sourceFilePath, destFilePath, vorpalInstance) {
             destinationStats = fs.statSync(destFilePath);
         } catch (e) {
             if (e.code === 'ENOENT') {
-                fs.renameSync(sourceFilePath, destFilePath);
-                vorpalInstance.log(`Moved ${sourceFilePath} to ${destFilePath}`);
-                return resolve();
+                return move(sourceFilePath, destFilePath).then(() => {
+                    vorpalInstance.log(`Moved ${sourceFilePath} to ${destFilePath}`);
+                });
             }
 
             return reject(e);
@@ -55,17 +76,18 @@ function move(sourceFilePath, destFilePath, vorpalInstance) {
         }, ({choice}) => {
             if (choice === 'Indexify') {
                 const indexifiedDestFilePath = indexifyIfExists(destFilePath);
-                fs.renameSync(sourceFilePath, indexifiedDestFilePath);
-                fileSystemChangeConfirmer(sourceFilePath, indexifiedDestFilePath);
+                return move(sourceFilePath, indexifiedDestFilePath).then(() => {
+                    fileSystemChangeConfirmer(sourceFilePath, indexifiedDestFilePath);
+                });
             } else if (choice === 'Overwrite') {
-                fs.renameSync(sourceFilePath, destFilePath);
-                logger.log('Moved from / to (replaced existing file):');
-                fileSystemChangeConfirmer(sourceFilePath, destFilePath);
+                return move(sourceFilePath, destFilePath).then(() => {
+                    logger.log('Moved from / to (replaced existing file):');
+                    fileSystemChangeConfirmer(sourceFilePath, destFilePath);
+                });
             } else {
                 logger.log(`Will not replace ${destFilePath}, continuing ...`);
+                return resolve();
             }
-
-            return resolve();
         });
     });
 }
