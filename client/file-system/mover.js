@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Promise = require('bluebird');
 
+const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 const logger = require('../vorpals/logger');
 const {cleanFileName} = require('./renamer-helper');
@@ -55,14 +56,11 @@ function move(sourceFilePath, destFilePath, vorpalInstance) {
             if (choice === 'Indexify') {
                 const indexifiedDestFilePath = indexifyIfExists(destFilePath);
                 fs.renameSync(sourceFilePath, indexifiedDestFilePath);
-                logger.log('Moved from / to:');
-                logger.log(removeCurrentWdHelper(sourceFilePath));
-                logger.log(indexifiedDestFilePath);
+                fileSystemChangeConfirmer(sourceFilePath, indexifiedDestFilePath);
             } else if (choice === 'Overwrite') {
                 fs.renameSync(sourceFilePath, destFilePath);
                 logger.log('Moved from / to (replaced existing file):');
-                logger.log(removeCurrentWdHelper(sourceFilePath));
-                logger.log(destFilePath);
+                fileSystemChangeConfirmer(sourceFilePath, destFilePath);
             } else {
                 logger.log(`Will not replace ${destFilePath}, continuing ...`);
             }

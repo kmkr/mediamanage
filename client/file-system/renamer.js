@@ -1,23 +1,14 @@
 const assert = require('assert');
-const Table = require('cli-table');
 const fs = require('fs');
 const path = require('path');
+
+const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
 const renamerHelper = require('./renamer-helper');
-const logger = require('../vorpals/logger');
-const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 
 function rename(sourceFilePath, destFileName) {
-    const table = new Table({
-        head: ['From', 'To'],
-        colWidths: [75, 75]
-    });
     const destFilePath = path.resolve(destFileName);
     fs.renameSync(sourceFilePath, destFilePath);
-    table.push([
-        removeCurrentWdHelper(sourceFilePath),
-        removeCurrentWdHelper(destFilePath)
-    ]);
-    logger.log(table.toString());
+    fileSystemChangeConfirmer(sourceFilePath, destFilePath);
     return destFilePath;
 }
 
