@@ -96,6 +96,10 @@ todo: write content
                 "fromDir": "scenes",
                 "toDir": "/tmp/scenes",
                 "type": "video"
+            },
+            {
+                "toDir": "/tmp/some-folder-for-moving-single-files",
+                "type": "video"
             }
         ],
         "mediaPlayer": {
@@ -110,3 +114,6 @@ todo: write content
         }
     }
 
+### moveMediaOptions
+
+Iterated when using "Move media". Files from the `fromDir` are moved to `toDir`. `fromDir` is optional and used only when moving all files. So if you need a move-to target used for moving single files only, just skip `fromDir`.

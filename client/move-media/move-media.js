@@ -8,7 +8,10 @@ const logger = require('../vorpals/logger');
 const fileFinder = require('../file-system/finder');
 
 exports.all = vorpalInstance => {
-    return Promise.reduce(config.moveMediaOptions, (t, moveMediaOption) => (
+    // Include only those media options with fromDir. The others are used for singleFile only.
+    const moveMediaOptions = config.moveMediaOptions.filter(moveMediaOption => moveMediaOption.fromDir);
+
+    return Promise.reduce(moveMediaOptions, (t, moveMediaOption) => (
         new Promise((resolve, reject) => {
             const fn = fileFinder[moveMediaOption.type];
             if (!fn) {
