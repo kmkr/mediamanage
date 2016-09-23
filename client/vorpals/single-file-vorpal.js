@@ -7,7 +7,7 @@ const logger = require('./logger');
 const mediaPlayer = require('../media-player');
 const moveMedia = require('../move-media/move-media');
 const fileRenamer = require('../file-system/renamer');
-const {cleanFileName} = require('../file-system/renamer-helper');
+const {cleanFilePath} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 const performerNameList = require('../performers/performer-name-list');
 const removeCurrentWd = require('../helpers/remove-current-wd');
@@ -16,7 +16,7 @@ const {extractAudio, extractVideo} = require('../media-extract');
 
 function getFormattedFileName(filePath) {
     const fileName = removeCurrentWd(filePath);
-    return cleanFileName(fileName).replace(path.parse(fileName).ext, '');
+    return cleanFilePath(fileName).replace(path.parse(fileName).ext, '');
 }
 
 function updateFilePath(existingFilePath, newFileName) {

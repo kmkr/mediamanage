@@ -41,30 +41,35 @@ function normalize(directory, fileName) {
     return `${prefix}${mainTitle}__${rest}`;
 }
 
-exports.cleanFileName = uncleaned => {
-    const extension = path.extname(uncleaned);
-    const titleIsSet = uncleaned.match(TITLE);
+exports.cleanFilePath = uncleanedFilePath => {
+    const fileDir = path.parse(uncleanedFilePath).dir;
+    const uncleanedFileName = path.parse(uncleanedFilePath).base;
+    const fileExtension = path.extname(uncleanedFileName);
+    const titleIsSet = uncleanedFileName.match(TITLE);
 
-    let cleaned = uncleaned
+    let cleanedFileName = uncleanedFileName
         .replace(PERFORMERS, (match, $1) => $1)
         .replace(CATEGORIES, (match, $1) => $1);
 
     if (titleIsSet) {
         // Remove the original file name and use the title instead
-        return cleaned
+        return path.join(fileDir, cleanedFileName)
             .replace(TITLE, (match, $1) => $1)
-            .replace(/__.*/, extension);
+            .replace(/__.*/, fileExtension);
     }
 
-    cleaned = cleaned.replace(extension, '');
+    cleanedFileName = cleanedFileName.replace(fileExtension, '');
 
     // Title is not set and the original file name will be used as title.
     // Move it to the start of the file name
-    if (cleaned.includes('__')) {
-        return `${cleaned.split('__')[1]}_${cleaned.split('__')[0]}${extension}`;
+    if (cleanedFileName.includes('__')) {
+        return path.join(
+            fileDir,
+            `${cleanedFileName.split('__')[1]}_${cleanedFileName.split('__')[0]}${fileExtension}`
+        );
     }
 
-    return cleaned + extension;
+    return path.join(fileDir, cleanedFileName + fileExtension);
 };
 
 function assertNotBlank(fileName) {

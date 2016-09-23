@@ -94,20 +94,26 @@ test('overwrite performers', t => {
 
 test('clean file name', t => {
     const fileName = '(t:my.title)_(p:ole.brumm)_(c:[woz])__file.mp4';
-    const actual = renamerHelper.cleanFileName(fileName);
+    const actual = renamerHelper.cleanFilePath(fileName);
     t.is(actual, 'my.title_ole.brumm_[woz].mp4');
 });
 
 test('clean file name without anything set', t => {
     const fileName = 'my.file.mp4';
-    const actual = renamerHelper.cleanFileName(fileName);
+    const actual = renamerHelper.cleanFilePath(fileName);
     t.is(actual, 'my.file.mp4');
 });
 
 test('clean file name without title', t => {
     const fileName = '(p:noff)_(c:[waz])__my.file.mp4';
-    const actual = renamerHelper.cleanFileName(fileName);
+    const actual = renamerHelper.cleanFilePath(fileName);
     t.is(actual, 'my.file_noff_[waz].mp4');
+});
+
+test('clean file path without title and spaces in name', t => {
+    const fileName = '/foo/bar/(c:[waz])__Wobzy Wabzy - Bobzy Bubzy.mp4';
+    const actual = renamerHelper.cleanFilePath(fileName);
+    t.is(actual, '/foo/bar/Wobzy Wabzy - Bobzy Bubzy_[waz].mp4');
 });
 
 test('indexify without index', t => {

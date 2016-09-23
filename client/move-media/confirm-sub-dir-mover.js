@@ -11,6 +11,7 @@ module.exports = ({filePaths, destDirPath, vorpalInstance}) => {
     return new Promise((resolve, reject) => {
         assert(filePaths && filePaths.constructor === Array, `File paths must be an array. Was ${filePaths}`);
 
+        logger.log('\n');
         filePaths.forEach(filePath => {
             logger.log(`Preparing to move ${chalk.yellow(filePath)}`);
         });
@@ -31,6 +32,9 @@ module.exports = ({filePaths, destDirPath, vorpalInstance}) => {
         }
 
         if (destinationDirAlternatives.length) {
+            // Add root dir as an option
+            destinationDirAlternatives.unshift('.');
+
             vorpalInstance.activeCommand.prompt({
                 message: `Where do you want to move ${chalk.yellow(filePaths.length)} files?`,
                 name: 'moveDestination',

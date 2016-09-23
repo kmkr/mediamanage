@@ -6,12 +6,12 @@ const Promise = require('bluebird');
 const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 const logger = require('../vorpals/logger');
-const {cleanFileName} = require('./renamer-helper');
+const {cleanFilePath} = require('./renamer-helper');
 const indexifyIfExists = require('./indexify-if-exists');
 
 exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
     return Promise.reduce(filePaths, (t, filePath) => {
-        const cleanedFilePath = cleanFileName(filePath);
+        const cleanedFilePath = cleanFilePath(filePath);
         const cleanedFileName = path.parse(cleanedFilePath).base;
         return move(
             filePath,
@@ -24,7 +24,7 @@ exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
 function move(sourceFilePath, destFilePath, vorpalInstance) {
     return new Promise((resolve, reject) => {
         assert(path.isAbsolute(sourceFilePath) && path.extname(sourceFilePath), `Source file must be an absolute pathed file. Was ${sourceFilePath}`);
-        assert(path.isAbsolute(destFilePath) && path.extname(destFilePath), `Dest file must be an absolute pathed file. Was ${sourceFilePath}`);
+        assert(path.isAbsolute(destFilePath) && path.extname(destFilePath), `Dest file must be an absolute pathed file. Was ${destFilePath}`);
 
         // Force throw unless source exists
         const sourceStats = fs.statSync(sourceFilePath);
