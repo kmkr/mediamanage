@@ -105,6 +105,8 @@ module.exports = function (filePath, onComplete) {
         .action((args, callback) => {
             moveMedia.single(vorpal, filePath)
                 .then(() => {
+                    mediaPlayer.stop();
+                    onComplete();
                     callback();
                 }).catch(err => {
                     logger.log(err);
@@ -120,6 +122,7 @@ module.exports = function (filePath, onComplete) {
             }, function ({confirmDelete}) {
                 if (confirmDelete) {
                     fileDeleter(filePath);
+                    mediaPlayer.stop();
                     onComplete();
                 }
                 logger.log('\n');
