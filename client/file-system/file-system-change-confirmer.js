@@ -1,15 +1,26 @@
-const Table = require('cli-table');
-const logger = require('../vorpals/logger');
+const table = require('table');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 
+const config = {
+    columnDefault: {
+        width: 70
+    },
+    columnCount: 2,
+    columns: {
+        0: {
+            width: 70
+        },
+        1: {
+            width: 70
+        }
+    }
+};
+
+const stream = table.createStream(config);
+
 module.exports = (sourceFilePath, destFilePath) => {
-    const table = new Table({
-        head: ['From', 'To'],
-        colWidths: [75, 75]
-    });
-    table.push([
+    stream.write([
         removeCurrentWdHelper(sourceFilePath),
         removeCurrentWdHelper(destFilePath)
     ]);
-    logger.log(table.toString());
 };

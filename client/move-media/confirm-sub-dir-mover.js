@@ -7,8 +7,8 @@ const Promise = require('bluebird');
 const logger = require('../vorpals/logger');
 const fileMover = require('../file-system/mover');
 
-module.exports = ({filePaths, destDirPath, vorpalInstance}) => {
-    return new Promise((resolve, reject) => {
+module.exports = ({filePaths, destDirPath, vorpalInstance}) => (
+    new Promise((resolve, reject) => {
         assert(filePaths && filePaths.constructor === Array, `File paths must be an array. Was ${filePaths}`);
 
         logger.log('\n');
@@ -35,19 +35,19 @@ module.exports = ({filePaths, destDirPath, vorpalInstance}) => {
             // Add root dir as an option
             destinationDirAlternatives.unshift('.');
 
-            vorpalInstance.activeCommand.prompt({
+            return vorpalInstance.activeCommand.prompt({
                 message: `Where do you want to move ${chalk.yellow(filePaths.length)} files?`,
                 name: 'moveDestination',
                 type: 'list',
                 choices: destinationDirAlternatives
-            }, function ({moveDestination}) {
+            }).then(({moveDestination}) => {
                 destDirPath = path.resolve(destDirPath, moveDestination);
-                resolve(fileMover.moveAll({filePaths, destDirPath, vorpalInstance}));
+                return fileMover.moveAll({filePaths, destDirPath, vorpalInstance});
             });
         } else {
             destDirPath = path.resolve(destDirPath);
-            resolve(fileMover.moveAll({filePaths, destDirPath, vorpalInstance}));
+            return fileMover.moveAll({filePaths, destDirPath, vorpalInstance});
         }
 
-    });
-};
+    })
+);
