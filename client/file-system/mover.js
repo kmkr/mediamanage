@@ -27,8 +27,13 @@ function move(sourceFilePath, destFilePath) {
             .then(resolve)
             .catch(e => {
                 if (e.code === 'EXDEV') {
-                    const megas = fs.statSync(sourceFilePath).size / 1024 / 1024;
-                    logger.log(`Moving ${megas}M cross-device`);
+                    let size = fs.statSync(sourceFilePath).size;
+                    if (size <= 1024) {
+                        size = `${Math.floor(size / 1024)}k`;
+                    } else if (size < (1024 * 1024)) {
+                        size = `${Math.floor(size / 1024 / 1024)}m`;
+                    }
+                    logger.log(`Moving ${size} cross-device`);
                     const is = fs.createReadStream(sourceFilePath);
                     const os = fs.createWriteStream(destFilePath);
 
