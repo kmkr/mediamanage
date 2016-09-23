@@ -127,7 +127,7 @@ module.exports = function (filePath, onComplete) {
         });
 
     vorpal
-        .command('t <title>', `Set title ${chalk.bgRed('for single file only')}`)
+        .command('title <title>', `Set title ${chalk.bgRed('for single file only')}`)
         .action((args, callback) => {
             const newTitle = fileRenamer.setTitle(args.title, [filePath])[0];
             filePath = updateFilePath(filePath, newTitle);

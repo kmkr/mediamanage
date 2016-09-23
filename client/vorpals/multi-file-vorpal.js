@@ -33,7 +33,7 @@ module.exports = function (onGoToFile) {
         });
 
     vorpal
-        .command('t <title>', 'Set title')
+        .command('title <title>', 'Set title')
         .action((args, callback) => {
             fileRenamer.setTitle(args.title, fileFinder.mediaFiles({recursive: true}));
             logger.log('\n');
