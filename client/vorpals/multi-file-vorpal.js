@@ -4,7 +4,7 @@ const chalk = Vorpal().chalk;
 const noDownload = require('../no-download');
 const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
-const moveMedia = require('../move-media');
+const moveMedia = require('../move-media/move-media');
 const cleanDirectory = require('../clean-directory');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 
@@ -49,7 +49,7 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('m', 'Move media')
         .action((args, callback) => {
-            moveMedia(vorpal)
+            moveMedia.all(vorpal)
                 .then(() => (
                     cleanDirectory(vorpal)
                 ))

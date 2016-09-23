@@ -5,6 +5,7 @@ const path = require('path');
 
 const logger = require('./logger');
 const mediaPlayer = require('../media-player');
+const moveMedia = require('../move-media/move-media');
 const fileRenamer = require('../file-system/renamer');
 const {cleanFileName} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
@@ -98,6 +99,17 @@ module.exports = function (filePath, onComplete) {
                 });
             });
     });
+
+    vorpal
+        .command('m', 'Move file')
+        .action((args, callback) => {
+            moveMedia.single(vorpal, filePath)
+                .then(() => {
+                    callback();
+                }).catch(err => {
+                    logger.log(err);
+                });
+        });
 
     vorpal.command('d', 'Delete file')
         .action((args, callback) => {
