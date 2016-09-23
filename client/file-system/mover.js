@@ -24,6 +24,7 @@ exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
 function move(sourceFilePath, destFilePath) {
     return new Promise((resolve, reject) => {
         return fs.renameAsync(sourceFilePath, destFilePath)
+            .then(resolve)
             .catch(e => {
                 if (e.code === 'EXDEV') {
                     logger.log('Moving cross-device');
