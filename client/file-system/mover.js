@@ -58,7 +58,7 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         } catch (e) {
             if (e.code === 'ENOENT') {
                 return move(sourceFilePath, destFilePath).then(() => {
-                    vorpalInstance.log(`Moved ${sourceFilePath} to ${destFilePath}`);
+                    fileSystemChangeConfirmer(sourceFilePath, destFilePath);
                 });
             }
 
