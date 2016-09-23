@@ -1,5 +1,10 @@
 module.exports = filePath => {
-    return filePath
-        .replace(process.cwd(), '')
-        .replace(/^\//, '');
-}
+    const {cwd} = process;
+    if (filePath.includes(cwd)) {
+        return filePath
+            .replace(process.cwd(), '')
+            .replace(/^\//, '');
+    }
+
+    return filePath;
+};
