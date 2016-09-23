@@ -43,12 +43,28 @@ function normalize(directory, fileName) {
 
 exports.cleanFileName = uncleaned => {
     const extension = path.extname(uncleaned);
+    const titleIsSet = uncleaned.match(TITLE);
 
-    return uncleaned
-        .replace(TITLE, (match, $1) => $1)
+    let cleaned = uncleaned
         .replace(PERFORMERS, (match, $1) => $1)
-        .replace(CATEGORIES, (match, $1) => $1)
-        .replace(/__.*/, extension);
+        .replace(CATEGORIES, (match, $1) => $1);
+
+    if (titleIsSet) {
+        // Remove the original file name and use the title instead
+        return cleaned
+            .replace(TITLE, (match, $1) => $1)
+            .replace(/__.*/, extension);
+    }
+
+    cleaned = cleaned.replace(extension, '');
+
+    // Title is not set and the original file name will be used as title.
+    // Move it to the start of the file name
+    if (cleaned.includes('__')) {
+        return `${cleaned.split('__')[1]}_${cleaned.split('__')[0]}${extension}`;
+    }
+
+    return cleaned + extension;
 };
 
 function assertNotBlank(fileName) {

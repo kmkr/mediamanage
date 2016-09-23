@@ -98,6 +98,18 @@ test('clean file name', t => {
     t.is(actual, 'my.title_ole.brumm_[woz].mp4');
 });
 
+test('clean file name without anything set', t => {
+    const fileName = 'my.file.mp4';
+    const actual = renamerHelper.cleanFileName(fileName);
+    t.is(actual, 'my.file.mp4');
+});
+
+test('clean file name without title', t => {
+    const fileName = '(p:noff)_(c:[waz])__my.file.mp4';
+    const actual = renamerHelper.cleanFileName(fileName);
+    t.is(actual, 'my.file_noff_[waz].mp4');
+});
+
 test('indexify without index', t => {
     const fileName = 'foo-bar.mp4';
     const actual = renamerHelper.indexify(fileName);
