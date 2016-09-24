@@ -11,38 +11,36 @@ exports.all = vorpalInstance => {
     // Include only those media options with fromDir. The others are used for singleFile only.
     const moveMediaOptions = config.moveMediaOptions.filter(moveMediaOption => moveMediaOption.fromDir);
 
-    return Promise.reduce(moveMediaOptions, (t, moveMediaOption) => (
-        new Promise((resolve, reject) => {
-            const fn = fileFinder[moveMediaOption.type];
-            if (!fn) {
-                return reject(`No such type ${moveMediaOption.type} - must be either video or audio`);
+    return Promise.reduce(moveMediaOptions, (t, moveMediaOption) => {
+        const fn = fileFinder[moveMediaOption.type];
+        if (!fn) {
+            return Promise.reject(`No such type ${moveMediaOption.type} - must be either video or audio`);
+        }
+
+        let filePaths;
+
+        try {
+            filePaths = fn({dirPath: moveMediaOption.fromDir});
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                logger.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
+                return Promise.resolve();
             }
+            return Promise.reject(err);
+        }
 
-            let filePaths;
+        if (!filePaths.length) {
+            logger.log(`No ${moveMediaOption.type} files found in ${moveMediaOption.fromDir} - continuing`);
+            return Promise.resolve();
+        }
 
-            try {
-                filePaths = fn({dirPath: moveMediaOption.fromDir});
-            } catch (err) {
-                if (err.code === 'ENOENT') {
-                    logger.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
-                    return resolve();
-                }
-                return reject(err);
-            }
+        return confirmSubDirMover({
+            filePaths,
+            destDirPath: moveMediaOption.toDir,
+            vorpalInstance
+        });
 
-            if (!filePaths.length) {
-                logger.log(`No ${moveMediaOption.type} files found in ${moveMediaOption.fromDir} - continuing`);
-                return resolve();
-            }
-
-            return confirmSubDirMover({
-                filePaths,
-                destDirPath: moveMediaOption.toDir,
-                vorpalInstance
-            });
-
-        })
-    ), null);
+    }, null);
 };
 
 exports.single = (vorpalInstance, filePath) => {
