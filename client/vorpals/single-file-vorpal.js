@@ -1,159 +1,89 @@
-const assert = require('assert');
 const Vorpal = require('vorpal');
 const chalk = Vorpal().chalk;
 const path = require('path');
+const Promise = require('bluebird');
 
 const logger = require('./logger');
+
+const currentFilePathStore = require('./single/current-file-path-store');
 const mediaPlayer = require('../media-player');
 const moveMedia = require('../move-media/move-media');
-const fileRenamer = require('../file-system/renamer');
+
 const {cleanFilePath} = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
-const performerNameList = require('../performers/performer-name-list');
+
 const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
-const {extractAudio, extractVideo, validate} = require('../media-extract');
 
 function getFormattedFileName(filePath) {
     const fileName = removeCurrentWd(filePath);
     return cleanFilePath(fileName).replace(path.parse(fileName).ext, '');
 }
 
-function updateFilePath(existingFilePath, newFileName) {
-    const existingFileName = removeCurrentWd(existingFilePath);
+function run(onComplete) {
 
-    return existingFilePath.replace(existingFileName, newFileName);
-}
-
-function setPerformerNames(performerNames, filePath) {
-    assert(performerNames.constructor === Array, `Names must be an array. Was ${performerNames}`);
-    const newPath = fileRenamer.setPerformerNames(performerNames, filePath);
-    const newTitle = path.parse(newPath).base;
-    return newTitle;
-}
-
-module.exports = function (filePath, onComplete) {
-    mediaPlayer.play(filePath);
     const vorpal = new Vorpal();
 
     function setDelimiter() {
-        vorpal.delimiter(`${chalk.cyan(getFormattedFileName(filePath))} $`);
+        vorpal.delimiter(`${chalk.cyan(getFormattedFileName(currentFilePathStore.get()))} $`);
     }
+
     setDelimiter();
+    vorpal.on('client_command_executed', ({command}) => {
+        if (command !== 'n') {
+            setDelimiter();
+        }
+        logger.log('\n');
+    });
     logger.setLogger(vorpal.log.bind(vorpal));
 
-    vorpal
-        .command('names <names...>', 'Set performer names')
-        .autocomplete({
-            data: performerNameList.list
-        })
-        .action(({names}, callback) => {
-            performerNameList.updateWith(names);
-            const newTitle = setPerformerNames(names, filePath);
-            filePath = updateFilePath(filePath, newTitle);
-            setDelimiter();
-            logger.log('\n');
-            callback();
-        });
+    require('./single/set-performer-names')(vorpal);
+    require('./single/set-categories')(vorpal);
+    require('./single/set-title')(vorpal);
 
-    vorpal.command('cat', 'Set categories')
-        .action((args, callback) => {
-            vorpal.activeCommand.prompt({
-                message: 'Enter categories',
-                type: 'checkbox',
-                name: 'categories',
-                choices: config.categories
-            }, function ({categories}) {
-                const newPath = fileRenamer.setCategories(categories, filePath);
-                const newTitle = path.parse(newPath).base;
-                filePath = updateFilePath(filePath, newTitle);
-                setDelimiter();
-                logger.log('\n');
-                callback();
-            });
-        });
-
-    config.extractOptions.forEach(({commandKey, destination, type}) => {
-        const commandPrompt = `${commandKey} <from> <to> [performerNames...]`;
-        vorpal.command(commandPrompt, `Extract to ${destination}`)
-            .validate(({from, to, performerNames}) => {
-                const isValid = validate({from, to, performerNames});
-                if (!isValid) {
-                    logger.log('Invalid input');
-                }
-                return isValid;
-            })
-            .autocomplete({
-                data: performerNameList.list
-            })
-            .action(({from, to, performerNames}, callback) => {
-                const fn = type === 'video' ? extractVideo : extractAudio;
-                fn({
-                    destinationDir: destination,
-                    filePath,
-                    from,
-                    to
-                })
-                .then(({destFilePath}) => {
-                    logger.log('Extraction complete\n');
-                    if (performerNames) {
-                        setPerformerNames(performerNames, destFilePath);
-                    }
-                    callback();
-                })
-                .catch(err => {
-                    logger.log(err);
-                });
-            });
+    config.extractOptions.forEach(extractOption => {
+        require('./single/extract')(vorpal, extractOption);
     });
 
     vorpal
         .command('m', 'Move file')
-        .action((args, callback) => {
-            moveMedia.single(vorpal, filePath)
-                .then(() => {
-                    mediaPlayer.stop();
-                    onComplete();
-                    callback();
-                }).catch(err => {
-                    logger.log(err);
-                });
+        .action(() => {
+            return moveMedia
+                .single(vorpal, currentFilePathStore.get())
+                .then(onComplete);
         });
 
     vorpal.command('d', 'Delete file')
-        .action((args, callback) => {
+        .action(() => {
             vorpal.activeCommand.prompt({
                 message: 'Delete file - are you sure?',
                 type: 'confirm',
                 name: 'confirmDelete'
             }, function ({confirmDelete}) {
                 if (confirmDelete) {
-                    fileDeleter(filePath);
-                    mediaPlayer.stop();
+                    fileDeleter(currentFilePathStore.get());
                     onComplete();
                 }
-                logger.log('\n');
-                callback();
+                return Promise.resolve();
             });
         });
 
-    vorpal
-        .command('title <title>', `Set title ${chalk.bgRed('for single file only')}`)
-        .action((args, callback) => {
-            const newTitle = fileRenamer.setTitle(args.title, [filePath])[0];
-            filePath = updateFilePath(filePath, newTitle);
-            setDelimiter();
-            logger.log('\n');
-            callback();
-        });
-
     vorpal.command('n', 'Go back')
-        .action((args, callback) => {
-            mediaPlayer.stop();
+        .action(() => {
             onComplete();
-            logger.log('\n');
-            callback();
+            return Promise.resolve();
         });
 
     return vorpal;
+}
+
+module.exports = function (filePath, onComplete) {
+    currentFilePathStore.set(filePath);
+    mediaPlayer.play(currentFilePathStore.get());
+
+    return run(() => {
+        mediaPlayer.stop();
+        onComplete();
+        currentFilePathStore.unset();
+    });
 };
