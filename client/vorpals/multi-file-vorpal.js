@@ -1,5 +1,6 @@
 const Vorpal = require('vorpal');
 const chalk = Vorpal().chalk;
+const Promise = require('bluebird');
 
 const noDownload = require('../no-download');
 const fileFinder = require('../file-system/finder');
@@ -21,53 +22,48 @@ function logFileNames() {
 module.exports = function (onGoToFile) {
     const vorpal = new Vorpal();
     logger.setLogger(vorpal.log.bind(vorpal));
+    vorpal.on('client_command_executed', () => {
+        logger.log('\n');
+    });
 
     logFileNames();
 
     vorpal
         .command('l', 'List media')
-        .action((args, callback) => {
+        .action(() => {
             logFileNames();
-            logger.log('\n');
-            callback();
+            return Promise.resolve();
         });
 
     vorpal
         .command('title <title>', 'Set title')
-        .action((args, callback) => {
+        .action(args => {
             fileRenamer.setTitle(args.title, fileFinder.mediaFiles({recursive: true}));
-            logger.log('\n');
-            callback();
+            return Promise.resolve();
         });
 
     vorpal
         .command('nodl', 'Add to no download')
-        .action((args, callback) => {
-            noDownload(vorpal).then(callback);
+        .action(() => {
+            return noDownload(vorpal);
         });
 
     vorpal
         .command('m', 'Move media')
-        .action((args, callback) => {
-            moveMedia.all(vorpal)
-                .then(() => (
-                    cleanDirectory(vorpal)
-                ))
+        .action(() => {
+            return moveMedia.all(vorpal)
                 .then(() => {
-                    callback();
+                    cleanDirectory(vorpal);
                     process.exit();
-                }).catch(err => {
-                    logger.log(err);
                 });
         });
 
     vorpal
         .command('s [index]', 'Select file')
-        .action((args, callback) => {
+        .action(args => {
             const filePath = fileFinder.mediaFiles({recursive: true})[Number(args.index) || 0];
             onGoToFile(filePath);
-            logger.log('\n');
-            callback();
+            return Promise.resolve();
         });
 
     vorpal.delimiter(`${chalk.yellow('mediamanage')} $`);
