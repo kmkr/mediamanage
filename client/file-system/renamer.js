@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const config = require('../config.json');
 
 const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
 const renamerHelper = require('./renamer-helper');
@@ -22,6 +23,7 @@ exports.setTitle = (title, filePaths) => {
 };
 
 exports.setPerformerNames = (performerNames, filePath) => {
+    assert(performerNames.constructor === Array, `Names must be an array. Was ${performerNames}`);
     assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
 
     const newFileName = renamerHelper.setPerformerNames(performerNames, filePath);
@@ -29,8 +31,10 @@ exports.setPerformerNames = (performerNames, filePath) => {
 };
 
 exports.setCategories = (categories, filePath) => {
+    assert(categories.constructor === Array, `Categories must be an array. Was ${categories}`);
     assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
 
-    const newFileName = renamerHelper.setCategories(categories, filePath);
+    const sortedCategories = config.categories.filter(category => categories.includes(category));
+    const newFileName = renamerHelper.setCategories(sortedCategories, filePath);
     return rename(filePath, newFileName);
 };

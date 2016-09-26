@@ -1,19 +1,13 @@
-const assert = require('assert');
-
+const config = require('../../config.json');
 const currentFilePathStore = require('./current-file-path-store');
 const fileRenamer = require('../../file-system/renamer');
 const {extractAudio, extractVideo, validate} = require('../../media-extract');
 const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
 
-function setPerformerNames(performerNames, filePath) {
-    assert(performerNames.constructor === Array, `Names must be an array. Was ${performerNames}`);
-    return fileRenamer.setPerformerNames(performerNames, filePath);
-}
-
 module.exports = (vorpal, extractOption) => {
     const {commandKey, destination, type} = extractOption;
-    const commandPrompt = `${commandKey} <from> <to> [performerNames...]`;
+    const commandPrompt = `${commandKey} <from> <to> [performerNamesAndCategories...]`;
 
     vorpal
         .command(commandPrompt, `Extract to ${destination}`)
@@ -25,9 +19,9 @@ module.exports = (vorpal, extractOption) => {
             return isValid;
         })
         .autocomplete({
-            data: performerNameList.list
+            data: () => config.categories.concat(performerNameList.list())
         })
-        .action(({from, to, performerNames}) => {
+        .action(({from, to, performerNamesAndCategories}) => {
             const fn = type === 'video' ? extractVideo : extractAudio;
 
             return fn({
@@ -37,8 +31,18 @@ module.exports = (vorpal, extractOption) => {
                 to
             }).then(({destFilePath}) => {
                 logger.log('Extraction complete');
-                if (performerNames) {
-                    setPerformerNames(performerNames, destFilePath);
+
+                if (performerNamesAndCategories) {
+                    const categories = performerNamesAndCategories.filter(entry => config.categories.includes(entry));
+                    const performerNames = performerNamesAndCategories.filter(entry => !categories.includes(entry));
+
+                    let filePath = destFilePath;
+                    if (performerNames.length) {
+                        filePath = fileRenamer.setPerformerNames(performerNames, filePath);
+                    }
+                    if (categories.length) {
+                        fileRenamer.setCategories(categories, filePath);
+                    }
                 }
             });
         });

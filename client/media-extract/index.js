@@ -54,7 +54,7 @@ exports.extractVideo = ({destinationDir, filePath, from, to}) => {
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
     }
-    if (!validate(from, to)) {
+    if (!validate({from, to})) {
         throw new Error(`Something is wrong with from ${from} or to ${to}`);
     }
 
@@ -75,8 +75,8 @@ exports.extractAudio = ({destinationDir, filePath, from, to}) => {
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
     }
-    if (!validate(from, to)) {
-        throw new Error(`Something is wrong with from ${from} or to ${to}`);
+    if (!validate({from, to})) {
+        throw new Error(`Something is wrong with from ${from} to ${to}`);
     }
 
     const {startsAtSeconds, endsAtSeconds} = map(from, to);
