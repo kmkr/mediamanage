@@ -22,19 +22,14 @@ function map(from, to) {
     const startsAtSeconds = secondsFromStringParser(`${from}`);
     const endsAtSeconds = secondsFromStringParser(`${to}`);
 
-    if (typeof startsAtSeconds === 'undefined' || !endsAtSeconds || startsAtSeconds > endsAtSeconds) {
-        throw new Error(`Something is wrong with from ${from} ${to}`);
-    }
-
     return {
         startsAtSeconds,
         endsAtSeconds
     };
 }
 
-exports.validate = ({from, to, performerNames}) => {
-    const startsAtSeconds = secondsFromStringParser(`${from}`);
-    const endsAtSeconds = secondsFromStringParser(`${to}`);
+function validate({from, to, performerNames}) {
+    const {startsAtSeconds, endsAtSeconds} = map(from, to);
 
     if (performerNames && performerNames.constructor !== Array) {
         return false;
@@ -49,13 +44,18 @@ exports.validate = ({from, to, performerNames}) => {
     }
 
     return true;
-};
+}
+
+exports.validate = validate;
 
 exports.extractVideo = ({destinationDir, filePath, from, to}) => {
     const extractor = extractors.find(extractor => extractor.supportsVideo(filePath));
 
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
+    }
+    if (!validate(from, to)) {
+        throw new Error(`Something is wrong with from ${from} or to ${to}`);
     }
 
     const {startsAtSeconds, endsAtSeconds} = map(from, to);
@@ -66,9 +66,7 @@ exports.extractVideo = ({destinationDir, filePath, from, to}) => {
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
-    }).then(() => {
-        return {destFilePath};
-    });
+    }).then(() => ({destFilePath}));
 };
 
 exports.extractAudio = ({destinationDir, filePath, from, to}) => {
@@ -76,6 +74,9 @@ exports.extractAudio = ({destinationDir, filePath, from, to}) => {
 
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
+    }
+    if (!validate(from, to)) {
+        throw new Error(`Something is wrong with from ${from} or to ${to}`);
     }
 
     const {startsAtSeconds, endsAtSeconds} = map(from, to);
@@ -86,9 +87,7 @@ exports.extractAudio = ({destinationDir, filePath, from, to}) => {
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
-    }).then(() => {
-        return {destFilePath};
-    });
+    }).then(() => ({destFilePath}));
 };
 
 function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {
