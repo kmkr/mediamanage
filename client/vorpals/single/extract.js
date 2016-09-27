@@ -1,10 +1,9 @@
 const config = require('../../config.json');
 const currentFilePathStore = require('./current-file-path-store');
-const fileRenamer = require('../../file-system/renamer');
 const {extractAudio, extractVideo, validate} = require('../../media-extract');
 const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
-const categoriesAndPerformerNamesParser = require('./categories-and-performer-name-parser');
+const categoriesAndPerformerNamesHandler = require('./categories-and-performer-name-handler');
 
 module.exports = (vorpal, extractOption) => {
     const {commandKey, destination, type} = extractOption;
@@ -34,15 +33,7 @@ module.exports = (vorpal, extractOption) => {
                 logger.log('Extraction complete');
 
                 if (performerNamesAndCategories) {
-                    const {categories, performerNames} = categoriesAndPerformerNamesParser(performerNamesAndCategories);
-
-                    let filePath = destFilePath;
-                    if (performerNames.length) {
-                        filePath = fileRenamer.setPerformerNames(performerNames, filePath);
-                    }
-                    if (categories.length) {
-                        fileRenamer.setCategories(categories, filePath);
-                    }
+                    categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath);
                 }
             });
         });
