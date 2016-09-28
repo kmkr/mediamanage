@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 const config = require('../../config.json');
 const currentFilePathStore = require('./current-file-path-store');
 const performerNameList = require('../../performers/performer-name-list');
-const categoriesAndPerformerNamesHandler = require('./categories-and-performer-name-handler')
+const categoriesAndPerformerNamesHandler = require('./categories-and-performer-names-handler');
 
 module.exports = vorpal => {
     vorpal

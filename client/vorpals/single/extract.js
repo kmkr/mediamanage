@@ -3,7 +3,7 @@ const currentFilePathStore = require('./current-file-path-store');
 const {extractAudio, extractVideo, validate} = require('../../media-extract');
 const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
-const categoriesAndPerformerNamesHandler = require('./categories-and-performer-name-handler');
+const categoriesAndPerformerNamesHandler = require('./categories-and-performer-names-handler');
 
 module.exports = (vorpal, extractOption) => {
     const {commandKey, destination, type} = extractOption;
