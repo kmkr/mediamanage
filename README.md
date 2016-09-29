@@ -100,6 +100,10 @@ todo: write content
             {
                 "toDir": "/tmp/some-folder-for-moving-single-files",
                 "type": "video"
+            },
+            {
+                "toDir": "./relative-folder",
+                "type": "video"
             }
         ],
         "mediaPlayer": {

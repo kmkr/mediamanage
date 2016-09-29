@@ -7,6 +7,14 @@ const confirmSubDirMover = require('./confirm-sub-dir-mover');
 const logger = require('../vorpals/logger');
 const fileFinder = require('../file-system/finder');
 
+function resolveToDir(toDir) {
+    if (path.isAbsolute(toDir)) {
+        return toDir;
+    }
+
+    return path.resolve(toDir);
+}
+
 exports.all = vorpalInstance => {
     // Include only those media options with fromDir. The others are used for singleFile only.
     const moveMediaOptions = config.moveMediaOptions.filter(moveMediaOption => moveMediaOption.fromDir);
@@ -36,7 +44,7 @@ exports.all = vorpalInstance => {
 
         return confirmSubDirMover({
             filePaths,
-            destDirPath: moveMediaOption.toDir,
+            destDirPath: resolveToDir(moveMediaOption.toDir),
             vorpalInstance
         });
 
@@ -46,7 +54,7 @@ exports.all = vorpalInstance => {
 exports.single = (vorpalInstance, filePath) => {
     assert(path.isAbsolute(filePath), `File path must be absolute. Was ${filePath}`);
 
-    const moveToChoices = config.moveMediaOptions.map(moveMediaOption => moveMediaOption.toDir);
+    const moveToChoices = config.moveMediaOptions.map(moveMediaOption => resolveToDir(moveMediaOption.toDir));
 
     return vorpalInstance.activeCommand.prompt({
         message: `Where do you want to move ${filePath}?`,
