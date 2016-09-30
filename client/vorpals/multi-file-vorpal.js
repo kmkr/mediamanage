@@ -45,8 +45,8 @@ module.exports = function (onGoToFile) {
         .command('m', 'Move media')
         .action(() => {
             return moveMedia.all(vorpal)
+                .then(() => cleanDirectory(vorpal))
                 .then(() => {
-                    cleanDirectory(vorpal);
                     process.exit();
                 });
         });

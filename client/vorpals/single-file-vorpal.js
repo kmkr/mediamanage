@@ -30,7 +30,7 @@ function run(onComplete) {
 
     setDelimiter();
     vorpal.on('client_command_executed', ({ command }) => {
-        if (command !== 'n') {
+        if (command !== 'n' && command !== 'm') {
             setDelimiter();
         }
         logger.log('\n');
