@@ -16,7 +16,7 @@ function getLongestDirLength(relativeFilePaths) {
 module.exports = () => {
     const relativeFilePaths = fileFinder.mediaFiles({ recursive: true }).map(removeCurrentWdHelper);
     const longestDirLength = getLongestDirLength(relativeFilePaths);
-    const indexLeftPad = Math.ceil(relativeFilePaths.length / 10);
+    const indexLeftPad = `${relativeFilePaths.length}`.length;
 
     relativeFilePaths.forEach((relativeFilePath, index) => {
         const { dir, base } = path.parse(relativeFilePath);
