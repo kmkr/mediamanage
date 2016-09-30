@@ -7,17 +7,9 @@ const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
 const moveMedia = require('../move-media/move-media');
 const cleanDirectory = require('../clean-directory');
-const removeCurrentWdHelper = require('../helpers/remove-current-wd');
+const fileNamesLogger = require('./multi/file-names-logger');
 
 const logger = require('./logger');
-
-function logFileNames() {
-    const fileNames = fileFinder.mediaFiles({ recursive: true }).map(removeCurrentWdHelper);
-    fileNames.forEach((fileName, index) => {
-        logger.log(`${index}) ${fileName}`);
-    });
-    logger.log('Select with s [index]');
-}
 
 module.exports = function (onGoToFile) {
     const vorpal = new Vorpal();
@@ -26,12 +18,12 @@ module.exports = function (onGoToFile) {
         logger.log('\n');
     });
 
-    logFileNames();
+    fileNamesLogger();
 
     vorpal
         .command('l', 'List media')
         .action(() => {
-            logFileNames();
+            fileNamesLogger();
             return Promise.resolve();
         });
 
