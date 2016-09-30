@@ -1,6 +1,7 @@
 const config = require('../../config.json');
 const currentFilePathStore = require('./current-file-path-store');
 const fileRenamer = require('../../file-system/renamer');
+const logger = require('../logger');
 
 module.exports = function (vorpal) {
     vorpal
@@ -12,8 +13,12 @@ module.exports = function (vorpal) {
                 name: 'categories',
                 choices: config.categories
             }).then(({ categories }) => {
-                const newPath = fileRenamer.setCategories(categories, currentFilePathStore.get());
-                currentFilePathStore.set(newPath);
+                if (categories.length) {
+                    const newPath = fileRenamer.setCategories(categories, currentFilePathStore.get());
+                    currentFilePathStore.set(newPath);
+                } else {
+                    logger.log('No category set');
+                }
             });
         });
 };
