@@ -19,6 +19,7 @@ module.exports = function (onGoToFile) {
     });
 
     fileNamesLogger();
+    logger.log('\n');
 
     vorpal
         .command('l', 'List media')
