@@ -6,7 +6,7 @@ function divmod(y, x) {
 }
 module.exports = function (includeMs = false) {
     return seconds => {
-        let dd, hh, mm, ms, ss;
+        let dd, hh, mm, ms, ss; // eslint-disable-line no-unused-vars
         [ss, ms] = divmod(1000 * seconds, 1000);
         [mm, ss] = divmod(ss, 60);
         [hh, mm] = divmod(mm, 60);

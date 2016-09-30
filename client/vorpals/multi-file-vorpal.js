@@ -12,7 +12,7 @@ const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 const logger = require('./logger');
 
 function logFileNames() {
-    const fileNames = fileFinder.mediaFiles({recursive: true}).map(removeCurrentWdHelper);
+    const fileNames = fileFinder.mediaFiles({ recursive: true }).map(removeCurrentWdHelper);
     fileNames.forEach((fileName, index) => {
         logger.log(`${index}) ${fileName}`);
     });
@@ -38,7 +38,7 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('title <title>', 'Set title')
         .action(args => {
-            fileRenamer.setTitle(args.title, fileFinder.mediaFiles({recursive: true}));
+            fileRenamer.setTitle(args.title, fileFinder.mediaFiles({ recursive: true }));
             return Promise.resolve();
         });
 
@@ -61,7 +61,7 @@ module.exports = function (onGoToFile) {
     vorpal
         .command('s [index]', 'Select file')
         .action(args => {
-            const filePath = fileFinder.mediaFiles({recursive: true})[Number(args.index) || 0];
+            const filePath = fileFinder.mediaFiles({ recursive: true })[Number(args.index) || 0];
             onGoToFile(filePath);
             return Promise.resolve();
         });

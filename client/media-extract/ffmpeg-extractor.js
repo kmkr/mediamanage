@@ -10,12 +10,12 @@ const SUPPORT_AUDIO_EXTRACT_REGEXP = SUPPORT_VIDEO_EXTRACT_REGEXP;
 exports.supportsVideo = fileName => fileName.match(SUPPORT_VIDEO_EXTRACT_REGEXP);
 exports.supportsAudio = fileName => fileName.match(SUPPORT_AUDIO_EXTRACT_REGEXP);
 
-exports.extractVideo = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds}) => {
+exports.extractVideo = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
     return run(`ffmpeg -ss ${startsAtSeconds} -i "${sourceFilePath}" -t ${lengthInSeconds} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
 };
 
-exports.extractAudio = ({sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds}) => {
+exports.extractAudio = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
 
     return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -t ${secondsToTimeParser(lengthInSeconds)} -i "${sourceFilePath}" -acodec libmp3lame -ab 196k "${destFilePath}" -loglevel warning`);

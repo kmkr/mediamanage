@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const parser = require('./seconds-to-time-parser')()
+const parser = require('./seconds-to-time-parser')();
 const parserWithMs = require('./seconds-to-time-parser')(true);
 
 test('parse to seconds', t => {

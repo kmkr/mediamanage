@@ -28,8 +28,8 @@ function map(from, to) {
     };
 }
 
-function validate({from, to, performerNames}) {
-    const {startsAtSeconds, endsAtSeconds} = map(from, to);
+function validate({ from, to, performerNames }) {
+    const { startsAtSeconds, endsAtSeconds } = map(from, to);
 
     if (performerNames && performerNames.constructor !== Array) {
         return false;
@@ -48,17 +48,17 @@ function validate({from, to, performerNames}) {
 
 exports.validate = validate;
 
-exports.extractVideo = ({destinationDir, filePath, from, to}) => {
+exports.extractVideo = ({ destinationDir, filePath, from, to }) => {
     const extractor = extractors.find(extractor => extractor.supportsVideo(filePath));
 
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
     }
-    if (!validate({from, to})) {
+    if (!validate({ from, to })) {
         throw new Error(`Something is wrong with from ${from} or to ${to}`);
     }
 
-    const {startsAtSeconds, endsAtSeconds} = map(from, to);
+    const { startsAtSeconds, endsAtSeconds } = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath);
     mkdir(destinationDir);
     return extractor.extractVideo({
@@ -66,20 +66,20 @@ exports.extractVideo = ({destinationDir, filePath, from, to}) => {
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
-    }).then(() => ({destFilePath}));
+    }).then(() => ({ destFilePath }));
 };
 
-exports.extractAudio = ({destinationDir, filePath, from, to}) => {
+exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
     const extractor = extractors.find(extractor => extractor.supportsAudio(filePath));
 
     if (!extractor) {
         throw new Error(`Unable to find extractor for ${filePath}`);
     }
-    if (!validate({from, to})) {
+    if (!validate({ from, to })) {
         throw new Error(`Something is wrong with from ${from} to ${to}`);
     }
 
-    const {startsAtSeconds, endsAtSeconds} = map(from, to);
+    const { startsAtSeconds, endsAtSeconds } = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
     mkdir(destinationDir);
     return extractor.extractAudio({
@@ -87,7 +87,7 @@ exports.extractAudio = ({destinationDir, filePath, from, to}) => {
         destFilePath,
         startsAtSeconds,
         endsAtSeconds
-    }).then(() => ({destFilePath}));
+    }).then(() => ({ destFilePath }));
 };
 
 function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {

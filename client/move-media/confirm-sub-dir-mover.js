@@ -7,7 +7,7 @@ const Promise = require('bluebird');
 const logger = require('../vorpals/logger');
 const fileMover = require('../file-system/mover');
 
-module.exports = ({filePaths, destDirPath, vorpalInstance}) => {
+module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {
     assert(filePaths && filePaths.constructor === Array, `File paths must be an array. Was ${filePaths}`);
 
     logger.log('\n');
@@ -39,13 +39,13 @@ module.exports = ({filePaths, destDirPath, vorpalInstance}) => {
             name: 'moveDestination',
             type: 'list',
             choices: destinationDirAlternatives
-        }).then(({moveDestination}) => {
+        }).then(({ moveDestination }) => {
             destDirPath = path.resolve(destDirPath, moveDestination);
-            return fileMover.moveAll({filePaths, destDirPath, vorpalInstance});
+            return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
         });
     } else {
         destDirPath = path.resolve(destDirPath);
-        return fileMover.moveAll({filePaths, destDirPath, vorpalInstance});
+        return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
     }
 
 };

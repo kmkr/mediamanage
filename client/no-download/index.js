@@ -4,7 +4,7 @@ const path = require('path');
 const config = require('../config');
 const touchFile = require('../file-system/toucher');
 const fileFinder = require('../file-system/finder');
-const {cleanFilePath} = require('../file-system/renamer-helper');
+const { cleanFilePath } = require('../file-system/renamer-helper');
 
 module.exports = vorpalInstance => (
     new Promise((resolve, reject) => {
@@ -32,7 +32,7 @@ module.exports = vorpalInstance => (
             type: 'list',
             name: 'reason',
             choices: reasons
-        }, function ({reason}) {
+        }, function ({ reason }) {
             const extName = path.parse(filePath).ext;
             const cleanedFileName = cleanFilePath(path.parse(filePath).base);
             const filePathToTouch = `${noDownloadPath}/${cleanedFileName.replace(extName, `_${reason}`)}`;

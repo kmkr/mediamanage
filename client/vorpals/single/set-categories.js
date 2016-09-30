@@ -11,7 +11,7 @@ module.exports = function (vorpal) {
                 type: 'checkbox',
                 name: 'categories',
                 choices: config.categories
-            }).then(({categories}) => {
+            }).then(({ categories }) => {
                 const newPath = fileRenamer.setCategories(categories, currentFilePathStore.get());
                 currentFilePathStore.set(newPath);
             });

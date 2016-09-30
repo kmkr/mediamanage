@@ -16,19 +16,19 @@ function getFilePath(wd, file) {
     });
 
     if (matches.length === 1) {
-        const {source, destination} = matches[0];
+        const { source, destination } = matches[0];
         const filePath = path.resolve(wd.replace(new RegExp(source), destination), file);
         return filePath;
     }
 }
 
 http.createServer((req, res) => {
-    const {url} = req;
+    const { url } = req;
     if (url.match('/stop')) {
         localMediaPlayer.stop();
     } else if (url.match('/play')) {
         const query = url.replace(/.*\?/, '');
-        const {wd, file} = querystring.parse(query);
+        const { wd, file } = querystring.parse(query);
 
         if (!wd || !file) {
             const message = `Both wd and file are required in query to play. Wd: ${wd}, file: ${file}`;

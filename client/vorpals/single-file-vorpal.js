@@ -9,7 +9,7 @@ const currentFilePathStore = require('./single/current-file-path-store');
 const mediaPlayer = require('../media-player');
 const moveMedia = require('../move-media/move-media');
 
-const {cleanFilePath} = require('../file-system/renamer-helper');
+const { cleanFilePath } = require('../file-system/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 
 const removeCurrentWd = require('../helpers/remove-current-wd');
@@ -29,7 +29,7 @@ function run(onComplete) {
     }
 
     setDelimiter();
-    vorpal.on('client_command_executed', ({command}) => {
+    vorpal.on('client_command_executed', ({ command }) => {
         if (command !== 'n') {
             setDelimiter();
         }
@@ -59,7 +59,7 @@ function run(onComplete) {
                 message: 'Delete file - are you sure?',
                 type: 'confirm',
                 name: 'confirmDelete'
-            }, function ({confirmDelete}) {
+            }, function ({ confirmDelete }) {
                 if (confirmDelete) {
                     fileDeleter(currentFilePathStore.get());
                     onComplete();

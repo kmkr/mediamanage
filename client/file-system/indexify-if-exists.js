@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const logger = require('../vorpals/logger');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
-const {indexify} = require('./renamer-helper');
+const { indexify } = require('./renamer-helper');
 
 function exists(filePath) {
     try {

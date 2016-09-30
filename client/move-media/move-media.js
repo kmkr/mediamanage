@@ -28,7 +28,7 @@ exports.all = vorpalInstance => {
         let filePaths;
 
         try {
-            filePaths = fn({dirPath: moveMediaOption.fromDir});
+            filePaths = fn({ dirPath: moveMediaOption.fromDir });
         } catch (err) {
             if (err.code === 'ENOENT') {
                 logger.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
@@ -61,7 +61,7 @@ exports.single = (vorpalInstance, filePath) => {
         name: 'destDirPath',
         type: 'list',
         choices: moveToChoices
-    }).then(({destDirPath}) => (
+    }).then(({ destDirPath }) => (
         confirmSubDirMover({
             filePaths: [filePath],
             destDirPath,

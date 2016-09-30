@@ -6,10 +6,10 @@ const Promise = require('bluebird');
 const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 const logger = require('../vorpals/logger');
-const {cleanFilePath} = require('./renamer-helper');
+const { cleanFilePath } = require('./renamer-helper');
 const indexifyIfExists = require('./indexify-if-exists');
 
-exports.moveAll = ({filePaths, destDirPath, vorpalInstance}) => {
+exports.moveAll = ({ filePaths, destDirPath, vorpalInstance }) => {
     return Promise.reduce(filePaths, (t, filePath) => {
         const cleanedFilePath = cleanFilePath(filePath);
         const cleanedFileName = path.parse(cleanedFilePath).base;
@@ -80,7 +80,7 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         name: 'choice',
         type: 'list',
         choices: ['Indexify', 'Overwrite', 'Skip file']
-    }).then(({choice}) => {
+    }).then(({ choice }) => {
         if (choice === 'Indexify') {
             const indexifiedDestFilePath = indexifyIfExists(destFilePath);
             return move(sourceFilePath, indexifiedDestFilePath).then(() => {
