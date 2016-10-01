@@ -11,6 +11,9 @@ module.exports = (vorpal, extractOption) => {
 
     vorpal
         .command(commandPrompt, `Extract to ${destination}`)
+        .types({
+            string: ['_']
+        })
         .validate(({ from, to, performerNames }) => {
             const isValid = validate({ from, to, performerNames });
             if (!isValid) {
