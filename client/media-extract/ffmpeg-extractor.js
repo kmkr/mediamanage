@@ -12,7 +12,7 @@ exports.supportsAudio = fileName => fileName.match(SUPPORT_AUDIO_EXTRACT_REGEXP)
 
 exports.extractVideo = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
-    return run(`ffmpeg -ss ${startsAtSeconds} -i "${sourceFilePath}" -t ${lengthInSeconds} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
+    return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -i "${sourceFilePath}" -t ${secondsToTimeParser(lengthInSeconds)} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
 };
 
 exports.extractAudio = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
