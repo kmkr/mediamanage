@@ -13,6 +13,17 @@ function rename(sourceFilePath, destFileName) {
     return destFilePath;
 }
 
+exports.rename = (newFileName, filePath) => {
+    assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
+    assert(newFileName, `File name must be set. Was: ${newFileName}`);
+
+    const sourceFilePath = filePath;
+    const currentFileName = path.parse(sourceFilePath).name;
+    const destFilePath = sourceFilePath.replace(currentFileName, newFileName);
+
+    return rename(sourceFilePath, destFilePath);
+}
+
 exports.setTitle = (title, filePaths) => {
     return filePaths.map(filePath => {
         assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
