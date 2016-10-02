@@ -6,7 +6,7 @@ const config = require('./config.json');
 const PORT = config.port;
 const MAPPINGS = config.mappings;
 const PLAYER = config.player;
-const LocalMediaPlayer = require('./media-player/local-media-player');
+const LocalMediaPlayer = require('../common/media-player/local-media-player');
 const localMediaPlayer = new LocalMediaPlayer(PLAYER);
 
 function getFilePath(wd, file) {

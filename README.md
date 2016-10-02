@@ -38,22 +38,16 @@ Mediamanage supports the following operations.
 - Bulk moving media files (including extracted media) from current directory.
 - Cleaning up source by deleting non-moved files (such as screenshots, covers and unwanted files) after moving media.
 
-## Server
+## How to use
 
-todo: write content
+mediamanage is split into a client and server module.
 
-    {
-        "port": 2000,
-        "player": "/usr/bin/smplayer",
-        "mappings": [
-            {
-                "source": ".*remote-path-regexp",
-                "destination": "/home/you/my-mount/"
-            }
-        ]
-    }
+* The client module is responsible for organize the media. The client contains the CLI and is what you interact with.
+* The server module is a tiny web server handling start and stop media requests from the client. The server is optional, and useful if you want to organize the files on machine A, while observing media on machine B. The server requires that the media files on machine A are mounted on machine B.
 
-## Client
+### Configuring the client
+
+The client is configured via `client/config.json`.
 
     {
         "autocomplete": {
@@ -107,6 +101,7 @@ todo: write content
             }
         ],
         "mediaPlayer": {
+            "local": "/usr/bin/vlc",
             "remote": "10.45.12.42:2000"
         },
         "nodownload": {
@@ -121,3 +116,23 @@ todo: write content
 ### moveMediaOptions
 
 Iterated when using "Move media". Files from the `fromDir` are moved to `toDir`. `fromDir` is optional and used only when moving all files. So if you need a move-to target used for moving single files only, just skip `fromDir`.
+
+### mediaPlayer
+
+mediamanage will try to play the file you select, and supports local and remote playing of the file. If `remote` is set in the configuration, mediamanage sends a HTTP GET request to the configured host. Otherwise, mediamanage will open the file in the mediaplayer of your choive. Use the `local` setting for playing media locally.
+
+## Configuring the server
+
+The server is an optional module, useful if you want to organize the files on machine A, while playing the media files on machine B. The server requires that the media files on machine A are mounted on machine B.
+
+    {
+        "port": 2000,
+        "player": "/usr/bin/smplayer",
+        "mappings": [
+            {
+                "source": ".*remote-path-regexp",
+                "destination": "/home/you/my-mount/"
+            }
+        ]
+    }
+
