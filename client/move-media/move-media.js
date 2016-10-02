@@ -22,7 +22,7 @@ exports.all = vorpalInstance => {
     return Promise.reduce(moveMediaOptions, (t, moveMediaOption) => {
         const fn = fileFinder[moveMediaOption.type];
         if (!fn) {
-            return Promise.reject(`No such type ${moveMediaOption.type} - must be either video or audio`);
+            throw new Error(`No such type ${moveMediaOption.type} - must be either video or audio`);
         }
 
         let filePaths;
@@ -34,7 +34,7 @@ exports.all = vorpalInstance => {
                 logger.log(`Directory ${moveMediaOption.fromDir} not found - continuing`);
                 return Promise.resolve();
             }
-            return Promise.reject(err);
+            throw err;
         }
 
         if (!filePaths.length) {

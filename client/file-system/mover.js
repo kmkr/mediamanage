@@ -61,14 +61,14 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
 
     try {
         destinationStats = fs.statSync(destFilePath);
-    } catch (e) {
-        if (e.code === 'ENOENT') {
+    } catch (err) {
+        if (err.code === 'ENOENT') {
             return move(sourceFilePath, destFilePath).then(() => {
                 fileSystemChangeConfirmer(sourceFilePath, destFilePath);
             });
         }
 
-        return Promise.reject(e);
+        throw err;
     }
 
     const destinationSize = destinationStats.size;
