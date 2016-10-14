@@ -91,11 +91,13 @@ exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
 };
 
 function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {
-    let fileName = path.parse(sourceFilePath).base;
+    const parsed = path.parse(sourceFilePath);
+    const sourceFileDir = parsed.dir;
+    let fileName = parsed.base;
     if (fileExtension) {
         fileName = fileName.replace(path.extname(fileName), fileExtension);
     }
 
-    const destFilePath = path.resolve(destinationDir, fileName);
+    const destFilePath = path.resolve(sourceFileDir, destinationDir, fileName);
     return indexifyIfExists(destFilePath);
 }
