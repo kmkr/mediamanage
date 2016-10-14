@@ -58,8 +58,16 @@ module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {
                 return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
             });
         } else {
-            destDirPath = path.resolve(destDirPath);
-            return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
+            return vorpalInstance.activeCommand.prompt({
+                message: `Confirm move of ${chalk.yellow(filePaths.length)} files`,
+                name: 'confirmMove',
+                type: 'confirm'
+            }).then(({ confirmMove }) => {
+                if (confirmMove) {
+                    destDirPath = path.resolve(destDirPath);
+                    return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
+                }
+            });
         }
     });
 };
