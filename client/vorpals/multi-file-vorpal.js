@@ -22,9 +22,9 @@ module.exports = function (onGoToFile) {
     logger.log('\n');
 
     vorpal
-        .command('l', 'List media')
-        .action(() => {
-            fileNamesLogger();
+        .command('l [filter]', 'List media')
+        .action(({ filter }) => {
+            fileNamesLogger(filter);
             return Promise.resolve();
         });
 

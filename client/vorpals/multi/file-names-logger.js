@@ -13,8 +13,12 @@ function getLongestDirLength(relativeFilePaths) {
         .reverse()[0] || 0;
 }
 
-module.exports = () => {
-    const relativeFilePaths = fileFinder.mediaFiles({ recursive: true }).map(removeCurrentWdHelper);
+module.exports = (filter = '') => {
+    const relativeFilePaths = fileFinder
+        .mediaFiles({ recursive: true })
+        .map(removeCurrentWdHelper)
+        .filter(relativeFileName => relativeFileName.toLowerCase().match(filter.toLowerCase()));
+
     const longestDirLength = getLongestDirLength(relativeFilePaths);
     const indexLeftPad = `${relativeFilePaths.length}`.length;
 
