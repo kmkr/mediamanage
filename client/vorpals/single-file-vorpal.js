@@ -21,7 +21,6 @@ function getFormattedFileName(filePath) {
 }
 
 function run(onComplete) {
-
     const vorpal = new Vorpal();
 
     function setDelimiter() {
@@ -48,11 +47,11 @@ function run(onComplete) {
 
     vorpal
         .command('m', 'Move file')
-        .action(() => {
-            return moveMedia
+        .action(() => (
+            moveMedia
                 .single(vorpal, currentFilePathStore.get())
-                .then(onComplete);
-        });
+                .then(onComplete)
+        ));
 
     vorpal.command('d', 'Delete file')
         .action(() => {

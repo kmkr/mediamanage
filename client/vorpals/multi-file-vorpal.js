@@ -37,19 +37,15 @@ module.exports = function (onGoToFile) {
 
     vorpal
         .command('nodl', 'Add to no download')
-        .action(() => {
-            return noDownload(vorpal);
-        });
+        .action(() => noDownload(vorpal));
 
     vorpal
         .command('m', 'Move media')
-        .action(() => {
-            return moveMedia.all(vorpal)
+        .action(() => (
+            moveMedia.all(vorpal)
                 .then(() => cleanDirectory(vorpal))
-                .then(() => {
-                    process.exit();
-                });
-        });
+                .then(() => process.exit())
+        ));
 
     vorpal
         .command('s [index]', 'Select file')

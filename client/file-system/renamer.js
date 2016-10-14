@@ -22,7 +22,7 @@ exports.rename = (newFileName, filePath) => {
     const destFilePath = sourceFilePath.replace(currentFileName, newFileName);
 
     return rename(sourceFilePath, destFilePath);
-}
+};
 
 exports.setTitle = (title, filePaths) => {
     return filePaths.map(filePath => {

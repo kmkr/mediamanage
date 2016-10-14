@@ -10,7 +10,7 @@ module.exports = function (includeMs = false) {
         [ss, ms] = divmod(1000 * seconds, 1000);
         [mm, ss] = divmod(ss, 60);
         [hh, mm] = divmod(mm, 60);
-        [dd, hh] = divmod(hh, 24);
+        [dd, hh] = divmod(hh, 24); // eslint-disable-line prefer-const
         ms = Math.floor(ms);
 
         hh = hh >= 10 ? hh : `0${hh}`;
