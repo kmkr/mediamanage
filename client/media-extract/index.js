@@ -81,7 +81,7 @@ exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
 
     const { startsAtSeconds, endsAtSeconds } = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
-    mkdir(destinationDir);
+    mkdir(path.parse(destFilePath).dir);
     return extractor.extractAudio({
         sourceFilePath: filePath,
         destFilePath,
