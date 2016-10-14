@@ -54,19 +54,25 @@ module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {
                 type: 'list',
                 choices: destinationDirAlternatives
             }).then(({ moveDestination }) => {
+                if (!moveDestination) {
+                    return;
+                }
                 destDirPath = path.resolve(destDirPath, moveDestination);
                 return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
             });
         } else {
+            // Guard while waiting for https://github.com/dthree/vorpal/issues/165
             return vorpalInstance.activeCommand.prompt({
                 message: `Confirm move of ${chalk.yellow(filePaths.length)} files`,
                 name: 'confirmMove',
                 type: 'confirm'
             }).then(({ confirmMove }) => {
-                if (confirmMove) {
-                    destDirPath = path.resolve(destDirPath);
-                    return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
+                if (!confirmMove) {
+                    return;
                 }
+
+                destDirPath = path.resolve(destDirPath);
+                return fileMover.moveAll({ filePaths, destDirPath, vorpalInstance });
             });
         }
     });

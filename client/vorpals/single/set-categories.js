@@ -13,7 +13,7 @@ module.exports = function (vorpal) {
                 name: 'categories',
                 choices: config.categories
             }).then(({ categories }) => {
-                if (categories.length) {
+                if (categories && categories.length) {
                     const newPath = fileRenamer.setCategories(categories, currentFilePathStore.get());
                     currentFilePathStore.set(newPath);
                 } else {

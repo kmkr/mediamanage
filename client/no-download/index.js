@@ -33,10 +33,12 @@ module.exports = vorpalInstance => (
             name: 'reason',
             choices: reasons
         }, function ({ reason }) {
-            const extName = path.parse(filePath).ext;
-            const cleanedFileName = cleanFilePath(path.parse(filePath).base);
-            const filePathToTouch = `${noDownloadPath}/${cleanedFileName.replace(extName, `_${reason}`)}`;
-            touchFile(filePathToTouch);
+            if (reason) {
+                const extName = path.parse(filePath).ext;
+                const cleanedFileName = cleanFilePath(path.parse(filePath).base);
+                const filePathToTouch = `${noDownloadPath}/${cleanedFileName.replace(extName, `_${reason}`)}`;
+                touchFile(filePathToTouch);
+            }
             resolve();
         });
     })

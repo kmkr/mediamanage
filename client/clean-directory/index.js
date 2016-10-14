@@ -19,9 +19,10 @@ module.exports = vorpalInstance => {
         type: 'confirm',
         default: false
     }).then(({ confirmDelete }) => {
-        if (confirmDelete) {
-            rimraf.sync(rootDir);
-            vorpalInstance.log(`Removed ${filePaths.length} file(s) and containing dir`);
+        if (!confirmDelete) {
+            return;
         }
+        rimraf.sync(rootDir);
+        vorpalInstance.log(`Removed ${filePaths.length} file(s) and containing dir`);
     });
 };

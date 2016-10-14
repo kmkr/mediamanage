@@ -61,11 +61,14 @@ exports.single = (vorpalInstance, filePath) => {
         name: 'destDirPath',
         type: 'list',
         choices: moveToChoices
-    }).then(({ destDirPath }) => (
-        confirmSubDirMover({
+    }).then(({ destDirPath }) => {
+        if (!destDirPath) {
+            return;
+        }
+        return confirmSubDirMover({
             filePaths: [filePath],
             destDirPath,
             vorpalInstance
-        })
-    ));
+        });
+    });
 };
