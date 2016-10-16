@@ -116,6 +116,13 @@ test('clean file path without title and spaces in name', t => {
     t.is(actual, '/foo/bar/Wobzy Wabzy - Bobzy Bubzy_[waz].mp4');
 });
 
+test('clean file name with double underscore in folder name', t => {
+    const fileName = '/woo/__waa/wii/(t:wobzy.bobzy)_(p:ole.b_noff)_(c:[wiz])__Wo wu, Bo by, Wi wa - ci fi [WoolB].mp4';
+    const actual = renamerHelper.cleanFilePath(fileName);
+    t.is(actual, '/woo/__waa/wii/wobzy.bobzy_ole.b_noff_[wiz].mp4');
+});
+
+
 test('indexify without index', t => {
     const fileName = 'foo-bar.mp4';
     const actual = renamerHelper.indexify(fileName);

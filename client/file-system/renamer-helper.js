@@ -53,9 +53,11 @@ exports.cleanFilePath = uncleanedFilePath => {
 
     if (titleIsSet) {
         // Remove the original file name and use the title instead
-        return path.join(fileDir, cleanedFileName)
+        const withSetTitle = cleanedFileName
             .replace(TITLE, (match, $1) => $1)
             .replace(/__.*/, fileExtension);
+
+        return path.join(fileDir, withSetTitle);
     }
 
     cleanedFileName = cleanedFileName.replace(fileExtension, '');
