@@ -14,17 +14,22 @@ function getLongestDirLength(relativeFilePaths) {
 }
 
 module.exports = (filter = '') => {
-    const relativeFilePaths = fileFinder
+    const allRelativeFilePaths = fileFinder
         .mediaFiles({ recursive: true })
-        .map(removeCurrentWdHelper)
+        .map(removeCurrentWdHelper);
+
+    const relevantRelativeFilePaths = allRelativeFilePaths
         .filter(relativeFileName => relativeFileName.toLowerCase().match(filter.toLowerCase()));
 
-    const longestDirLength = getLongestDirLength(relativeFilePaths);
-    const indexLeftPad = `${relativeFilePaths.length}`.length;
+    const longestDirLength = getLongestDirLength(relevantRelativeFilePaths);
+    const indexLeftPad = `${relevantRelativeFilePaths.length}`.length;
 
-    relativeFilePaths.forEach((relativeFilePath, index) => {
-        const { dir, base } = path.parse(relativeFilePath);
-        logger.log(`${leftPad(index, indexLeftPad)}) ${leftPad(dir, longestDirLength)}/${chalk.green(base)}`);
+    allRelativeFilePaths.forEach((relativeFilePath, index) => {
+        // Loop all to get indices correct
+        if (relevantRelativeFilePaths.includes(relativeFilePath)) {
+            const { dir, base } = path.parse(relativeFilePath);
+            logger.log(`${leftPad(index, indexLeftPad)}) ${leftPad(dir, longestDirLength)}/${chalk.green(base)}`);
+        }
     });
 
     logger.log('Select with s [index]');
