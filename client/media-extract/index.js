@@ -60,7 +60,7 @@ exports.extractVideo = ({ destinationDir, filePath, from, to }) => {
 
     const { startsAtSeconds, endsAtSeconds } = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath);
-    mkdir(destinationDir);
+    mkdir(path.parse(destFilePath).dir);
     return extractor.extractVideo({
         sourceFilePath: filePath,
         destFilePath,
