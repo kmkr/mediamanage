@@ -5,6 +5,7 @@ const Promise = require('bluebird');
 const noDownload = require('../no-download');
 const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
+const keywordsFromCurrentWd = require('../file-system/keywords-from-currect-wd');
 const moveMedia = require('../move-media/move-media');
 const cleanDirectory = require('../clean-directory');
 const fileNamesLogger = require('./multi/file-names-logger');
@@ -29,9 +30,11 @@ module.exports = function (onGoToFile) {
         });
 
     vorpal
-        .command('title <title>', 'Set title')
+        .command('title <title...>', 'Set title')
+        .autocomplete(keywordsFromCurrentWd())
         .action(args => {
-            fileRenamer.setTitle(args.title, fileFinder.mediaFiles({ recursive: true }));
+            const title = args.title.join('.');
+            fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }));
             return Promise.resolve();
         });
 
