@@ -5,9 +5,12 @@ const config = require('../config.json');
 
 const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
 const renamerHelper = require('./renamer-helper');
+const indexifyIfExists = require('./indexify-if-exists');
 
 function rename(sourceFilePath, destFileName) {
-    const destFilePath = path.resolve(destFileName);
+    const destFilePath = indexifyIfExists(
+        path.resolve(destFileName)
+    );
     fs.renameSync(sourceFilePath, destFilePath);
     fileSystemChangeConfirmer(sourceFilePath, destFilePath);
     return destFilePath;
