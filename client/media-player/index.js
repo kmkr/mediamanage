@@ -20,11 +20,11 @@ function getMediaPlayer() {
             return remoteMediaPlayer;
         }
 
-        if (config.mediaPlayer.player) {
-            const PLAYER = config.mediaPlayer.player;
+        if (config.mediaPlayer.local) {
+            const PLAYER = config.mediaPlayer.local;
             const LocalMediaPlayer = require('../../common/media-player/local-media-player');
             const localMediaPlayer = new LocalMediaPlayer(PLAYER);
-            logger.log(`Using ${config.mediaPlayer.player} as local media player`);
+            logger.log(`Using ${config.mediaPlayer.local} as local media player`);
             return localMediaPlayer;
         }
     }
