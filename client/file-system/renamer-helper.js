@@ -25,7 +25,7 @@ function normalize(directory, fileName) {
         .replace(title, '')
         .replace(performers, '')
         .replace(categories, '')
-        .replace(/_/g, '');
+        .replace(/^_+/, '');
 
     const mainTitle = [title, performers, categories]
         .filter(e => e)

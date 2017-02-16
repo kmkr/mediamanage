@@ -68,6 +68,12 @@ test('overwrite categories', t => {
     t.is(actual, '(t:my.title)_(p:brumm)_(c:[woz])__file.mp4');
 });
 
+test('keep underscores in original title when no new title is set', t => {
+    const fileName = 'my_original_file.mp4';
+    const actual = renamerHelper.setCategories(['waz'], fileName);
+    t.is(actual, '(c:[waz])__my_original_file.mp4');
+});
+
 test('set performer', t => {
     const fileName = '(c:[woz])__file.mp4';
     const actual = renamerHelper.setPerformerNames(['olebrumm'], fileName);
@@ -104,10 +110,16 @@ test('clean file name without anything set', t => {
     t.is(actual, 'my.file.mp4');
 });
 
-test('clean file name without title', t => {
+test('clean file name with performer and category, but without title', t => {
     const fileName = '(p:noff)_(c:[waz])__my.file.mp4';
     const actual = renamerHelper.cleanFilePath(fileName);
     t.is(actual, 'my.file_noff_[waz].mp4');
+});
+
+test('clean file name with underscored name and category, but without title', t => {
+    const fileName = '(c:[waz])__my_underscored_file.mp4';
+    const actual = renamerHelper.cleanFilePath(fileName);
+    t.is(actual, 'my_underscored_file_[waz].mp4');
 });
 
 test('clean file path without title and spaces in name', t => {
@@ -121,7 +133,6 @@ test('clean file name with double underscore in folder name', t => {
     const actual = renamerHelper.cleanFilePath(fileName);
     t.is(actual, '/woo/__waa/wii/wobzy.bobzy_ole.b_noff_[wiz].mp4');
 });
-
 
 test('indexify without index', t => {
     const fileName = 'foo-bar.mp4';
