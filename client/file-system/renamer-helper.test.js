@@ -74,6 +74,12 @@ test('keep underscores in original title when no new title is set', t => {
     t.is(actual, '(c:[waz])__my_original_file.mp4');
 });
 
+test('category with dash', t => {
+    const fileName = 'my_original_file.mp4';
+    const actual = renamerHelper.setCategories(['waz-woz', 'wiz'], fileName);
+    t.is(actual, '(c:[waz-woz][wiz])__my_original_file.mp4');
+});
+
 test('set performer', t => {
     const fileName = '(c:[woz])__file.mp4';
     const actual = renamerHelper.setPerformerNames(['olebrumm'], fileName);

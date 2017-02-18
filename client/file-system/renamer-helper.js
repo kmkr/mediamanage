@@ -3,7 +3,7 @@ const path = require('path');
 
 const TITLE = /\(t:([^\)]+)\)/;
 const PERFORMERS = /\(p:([\w\._]+)\)/;
-const CATEGORIES = /\(c:([\[\w\]]+)\)/;
+const CATEGORIES = /\(c:([\[\w\-\]]+)\)/;
 
 function hasTitle(fileName) {
     return fileName.match(TITLE);
