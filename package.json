@@ -15,6 +15,7 @@
     "eslint": "^3.5.0",
     "fs-tools": "^0.2.11",
     "left-pad": "^1.1.2",
+    "minimatch": "^3.0.3",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.4",
     "table": "^3.8.0",

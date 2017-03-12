@@ -1,6 +1,7 @@
 const chalk = require('vorpal')().chalk;
 const path = require('path');
 const leftPad = require('left-pad');
+const minimatch = require('minimatch');
 
 const fileFinder = require('../../file-system/finder');
 const removeCurrentWdHelper = require('../../helpers/remove-current-wd');
@@ -13,13 +14,13 @@ function getLongestDirLength(relativeFilePaths) {
         .reverse()[0] || 0;
 }
 
-module.exports = (filter = '') => {
+module.exports = (filter = '*') => {
     const allRelativeFilePaths = fileFinder
         .mediaFiles({ recursive: true })
         .map(removeCurrentWdHelper);
 
     const relevantRelativeFilePaths = allRelativeFilePaths
-        .filter(relativeFileName => relativeFileName.toLowerCase().match(filter.toLowerCase()));
+        .filter(relativeFileName => minimatch(relativeFileName, filter, { nocase: true }));
 
     const longestDirLength = getLongestDirLength(relevantRelativeFilePaths);
     const indexLeftPad = `${relevantRelativeFilePaths.length}`.length;

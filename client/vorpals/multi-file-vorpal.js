@@ -23,7 +23,7 @@ module.exports = function (onGoToFile) {
     logger.log('\n');
 
     vorpal
-        .command('l [filter]', 'List media')
+        .command('l [filter]', 'List media. Filter is a minimatch pattern. Defaults to "*".')
         .action(({ filter }) => {
             fileNamesLogger(filter);
             return Promise.resolve();
