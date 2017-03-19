@@ -62,8 +62,8 @@ function run(onComplete) {
             }, function ({ confirmDelete }) {
                 if (confirmDelete) {
                     fileDeleter(currentFilePathStore.get());
-                    onComplete();
                 }
+                onComplete();
                 return Promise.resolve();
             });
         });
