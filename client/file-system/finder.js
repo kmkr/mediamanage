@@ -30,16 +30,16 @@ function allFiles({ dirPath = process.cwd(), recursive = false } = {}) {
 
 exports.allFiles = allFiles;
 
-exports.mediaFiles = ({ dirPath = process.cwd(), recursive = false }) => {
+exports.mediaFiles = ({ dirPath = process.cwd(), recursive = false, filter = '' }) => {
     return allFiles({ dirPath, recursive }).filter(filePath => {
-        return isAudio(filePath) || isVideo(filePath);
+        return (isAudio(filePath) || isVideo(filePath)) && filePath.includes(filter);
     });
 };
 
-exports.video = ({ dirPath = process.cwd(), recursive = false } = {}) => {
-    return allFiles({ dirPath, recursive }).filter(isVideo);
+exports.video = ({ dirPath = process.cwd(), recursive = false, filter = '' } = {}) => {
+    return allFiles({ dirPath, recursive, filter }).filter(isVideo);
 };
 
-exports.audio = ({ dirPath = process.cwd(), recursive = false } = {}) => {
-    return allFiles({ dirPath, recursive }).filter(isAudio);
+exports.audio = ({ dirPath = process.cwd(), recursive = false, filter = '' } = {}) => {
+    return allFiles({ dirPath, recursive, filter }).filter(isAudio);
 };
