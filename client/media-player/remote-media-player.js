@@ -13,7 +13,6 @@ exports.play = filePath => {
     const fileName = path.parse(filePath).base;
     const url = `http://${hostname}:${port}/play?wd=${querystring.escape(wd)}&file=${querystring.escape(fileName)}`;
     http.get(url, res => {
-        logger.log(`Got response: ${res.statusCode}`);
         res.resume();
     }).on('error', (e) => {
         logger.log(`Got error: ${e.message}`);
@@ -23,7 +22,6 @@ exports.play = filePath => {
 exports.stop = () => {
     const url = `http://${hostname}:${port}/stop`;
     http.get(url, res => {
-        logger.log(`Got response: ${res.statusCode}`);
         res.resume();
     }).on('error', (e) => {
         logger.log(`Got error: ${e.message}`);
