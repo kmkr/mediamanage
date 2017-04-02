@@ -3,10 +3,9 @@ const path = require('path');
 
 const config = require('../config');
 const touchFile = require('../file-system/toucher');
-const fileFinder = require('../file-system/finder');
 const { cleanFilePath } = require('../file-system/renamer-helper');
 
-module.exports = vorpalInstance => (
+module.exports = (vorpalInstance, label) => (
     new Promise((resolve, reject) => {
         const noDownloadPath = config.nodownload.path;
         const reasons = config.nodownload.reasons;
@@ -19,14 +18,6 @@ module.exports = vorpalInstance => (
             return reject(`nodownloadpath must be absolute. Was ${noDownloadPath}`);
         }
 
-        const filePaths = fileFinder.video();
-
-        if (!filePaths.length) {
-            return reject('No videos found');
-        }
-
-        const filePath = filePaths[0];
-
         vorpalInstance.activeCommand.prompt({
             message: 'Enter reason',
             type: 'list',
@@ -34,8 +25,8 @@ module.exports = vorpalInstance => (
             choices: reasons
         }, function ({ reason }) {
             if (reason) {
-                const extName = path.parse(filePath).ext;
-                const cleanedFileName = cleanFilePath(path.parse(filePath).base);
+                const extName = path.parse(label).ext;
+                const cleanedFileName = cleanFilePath(path.parse(label).base);
                 const filePathToTouch = `${noDownloadPath}/${cleanedFileName.replace(extName, `_${reason}`)}`;
                 touchFile(filePathToTouch);
             }

@@ -40,7 +40,15 @@ module.exports = function (onGoToFile) {
 
     vorpal
         .command('nodl', 'Add to no download')
-        .action(() => noDownload(vorpal));
+        .action(() => {
+            const filePaths = fileFinder.video();
+
+            if (!filePaths.length) {
+                return Promise.reject('No videos found');
+            }
+
+            return noDownload(vorpal, filePaths[0]);
+        });
 
     vorpal
         .command('m', 'Move media')
