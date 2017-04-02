@@ -72,11 +72,11 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     }
 
     const destinationSize = destinationStats.size;
-    const ratio = Math.floor((sourceSize / destinationSize) * 100);
+    const ratio = sourceSize / destinationSize;
     logger.log(`\nProcessing ${removeCurrentWdHelper(sourceFilePath)}`);
 
     return vorpalInstance.activeCommand.prompt({
-        message: `${destFilePath} exists, what do you want to do? Source size ${sourceSize} vs destination ${destinationSize} (${ratio}%)?`,
+        message: `${destFilePath} exists, what do you want to do? Source: ${sourceSize}B, modified ${sourceStats.mtime}, created ${sourceStats.birthtime}. Destination ${destinationSize}B, modified ${destinationStats.mtime}, created ${destinationStats.birthtime}. Source is ${ratio} of the destination size.`,
         name: 'choice',
         type: 'list',
         choices: ['Indexify', 'Overwrite', 'Skip file']
