@@ -7,6 +7,7 @@ const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
 const keywordsFromCurrentWd = require('../file-system/keywords-from-current-wd');
 const moveMedia = require('../move-media/move-media');
+const undoMove = require('../move-media/undo-move');
 const cleanDirectory = require('../clean-directory');
 const fileNamesLogger = require('./multi/file-names-logger');
 
@@ -55,7 +56,12 @@ module.exports = function (onGoToFile) {
         .action(() => (
             moveMedia.all(vorpal)
                 .then(() => cleanDirectory(vorpal))
-                .then(() => process.exit())
+        ));
+
+    vorpal
+        .command('u', 'Undo move')
+        .action(() => (
+            undoMove(vorpal)
         ));
 
     vorpal

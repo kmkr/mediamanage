@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const path = require('path');
 
 const config = require('../config');
-const touchFile = require('../file-system/toucher');
+const touchFile = require('./toucher');
 const { cleanFilePath } = require('../file-system/renamer-helper');
 
 module.exports = (vorpalInstance, label) => (

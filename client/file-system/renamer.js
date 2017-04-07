@@ -3,16 +3,21 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../config.json');
 
-const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
+const printSourceDestService = require('../helpers/print-source-dest-service');
 const renamerHelper = require('./renamer-helper');
 const indexifyIfExists = require('./indexify-if-exists');
+const movedFiles = require('./moved-files-service');
 
 function rename(sourceFilePath, destFileName) {
     const destFilePath = indexifyIfExists(
         path.resolve(destFileName)
     );
     fs.renameSync(sourceFilePath, destFilePath);
-    fileSystemChangeConfirmer(sourceFilePath, destFilePath);
+    movedFiles.add({ sourceFilePath, destFilePath });
+    printSourceDestService({
+        sourceFilePaths: [sourceFilePath],
+        destFilePaths: [destFilePath]
+    });
     return destFilePath;
 }
 
@@ -24,7 +29,6 @@ exports.rename = (newFileName, filePath) => {
     const currentFileName = path.parse(sourceFilePath).name;
     const destFilePath = sourceFilePath.replace(currentFileName, newFileName);
 
-    // todo: confirm hvis filePaths er flere enn en, eventuelt innfør en "undo"
     return rename(sourceFilePath, destFilePath);
 };
 

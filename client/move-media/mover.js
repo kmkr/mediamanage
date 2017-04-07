@@ -3,19 +3,27 @@ const fs = require('fs');
 const path = require('path');
 const Promise = require('bluebird');
 
-const fileSystemChangeConfirmer = require('./file-system-change-confirmer');
+const printSourceDestService = require('../helpers/print-source-dest-service');
 const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 const logger = require('../vorpals/logger');
-const { cleanFilePath } = require('./renamer-helper');
-const indexifyIfExists = require('./indexify-if-exists');
+const { cleanFilePath } = require('../file-system/renamer-helper');
+const indexifyIfExists = require('../file-system/indexify-if-exists');
+const movedFiles = require('../file-system/moved-files-service');
 
-exports.moveAll = ({ filePaths, destDirPath, vorpalInstance }) => {
-    return Promise.reduce(filePaths, (t, filePath) => {
-        const cleanedFilePath = cleanFilePath(filePath);
-        const cleanedFileName = path.parse(cleanedFilePath).base;
+exports.moveAll = ({ filePaths, destDirPath, destDirPaths, vorpalInstance }) => {
+    return Promise.reduce(filePaths, (t, filePath, index) => {
+        let destFilePath;
+        if (destDirPath) {
+            const cleanedFilePath = cleanFilePath(filePath);
+            const cleanedFileName = path.parse(cleanedFilePath).base;
+            destFilePath = path.join(destDirPath, cleanedFileName);
+        } else {
+            destFilePath = destDirPaths[index];
+        }
+
         return prepareMove(
             filePath,
-            path.join(destDirPath, cleanedFileName),
+            destFilePath,
             vorpalInstance
         );
     }, null);
@@ -24,7 +32,6 @@ exports.moveAll = ({ filePaths, destDirPath, vorpalInstance }) => {
 function move(sourceFilePath, destFilePath) {
     return new Promise((resolve, reject) => {
         return fs.renameAsync(sourceFilePath, destFilePath)
-            .then(resolve)
             .catch(e => {
                 if (e.code === 'EXDEV') {
                     let size = fs.statSync(sourceFilePath).size;
@@ -45,6 +52,10 @@ function move(sourceFilePath, destFilePath) {
                 } else {
                     return reject(e);
                 }
+            })
+            .then(() => {
+                movedFiles.add({ sourceFilePath, destFilePath });
+                resolve();
             });
     });
 }
@@ -64,7 +75,10 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     } catch (err) {
         if (err.code === 'ENOENT') {
             return move(sourceFilePath, destFilePath).then(() => {
-                fileSystemChangeConfirmer(sourceFilePath, destFilePath);
+                printSourceDestService({
+                    sourceFilePaths: [sourceFilePath],
+                    destFilePaths: [destFilePath]
+                });
             });
         }
 
@@ -84,12 +98,12 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         if (choice === 'Indexify') {
             const indexifiedDestFilePath = indexifyIfExists(destFilePath);
             return move(sourceFilePath, indexifiedDestFilePath).then(() => {
-                fileSystemChangeConfirmer(sourceFilePath, indexifiedDestFilePath);
+                printSourceDestService(sourceFilePath, indexifiedDestFilePath);
             });
         } else if (choice === 'Overwrite') {
             return move(sourceFilePath, destFilePath).then(() => {
                 logger.log('Moved from / to (replaced existing file):');
-                fileSystemChangeConfirmer(sourceFilePath, destFilePath);
+                printSourceDestService(sourceFilePath, destFilePath);
             });
         } else {
             logger.log(`Will not replace ${destFilePath}, continuing ...`);

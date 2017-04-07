@@ -1,5 +1,13 @@
 module.exports = filePath => {
-    const cwd = process.cwd();
+    let cwd;
+    try {
+        cwd = process.cwd();
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            return filePath;
+        }
+        throw err;
+    }
     if (filePath.includes(cwd)) {
         return filePath
             .replace(cwd, '')
