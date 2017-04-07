@@ -10,7 +10,7 @@ module.exports = function (vorpal) {
         .autocomplete(keywordsFromCurrentWd())
         .action(args => {
             const title = args.title.join('.');
-            const newPath = fileRenamer.setTitle(title, [currentFilePathStore.get()])[0];
+            const [newPath] = fileRenamer.setTitle(title, [currentFilePathStore.get()]);
 
             currentFilePathStore.set(newPath);
             return Promise.resolve();

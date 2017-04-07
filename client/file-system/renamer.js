@@ -24,31 +24,34 @@ exports.rename = (newFileName, filePath) => {
     const currentFileName = path.parse(sourceFilePath).name;
     const destFilePath = sourceFilePath.replace(currentFileName, newFileName);
 
+    // todo: confirm hvis filePaths er flere enn en, eventuelt innfør en "undo"
     return rename(sourceFilePath, destFilePath);
 };
 
 exports.setTitle = (title, filePaths) => {
     return filePaths.map(filePath => {
-        assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
-
         const newFileName = renamerHelper.setTitle(title, filePath);
         return rename(filePath, newFileName);
     });
 };
 
-exports.setPerformerNames = (performerNames, filePath) => {
-    assert(performerNames.constructor === Array, `Names must be an array. Was ${performerNames}`);
-    assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
+exports.setPerformerNames = (performerNames, filePaths) => {
+    assert(Array.isArray(performerNames), `Names must be an array. Was ${performerNames}`);
+    assert(Array.isArray(filePaths), `File paths must be an array. Was ${filePaths}`);
 
-    const newFileName = renamerHelper.setPerformerNames(performerNames, filePath);
-    return rename(filePath, newFileName);
+    return filePaths.map(filePath => {
+        const newFileName = renamerHelper.setPerformerNames(performerNames, filePath);
+        return rename(filePath, newFileName);
+    });
 };
 
-exports.setCategories = (categories, filePath) => {
-    assert(categories.constructor === Array, `Categories must be an array. Was ${categories}`);
-    assert(path.isAbsolute(filePath), `File path must be absolute. Was: ${filePath}`);
+exports.setCategories = (categories, filePaths) => {
+    assert(Array.isArray(categories), `Categories must be an array. Was ${categories}`);
+    assert(Array.isArray(filePaths), `File paths must be an array. Was ${filePaths}`);
 
-    const sortedCategories = config.categories.filter(category => categories.includes(category));
-    const newFileName = renamerHelper.setCategories(sortedCategories, filePath);
-    return rename(filePath, newFileName);
+    return filePaths.map(filePath => {
+        const sortedCategories = config.categories.filter(category => categories.includes(category));
+        const newFileName = renamerHelper.setCategories(sortedCategories, filePath);
+        return rename(filePath, newFileName);
+    });
 };

@@ -9,11 +9,11 @@ module.exports = (performerNamesAndCategories, destFilePath) => {
     let filePath = destFilePath;
 
     if (performerNames.length) {
-        filePath = fileRenamer.setPerformerNames(performerNames, filePath);
+        [filePath] = fileRenamer.setPerformerNames(performerNames, [filePath]);
         performerNameList.updateWith(performerNames);
     }
     if (categories.length) {
-        filePath = fileRenamer.setCategories(categories, filePath);
+        [filePath] = fileRenamer.setCategories(categories, [filePath]);
     }
 
     return filePath;

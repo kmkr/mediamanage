@@ -14,7 +14,7 @@ module.exports = function (vorpal) {
                 choices: config.categories
             }).then(({ categories }) => {
                 if (categories && categories.length) {
-                    const newPath = fileRenamer.setCategories(categories, currentFilePathStore.get());
+                    const [newPath] = fileRenamer.setCategories(categories, [currentFilePathStore.get()]);
                     currentFilePathStore.set(newPath);
                 } else {
                     logger.log('No category set');

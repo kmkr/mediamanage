@@ -17,7 +17,7 @@ module.exports = function (vorpal) {
         })
         .action(args => {
             if (args.newName) {
-                const newPath = fileRenamer.rename(args.newName, currentFilePathStore.get());
+                const [newPath] = fileRenamer.rename(args.newName, [currentFilePathStore.get()]);
                 currentFilePathStore.set(newPath);
             } else {
                 logger.log('No rename');
