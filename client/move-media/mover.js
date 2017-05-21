@@ -88,22 +88,32 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     const destinationSize = destinationStats.size;
     const ratio = sourceSize / destinationSize;
     logger.log(`\nProcessing ${removeCurrentWdHelper(sourceFilePath)}`);
+    logger.log(`${destFilePath} exists, what do you want to do?`);
+    logger.log(`Src: ${sourceSize}B, modified ${sourceStats.mtime}, created ${sourceStats.birthtime}.`);
+    logger.log(`Dst: ${destinationSize}B, modified ${destinationStats.mtime}, created ${destinationStats.birthtime}`);
+    logger.log(`Source is ${ratio} of the destination size.`);
 
     return vorpalInstance.activeCommand.prompt({
-        message: `${destFilePath} exists, what do you want to do? Source: ${sourceSize}B, modified ${sourceStats.mtime}, created ${sourceStats.birthtime}. Destination ${destinationSize}B, modified ${destinationStats.mtime}, created ${destinationStats.birthtime}. Source is ${ratio} of the destination size.`,
-        name: 'choice',
+        message: 'What do you want to do?',
         type: 'list',
+        name: 'choice',
         choices: ['Indexify', 'Overwrite', 'Skip file']
     }).then(({ choice }) => {
         if (choice === 'Indexify') {
             const indexifiedDestFilePath = indexifyIfExists(destFilePath);
             return move(sourceFilePath, indexifiedDestFilePath).then(() => {
-                printSourceDestService(sourceFilePath, indexifiedDestFilePath);
+                printSourceDestService({
+                    sourceFilePaths: [sourceFilePath],
+                    destFilePaths: [destFilePath]
+                });
             });
         } else if (choice === 'Overwrite') {
             return move(sourceFilePath, destFilePath).then(() => {
                 logger.log('Moved from / to (replaced existing file):');
-                printSourceDestService(sourceFilePath, destFilePath);
+                printSourceDestService({
+                    sourceFilePaths: [sourceFilePath],
+                    destFilePaths: [destFilePath]
+                });
             });
         } else {
             logger.log(`Will not replace ${destFilePath}, continuing ...`);
