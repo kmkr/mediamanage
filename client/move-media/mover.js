@@ -60,6 +60,21 @@ function move(sourceFilePath, destFilePath) {
     });
 }
 
+function shouldAutoIndexify(sourceStats, destinationStats) {
+    const oneHourInMilliseconds = 60 * 60 * 1000;
+    return Math.abs(sourceStats.mtime.getTime() - destinationStats.mtime.getTime()) < oneHourInMilliseconds;
+}
+
+function indexify(sourceFilePath, destFilePath) {
+    const indexifiedDestFilePath = indexifyIfExists(destFilePath);
+    return move(sourceFilePath, indexifiedDestFilePath).then(() => {
+        printSourceDestService({
+            sourceFilePaths: [sourceFilePath],
+            destFilePaths: [destFilePath]
+        });
+    });
+}
+
 function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     assert(path.isAbsolute(sourceFilePath) && path.extname(sourceFilePath), `Source file must be an absolute pathed file. Was ${sourceFilePath}`);
     assert(path.isAbsolute(destFilePath) && path.extname(destFilePath), `Dest file must be an absolute pathed file. Was ${destFilePath}`);
@@ -88,10 +103,17 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     const destinationSize = destinationStats.size;
     const ratio = sourceSize / destinationSize;
     logger.log(`\nProcessing ${removeCurrentWdHelper(sourceFilePath)}`);
+
+    const autoIndexify = shouldAutoIndexify(sourceStats, destinationStats);
+
+    if (autoIndexify) {
+        return indexify(sourceFilePath, destFilePath);
+    }
+
     logger.log(`${destFilePath} exists, what do you want to do?`);
-    logger.log(`Src: ${sourceSize}B, modified ${sourceStats.mtime}, created ${sourceStats.birthtime}.`);
-    logger.log(`Dst: ${destinationSize}B, modified ${destinationStats.mtime}, created ${destinationStats.birthtime}`);
-    logger.log(`Source is ${ratio} of the destination size.`);
+    logger.log(`Src: Modified ${sourceStats.mtime}, created ${sourceStats.birthtime}, ${sourceSize}B`);
+    logger.log(`Dst: Modified ${destinationStats.mtime}, created ${destinationStats.birthtime}, ${destinationSize}B`);
+    logger.log(`Source is ${Math.round(ratio * 100) / 100} of the destination size.`);
 
     return vorpalInstance.activeCommand.prompt({
         message: 'What do you want to do?',
@@ -100,13 +122,7 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         choices: ['Indexify', 'Overwrite', 'Skip file']
     }).then(({ choice }) => {
         if (choice === 'Indexify') {
-            const indexifiedDestFilePath = indexifyIfExists(destFilePath);
-            return move(sourceFilePath, indexifiedDestFilePath).then(() => {
-                printSourceDestService({
-                    sourceFilePaths: [sourceFilePath],
-                    destFilePaths: [destFilePath]
-                });
-            });
+            return indexify(sourceFilePath, destFilePath);
         } else if (choice === 'Overwrite') {
             return move(sourceFilePath, destFilePath).then(() => {
                 logger.log('Moved from / to (replaced existing file):');
