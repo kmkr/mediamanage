@@ -1,6 +1,7 @@
 const config = require('../config.json');
 
 const logger = require('../vorpals/logger');
+const removeCurrentWd = require('../helpers/remove-current-wd');
 
 function getMediaPlayer() {
     if (!config.mediaPlayer) {
@@ -33,6 +34,7 @@ function getMediaPlayer() {
 const mediaPlayer = getMediaPlayer();
 
 exports.play = filePath => {
+    logger.log(`Playing ${removeCurrentWd(filePath)}`);
     mediaPlayer.play(filePath);
 };
 
