@@ -1,6 +1,11 @@
 const rimraf = require('rimraf');
 
 const fileFinder = require('../file-system/finder');
+const logger = require('../vorpals/logger');
+
+function clean(rootDir) {
+    rimraf.sync(rootDir);
+}
 
 module.exports = vorpalInstance => {
     const rootDir = process.cwd();
@@ -10,7 +15,14 @@ module.exports = vorpalInstance => {
     const audioFileNames = fileFinder.audio({ dirPath: rootDir, recursive });
 
     filePaths
-        .forEach(filePath => vorpalInstance.log(filePath));
+        .forEach(filePath => logger.log(filePath));
+
+    if (filePaths.length === 0) {
+        logger.log(`Removing ${rootDir}`);
+        clean(rootDir);
+        return Promise.resolve();
+    }
+
     const message = `${filePaths.length} file(s) left (${videoFileNames.length} video, ${audioFileNames.length} audio). Delete?`;
 
     return vorpalInstance.activeCommand.prompt({
@@ -22,7 +34,8 @@ module.exports = vorpalInstance => {
         if (!confirmDelete) {
             return;
         }
-        rimraf.sync(rootDir);
-        vorpalInstance.log(`Removed ${filePaths.length} file(s) and containing dir`);
+
+        clean(rootDir, filePaths);
+        logger.log(`Removed ${filePaths.length} file(s) and containing dir`);
     });
 };
