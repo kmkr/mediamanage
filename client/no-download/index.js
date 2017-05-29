@@ -27,7 +27,7 @@ module.exports = (vorpalInstance, label) => (
             if (reason) {
                 const extName = path.parse(label).ext;
                 const cleanedFileName = cleanFilePath(path.parse(label).base);
-                const filePathToTouch = `${noDownloadPath}/${cleanedFileName.replace(extName, `_${reason}`)}`;
+                const filePathToTouch = path.join(noDownloadPath, cleanedFileName.replace(extName, `_${reason}`));
                 touchFile(filePathToTouch);
             }
             resolve();
