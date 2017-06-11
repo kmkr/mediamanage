@@ -1,33 +1,8 @@
 const assert = require('assert');
-const table = require('table/dist/table');
 
 const logger = require('../vorpals/logger');
-const removeCurrentWdHelper = require('../helpers/remove-current-wd');
-
-const configTwoCols = {
-    columns: {
-        0: {
-            width: 75
-        },
-        1: {
-            width: 75
-        }
-    }
-};
-
-const configThreeCols = {
-    columns: {
-        0: {
-            width: 20
-        },
-        1: {
-            width: 65
-        },
-        2: {
-            width: 65
-        }
-    }
-};
+const removeCurrentWdHelper = require('./remove-current-wd');
+const findCommonPartsInStrings = require('./find-common-parts-in-strings');
 
 module.exports = ({ sourceFilePaths, destFilePaths }) => {
     assert(Array.isArray(sourceFilePaths), 'Source paths must be an array');
@@ -35,7 +10,11 @@ module.exports = ({ sourceFilePaths, destFilePaths }) => {
     assert(sourceFilePaths.length === destFilePaths.length, 'Source and dest path length must be equal');
     assert(sourceFilePaths.length > 0, 'Paths cannot be empty');
 
-    const config = sourceFilePaths.length === 1 ? configTwoCols : configThreeCols;
+    const commonPart = findCommonPartsInStrings([
+        ...sourceFilePaths,
+        ...destFilePaths
+    ]);
+
     const data = sourceFilePaths.map((sourcePath, index) => {
         const row = [
             removeCurrentWdHelper(sourcePath),
@@ -47,5 +26,8 @@ module.exports = ({ sourceFilePaths, destFilePaths }) => {
         return row;
     });
 
-    logger.log(table(data, config));
+    sourceFilePaths.forEach((sourcePath, index) => {
+        logger.log(`From ${sourcePath.replace(commonPart, '')}`);
+        logger.log(`To   ${destFilePaths[index].replace(commonPart, '')}`);
+    });
 };
