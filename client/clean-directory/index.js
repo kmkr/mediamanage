@@ -1,4 +1,5 @@
 const rimraf = require('rimraf');
+const chalk = require('vorpal')().chalk;
 
 const fileFinder = require('../file-system/finder');
 const logger = require('../vorpals/logger');
@@ -18,7 +19,7 @@ module.exports = vorpalInstance => {
         .forEach(filePath => logger.log(filePath));
 
     if (filePaths.length === 0) {
-        logger.log(`Removing ${rootDir}`);
+        logger.log(`Removing ${chalk.red(rootDir)}`);
         clean(rootDir);
         return Promise.resolve();
     }
