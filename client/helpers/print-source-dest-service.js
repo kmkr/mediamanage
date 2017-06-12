@@ -1,7 +1,6 @@
 const assert = require('assert');
 
 const logger = require('../vorpals/logger');
-const removeCurrentWdHelper = require('./remove-current-wd');
 const findCommonPartsInStrings = require('./find-common-parts-in-strings');
 
 module.exports = ({ sourceFilePaths, destFilePaths }) => {
@@ -14,17 +13,6 @@ module.exports = ({ sourceFilePaths, destFilePaths }) => {
         ...sourceFilePaths,
         ...destFilePaths
     ]);
-
-    const data = sourceFilePaths.map((sourcePath, index) => {
-        const row = [
-            removeCurrentWdHelper(sourcePath),
-            removeCurrentWdHelper(destFilePaths[index])
-        ];
-        if (sourceFilePaths.length > 1) {
-            data.unshift(index + 1);
-        }
-        return row;
-    });
 
     sourceFilePaths.forEach((sourcePath, index) => {
         logger.log(`From ${sourcePath.replace(commonPart, '')}`);
