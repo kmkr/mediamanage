@@ -44,11 +44,22 @@ module.exports = function (onGoToFile) {
         .action(() => {
             const filePaths = fileFinder.video();
 
-            if (!filePaths.length) {
-                return Promise.reject('No videos found');
+            if (filePaths.length) {
+                return noDownload(vorpal, filePaths[0]);
             }
 
-            return noDownload(vorpal, filePaths[0]);
+            return vorpal.activeCommand.prompt({
+                message: 'Set title',
+                type: 'input',
+                name: 'title'
+            }, ({ title }) => {
+                console.log(title);
+                if (title) {
+                    return noDownload(vorpal, title);
+                }
+
+                return Promise.resolve();
+            });
         });
 
     vorpal
