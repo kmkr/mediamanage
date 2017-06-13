@@ -1,4 +1,5 @@
 const assert = require('assert');
+const chalk = require('vorpal')().chalk;
 
 const logger = require('../vorpals/logger');
 const findCommonPartsInStrings = require('./find-common-parts-in-strings');
@@ -14,8 +15,13 @@ module.exports = ({ sourceFilePaths, destFilePaths }) => {
         ...destFilePaths
     ]);
 
+    function clean(input) {
+        return input
+            .replace(commonPart, '')
+            .replace(/^\//, '');
+    }
+
     sourceFilePaths.forEach((sourcePath, index) => {
-        logger.log(`From ${sourcePath.replace(commonPart, '')}`);
-        logger.log(`To   ${destFilePaths[index].replace(commonPart, '')}`);
+        logger.log(`${chalk.yellow(clean(sourcePath))} → ${chalk.green(clean(destFilePaths[index]))}`);
     });
 };
