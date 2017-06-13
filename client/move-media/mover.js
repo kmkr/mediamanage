@@ -70,7 +70,7 @@ function indexify(sourceFilePath, destFilePath) {
     return move(sourceFilePath, indexifiedDestFilePath).then(() => {
         printSourceDestService({
             sourceFilePaths: [sourceFilePath],
-            destFilePaths: [destFilePath]
+            destFilePaths: [indexifiedDestFilePath]
         });
     });
 }
