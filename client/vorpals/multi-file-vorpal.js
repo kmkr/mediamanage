@@ -10,6 +10,7 @@ const moveMedia = require('../move-media/move-media');
 const undoMove = require('../move-media/undo-move');
 const cleanDirectory = require('../clean-directory');
 const fileNamesLogger = require('./multi/file-names-logger');
+const searchForExistingMediaService = require('../file-system/search-for-existing-media-service');
 
 const logger = require('./logger');
 
@@ -36,6 +37,7 @@ module.exports = function (onGoToFile) {
         .action(args => {
             const title = args.title.join('.');
             fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }));
+            searchForExistingMediaService(title);
             return Promise.resolve();
         });
 
