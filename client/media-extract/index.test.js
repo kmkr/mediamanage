@@ -1,8 +1,6 @@
-const test = require('ava');
-
 const mediaExtract = require('./index');
 
-test('validate', t => {
+test('validate', () => {
     const arg = {
         from: 0,
         to: 1,
@@ -10,10 +8,10 @@ test('validate', t => {
             'ole.brumm'
         ]
     };
-    t.true(mediaExtract.validate(arg));
+    expect(mediaExtract.validate(arg)).toBe(true);
 });
 
-test('support for string input', t => {
+test('support for string input', () => {
     const arg = {
         from: '1.2.3',
         to: '1.2.4',
@@ -21,10 +19,10 @@ test('support for string input', t => {
             'ole.brumm'
         ]
     };
-    t.true(mediaExtract.validate(arg));
+    expect(mediaExtract.validate(arg)).toBe(true);
 });
 
-test('invalid when from is before to', t => {
+test('invalid when from is before to', () => {
     const arg = {
         from: 1,
         to: 0,
@@ -32,11 +30,11 @@ test('invalid when from is before to', t => {
             'ole.brumm'
         ]
     };
-    t.true(!mediaExtract.validate(arg));
+    expect(!mediaExtract.validate(arg)).toBe(true);
 });
 
 
-test('invalid when from is before to with strings', t => {
+test('invalid when from is before to with strings', () => {
     const arg = {
         from: '1.2.3',
         to: '1.2.2',
@@ -44,6 +42,6 @@ test('invalid when from is before to with strings', t => {
             'ole.brumm'
         ]
     };
-    t.true(!mediaExtract.validate(arg));
+    expect(!mediaExtract.validate(arg)).toBe(true);
 });
 

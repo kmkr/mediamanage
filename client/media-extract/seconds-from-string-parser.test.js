@@ -1,15 +1,13 @@
-const test = require('ava');
-
 const parser = require('./seconds-from-string-parser');
 
-test('parse seconds', t => {
-    t.true(parser('60') === 60);
+test('parse seconds', () => {
+    expect(parser('60') === 60).toBe(true);
 });
 
-test('parse minutes', t => {
-    t.true(parser('1.20') === 80);
+test('parse minutes', () => {
+    expect(parser('1.20') === 80).toBe(true);
 });
 
-test('parse hours', t => {
-    t.true(parser('1.1.1') === 3661);
+test('parse hours', () => {
+    expect(parser('1.1.1') === 3661).toBe(true);
 });
