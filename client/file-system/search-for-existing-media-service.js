@@ -33,28 +33,47 @@ function allFiles() {
     ), []);
 }
 
-function isMatch(fileName, thisTitle) {
-    const fileTitle = getTitle(fileName);
-    return fileTitle.includes(thisTitle) ||
-        fileTitle.replace(/and/g, '&').includes(thisTitle) ||
-        fileTitle.replace(/&/g, 'and').includes(thisTitle) ||
-        fileTitle.replace(/'/g, '').includes(thisTitle) ||
-        thisTitle.replace(/'/g, '').includes(fileTitle);
+function isMatch(thisLabel, otherLabel) {
+    return otherLabel.includes(thisLabel) ||
+        otherLabel.replace(/and/g, '&').includes(thisLabel) ||
+        otherLabel.replace(/&/g, 'and').includes(thisLabel) ||
+        otherLabel.replace(/'/g, '').includes(thisLabel) ||
+        thisLabel.replace(/'/g, '').includes(otherLabel);
 }
 
-module.exports = thisTitle => {
-    if (!fileCache) {
-        fileCache = allFiles();
-    }
-
-    const hits = fileCache.filter(filePath => (
-        isMatch(path.parse(filePath).name.toLowerCase(), thisTitle.toLowerCase())
-    ));
-
+function log(hits) {
     if (hits.length) {
         logger.log(chalk.red('Found files matching this title:\n'));
     }
     hits.forEach(hit => {
         logger.log(hit);
     });
+}
+
+exports.byTitle = thisTitle => {
+    if (!fileCache) {
+        fileCache = allFiles();
+    }
+
+    const hits = fileCache.filter(filePath => {
+        const thatFileName = path.parse(filePath).name.toLowerCase();
+        const thatTitle = getTitle(thatFileName);
+        return isMatch(thisTitle.toLowerCase(), thatTitle);
+    });
+
+    log(hits);
+};
+
+exports.byFileName = thisFilePath => {
+    if (!fileCache) {
+        fileCache = allFiles();
+    }
+
+    const thisFileName = path.parse(thisFilePath).name.toLowerCase();
+    const hits = fileCache.filter(filePath => {
+        const thatFileName = path.parse(filePath).name.toLowerCase();
+        return isMatch(thisFileName, thatFileName);
+    });
+
+    log(hits);
 };

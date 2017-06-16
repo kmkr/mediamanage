@@ -37,7 +37,7 @@ module.exports = function (onGoToFile) {
         .action(args => {
             const title = args.title.join('.');
             fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }));
-            searchForExistingMediaService(title);
+            searchForExistingMediaService.byTitle(title);
             return Promise.resolve();
         });
 

@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = (strings) => {
+module.exports = strings => {
     if (!strings.length || strings.length === 1) {
         return strings;
     }

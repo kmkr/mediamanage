@@ -15,6 +15,7 @@ const fileDeleter = require('../file-system/deleter');
 
 const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
+const searchForExistingMediaService = require('../file-system/search-for-existing-media-service');
 
 function getFormattedFileName(filePath) {
     const fileName = removeCurrentWd(filePath);
@@ -85,6 +86,8 @@ function run(onComplete) {
 module.exports = function (filePath, onComplete) {
     currentFilePathStore.set(filePath);
     mediaPlayer.play(currentFilePathStore.get());
+
+    searchForExistingMediaService.byFileName(filePath);
 
     return run(() => {
         mediaPlayer.stop();
