@@ -5,6 +5,8 @@ const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
 const categoriesAndPerformerNamesHandler = require('./categories-and-performer-names-handler');
 
+let previousToValue = '';
+
 module.exports = (vorpal, extractOption) => {
     const { commandKey, destination, type } = extractOption;
     const commandPrompt = `${commandKey} <from> <to> [performerNamesAndCategories...]`;
@@ -19,10 +21,14 @@ module.exports = (vorpal, extractOption) => {
             if (!isValid) {
                 logger.log('Invalid input');
             }
+
+            previousToValue = to;
             return isValid;
         })
         .autocomplete({
-            data: () => config.categories.concat(performerNameList.list())
+            data: () => [previousToValue]
+                .concat(config.categories)
+                .concat(performerNameList.list())
         })
         .action(({ from, to, performerNamesAndCategories }) => {
             const fn = type === 'video' ? extractVideo : extractAudio;
