@@ -33,21 +33,26 @@ function allFiles() {
     ), []);
 }
 
+function clean(label) {
+    return label
+        .replace(/&/g, 'and')
+        .replace(/'/g, '');
+}
+
 function isMatch(thisLabel, otherLabel) {
-    return otherLabel.includes(thisLabel) ||
-        otherLabel.replace(/and/g, '&').includes(thisLabel) ||
-        otherLabel.replace(/&/g, 'and').includes(thisLabel) ||
-        otherLabel.replace(/'/g, '').includes(thisLabel) ||
-        thisLabel.replace(/'/g, '').includes(otherLabel);
+    const cleanedThisLabel = clean(thisLabel);
+    const cleanedOtherLabel = clean(otherLabel);
+    return cleanedThisLabel.includes(cleanedOtherLabel) || cleanedOtherLabel.includes(cleanedThisLabel);
 }
 
 function log(hits) {
     if (hits.length) {
-        logger.log(chalk.red('Found files matching this title:\n'));
+        logger.log(chalk.red('Found files matching this title:'));
     }
     hits.forEach(hit => {
         logger.log(hit);
     });
+    logger.log('\n');
 }
 
 exports.byTitle = thisTitle => {
