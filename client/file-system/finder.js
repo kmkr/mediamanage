@@ -3,6 +3,7 @@ const fs = require('fs');
 // vurder https://www.npmjs.com/package/fs-extra
 const fsTools = require('fs-tools');
 const path = require('path');
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 function isAudio(filePath) {
     return filePath.match(/\.(mp3|wav|wma|flac|ogg)$/i);
@@ -22,18 +23,21 @@ function allFiles({ dirPath = process.cwd(), recursive = false } = {}) {
         fsTools.walkSync(dirPath, filePath => {
             files.push(filePath);
         });
-        return files;
+        return files
+            .sort(collator.compare);
     }
 
-    return fs.readdirSync(dirPath).map(fileName => path.resolve(process.cwd(), dirPath, fileName));
+    return fs.readdirSync(dirPath)
+        .map(fileName => path.resolve(process.cwd(), dirPath, fileName))
+        .sort(collator.compare);
 }
 
 exports.allFiles = allFiles;
 
 exports.mediaFiles = ({ dirPath = process.cwd(), recursive = false }) => {
-    return allFiles({ dirPath, recursive }).filter(filePath => {
-        return (isAudio(filePath) || isVideo(filePath));
-    });
+    return allFiles({ dirPath, recursive }).filter(filePath => (
+        isAudio(filePath) || isVideo(filePath)
+    ));
 };
 
 exports.video = ({ dirPath = process.cwd(), recursive = false, filter = '' } = {}) => {
