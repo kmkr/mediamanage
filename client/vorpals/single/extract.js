@@ -26,9 +26,13 @@ module.exports = (vorpal, extractOption) => {
             return isValid;
         })
         .autocomplete({
-            data: () => [previousToValue]
-                .concat(config.categories)
-                .concat(performerNameList.list())
+            data: input => {
+                if (input.split(' ').length > 2) {
+                    return config.categories.concat(performerNameList.list());
+                } else {
+                    return [previousToValue];
+                }
+            }
         })
         .action(({ from, to, performerNamesAndCategories }) => {
             const fn = type === 'video' ? extractVideo : extractAudio;
