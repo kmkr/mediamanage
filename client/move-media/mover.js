@@ -4,7 +4,6 @@ const path = require('path');
 const Promise = require('bluebird');
 
 const printSourceDestService = require('../helpers/print-source-dest-service');
-const removeCurrentWdHelper = require('../helpers/remove-current-wd');
 const logger = require('../vorpals/logger');
 const { cleanFilePath } = require('../file-system/renamer-helper');
 const indexifyIfExists = require('../file-system/indexify-if-exists');
@@ -102,7 +101,6 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
 
     const destinationSize = destinationStats.size;
     const ratio = sourceSize / destinationSize;
-    logger.log(`\nProcessing ${removeCurrentWdHelper(sourceFilePath)}`);
 
     const autoIndexify = shouldAutoIndexify(sourceStats, destinationStats);
 
