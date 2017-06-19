@@ -1,5 +1,5 @@
 const Vorpal = require('vorpal');
-const chalk = Vorpal().chalk;  // eslint-disable-line new-cap
+const chalk = Vorpal().chalk; // eslint-disable-line new-cap
 const path = require('path');
 const Promise = require('bluebird');
 

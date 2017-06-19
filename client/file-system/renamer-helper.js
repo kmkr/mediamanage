@@ -1,9 +1,11 @@
 const assert = require('assert');
 const path = require('path');
 
+/* eslint-disable no-useless-escape */
 const TITLE = /\(t:([^\)]+)\)/;
 const PERFORMERS = /\(p:([\w\._]+)\)/;
 const CATEGORIES = /\(c:([\[\w\-\]]+)\)/;
+/* eslint-enable no-useless-escape */
 
 function hasTitle(fileName) {
     return fileName.match(TITLE);
