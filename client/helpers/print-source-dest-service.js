@@ -24,7 +24,7 @@ module.exports = ({ sourceFilePaths, destFilePaths }) => {
     function clean(input) {
         return input
             .replace(commonPart, '')
-            .replace(/^\//, '');
+            .replace(new RegExp(`^${path.sep}`), '');
     }
 
     sourceFilePaths.forEach((sourcePath, index) => {
