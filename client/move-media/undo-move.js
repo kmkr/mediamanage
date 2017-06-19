@@ -6,7 +6,7 @@ const removeCurrentWd = require('../helpers/remove-current-wd');
 const { moveAll } = require('./mover');
 const promptCreateFolder = require('./prompt-create-folder');
 const logger = require('../vorpals/logger');
-const arrayUniqueValues = require('../helpers/array-unique-values');
+const unique = require('../helpers/array-unique-values');
 
 const TIME_THRESHOLD_MS = 5000;
 
@@ -45,7 +45,10 @@ module.exports = (vorpalInstance) => {
         const destDirPaths = indexes
             .map(index => movedFiles[index].sourceFilePath)
             .reverse();
-        const uniqueDirs = arrayUniqueValues(destDirPaths.map(destDirPath => path.parse(destDirPath).dir));
+        const uniqueDirs = destDirPaths
+            .map(destDirPath => path.parse(destDirPath).dir)
+            .sort()
+            .filter(unique);
         return Promise.reduce(uniqueDirs, (t, dir) => (
             promptCreateFolder(dir, vorpalInstance)
         ), null).then(() => {

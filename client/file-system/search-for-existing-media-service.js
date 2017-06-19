@@ -4,12 +4,9 @@ const path = require('path');
 const finder = require('./finder');
 const config = require('../config.json');
 const logger = require('../vorpals/logger');
+const unique = require('../helpers/array-unique-values');
 
 let fileCache;
-
-function unique(el, i, a) {
-    return i === a.indexOf(el);
-}
 
 // Assumes title is the first part of the file name and that parts are split by "_"
 function getTitle(fileName) {

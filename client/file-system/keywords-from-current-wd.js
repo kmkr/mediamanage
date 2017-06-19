@@ -2,6 +2,7 @@ const path = require('path');
 
 const { allFiles } = require('./finder');
 const removeCurrentWd = require('../helpers/remove-current-wd');
+const unique = require('../helpers/array-unique-values');
 
 const REPLACE_REGEXP = /[^a-z0-9]/ig;
 
@@ -20,9 +21,7 @@ module.exports = () => {
             flat.concat(toFlatten)
         ), [])
         .sort()
-        .filter((el, i, a) => (
-            i === a.indexOf(el)
-        ))
+        .filter(unique)
         .filter(keyword => keyword)
         .filter(keyword => /0-9/.test(keyword) || keyword.length > 1);
 };
