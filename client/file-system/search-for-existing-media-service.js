@@ -17,17 +17,20 @@ function getTitle(fileName) {
 }
 
 function allFiles() {
-    const sources = config.moveMediaOptions
+    const sourcePaths = config.moveMediaOptions
         .map(o => o.toDir)
         .sort()
         .filter(unique)
         .filter(filePath => fs.existsSync(filePath));
 
-    return sources.map(source => (
+    return sourcePaths.map(sourcePath => (
         finder.mediaFiles({
-            dirPath: source,
+            dirPath: sourcePath,
             recursive: true
-        })
+        }).map(filePath => ({
+            filePath,
+            sourcePath
+        }))
     )).reduce((flat, toFlatten) => (
         flat.concat(toFlatten)
     ), []);
@@ -47,10 +50,11 @@ function isMatch(thisLabel, otherLabel) {
 
 function log(hits) {
     if (hits.length) {
-        logger.log(chalk.red('Found files matching this title:'));
+        logger.log(chalk.red('Found existing files matching this file:'));
     }
     hits.forEach(hit => {
-        logger.log(hit);
+        const { filePath, sourcePath } = hit;
+        logger.log(filePath.replace(sourcePath, ''));
     });
     logger.log('\n');
 }
@@ -60,7 +64,7 @@ exports.byTitle = thisTitle => {
         fileCache = allFiles();
     }
 
-    const hits = fileCache.filter(filePath => {
+    const hits = fileCache.filter(({ filePath }) => {
         const thatFileName = path.parse(filePath).name.toLowerCase();
         const thatTitle = getTitle(thatFileName);
         return isMatch(thisTitle.toLowerCase(), thatTitle);
@@ -75,7 +79,7 @@ exports.byFileName = thisFilePath => {
     }
 
     const thisFileName = path.parse(thisFilePath).name.toLowerCase();
-    const hits = fileCache.filter(filePath => {
+    const hits = fileCache.filter(({ filePath }) => {
         const thatFileName = path.parse(filePath).name.toLowerCase();
         return isMatch(thisFileName, thatFileName);
     });
