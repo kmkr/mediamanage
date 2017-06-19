@@ -32,6 +32,13 @@ module.exports = function (onGoToFile) {
         });
 
     vorpal
+        .command('ll', 'List recursive media')
+        .action(() => {
+            fileNamesLogger('**/**');
+            return Promise.resolve();
+        });
+
+    vorpal
         .command('title <title...>', 'Set title')
         .autocomplete(keywordsFromCurrentWd())
         .action(args => {
