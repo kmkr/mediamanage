@@ -17,16 +17,22 @@ const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
 const searchForExistingMediaService = require('../file-system/search-for-existing-media-service');
 
-function getFormattedFileName(filePath) {
-    const fileName = removeCurrentWd(filePath);
-    return cleanFilePath(fileName).replace(path.parse(fileName).ext, '');
-}
-
 function run(onComplete) {
     const vorpal = new Vorpal();
 
     function setDelimiter() {
-        vorpal.delimiter(`${chalk.cyan(getFormattedFileName(currentFilePathStore.get()))} $`);
+        const filePath = currentFilePathStore.get();
+        const fileName = removeCurrentWd(filePath);
+        const cleanedFileName = cleanFilePath(fileName)
+            .replace(path.parse(fileName).ext, '');
+        const line = [
+            fileName.substring(0, 30),
+            chalk.yellow(cleanedFileName)
+        ]
+            .filter(e => e)
+            .join('/');
+
+        vorpal.delimiter(`${line} $`);
     }
 
     setDelimiter();
