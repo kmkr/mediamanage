@@ -1,3 +1,4 @@
+const chalk = require('vorpal')().chalk;
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
@@ -108,10 +109,10 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         return indexify(sourceFilePath, destFilePath);
     }
 
-    logger.log(`${destFilePath} exists, what do you want to do?`);
-    logger.log(`Src: Modified ${sourceStats.mtime}, created ${sourceStats.birthtime}, ${sourceSize}B`);
-    logger.log(`Dst: Modified ${destinationStats.mtime}, created ${destinationStats.birthtime}, ${destinationSize}B`);
-    logger.log(`Source is ${Math.round(ratio * 100) / 100} of the destination size.`);
+    logger.log(`${chalk.yellow(destFilePath)} exists, what do you want to do?`);
+    logger.log(`Src: Modified ${chalk.bold(sourceStats.mtime)}, created ${chalk.bold(sourceStats.birthtime)}, ${chalk.bold(sourceSize)}B`);
+    logger.log(`Dst: Modified ${chalk.bold(destinationStats.mtime)}, created ${chalk.bold(destinationStats.birthtime)}, ${chalk.bold(destinationSize)}B`);
+    logger.log(`Source is ${chalk.bold(Math.round(ratio * 100) / 100)} times the destination size.`);
 
     return vorpalInstance.activeCommand.prompt({
         message: 'What do you want to do?',
