@@ -120,6 +120,12 @@ test('clean file name with performer and category, but without title', () => {
     expect(actual).toBe('my.file_noff_[waz].mp4');
 });
 
+test('clean file name with performer, with indexified old title', () => {
+    const fileName = '(p:noff)__my.file_(1).mp4';
+    const actual = renamerHelper.cleanFilePath(fileName);
+    expect(actual).toBe('my.file_noff.mp4');
+});
+
 test('clean file name with underscored name and category, but without title', () => {
     const fileName = '(c:[waz])__my_underscored_file.mp4';
     const actual = renamerHelper.cleanFilePath(fileName);

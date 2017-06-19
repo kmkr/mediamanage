@@ -4,6 +4,7 @@ const path = require('path');
 const TITLE = /\(t:([^)]+)\)/;
 const PERFORMERS = /\(p:([\w._]+)\)/;
 const CATEGORIES = /\(c:([[\w\-\]]+)\)/;
+const INDEX = /_\((\d+)\)/;
 
 function hasTitle(fileName) {
     return fileName.match(TITLE);
@@ -45,7 +46,7 @@ exports.cleanFilePath = uncleanedFilePath => {
     const fileDir = path.parse(uncleanedFilePath).dir;
     const uncleanedFileName = path.parse(uncleanedFilePath).base;
     const fileExtension = path.extname(uncleanedFileName);
-    const titleIsSet = uncleanedFileName.match(TITLE);
+    const titleIsSet = hasTitle(uncleanedFileName);
 
     let cleanedFileName = uncleanedFileName
         .replace(PERFORMERS, (match, $1) => $1)
@@ -65,17 +66,21 @@ exports.cleanFilePath = uncleanedFilePath => {
     // Title is not set and the original file name will be used as title.
     // Move it to the start of the file name
     if (cleanedFileName.includes('__')) {
-        return path.join(
-            fileDir,
-            `${cleanedFileName.split('__')[1]}_${cleanedFileName.split('__')[0]}${fileExtension}`
-        );
+        let [firstPart, secondPart] = cleanedFileName.split('__'); // eslint-disable-line prefer-const
+
+        // If the original file is indexed, remove the index
+        const indexMatch = secondPart.match(INDEX);
+        if (indexMatch) {
+            secondPart = secondPart.replace(indexMatch[0], '');
+        }
+        return path.join(fileDir, `${secondPart}_${firstPart}${fileExtension}`);
     }
 
     return path.join(fileDir, cleanedFileName + fileExtension);
 };
 
 function assertNotBlank(fileName) {
-    assert(fileName, 'File name cannot be empty');
+    assert(fileName, 'File path cannot be empty');
 }
 
 exports.setTitle = (title, filePath) => {
@@ -115,13 +120,13 @@ exports.setCategories = (categories, filePath) => {
 };
 
 exports.indexify = filePath => {
-    assert(filePath, `File path cannot be empty. Was ${filePath}`);
+    assertNotBlank(filePath);
 
     const extension = path.extname(filePath);
-    const regExp = new RegExp(`\\((\\d+)\\)${extension}`);
+    const regExp = new RegExp(`${INDEX.source}${extension}`);
     if (filePath.match(regExp)) {
         return filePath.replace(regExp, (match, $1) => {
-            return `(${Number($1) + 1})${extension}`;
+            return `_(${Number($1) + 1})${extension}`;
         });
     } else {
         return filePath.replace(extension, `_(1)${extension}`);
