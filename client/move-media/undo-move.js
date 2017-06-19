@@ -6,7 +6,7 @@ const removeCurrentWd = require('../helpers/remove-current-wd');
 const { moveAll } = require('./mover');
 const promptCreateFolder = require('./prompt-create-folder');
 const logger = require('../vorpals/logger');
-const unique = require('../helpers/array-unique-values');
+const { unique } = require('../helpers/array-helper');
 
 const TIME_THRESHOLD_MS = 5000;
 

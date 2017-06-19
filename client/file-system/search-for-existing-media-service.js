@@ -4,7 +4,7 @@ const path = require('path');
 const finder = require('./finder');
 const config = require('../config.json');
 const logger = require('../vorpals/logger');
-const unique = require('../helpers/array-unique-values');
+const { flatten, unique } = require('../helpers/array-helper');
 
 let fileCache;
 
@@ -28,9 +28,7 @@ function allFiles() {
             filePath,
             sourcePath
         }))
-    )).reduce((flat, toFlatten) => (
-        flat.concat(toFlatten)
-    ), []);
+    )).reduce(flatten, []);
 }
 
 function clean(label) {
