@@ -10,8 +10,7 @@ const logger = require('../logger');
 function getLongestDirLength(relativeFilePaths) {
     return relativeFilePaths
         .map(entry => path.parse(entry).dir.length)
-        .sort()
-        .reverse()[0] || 0;
+        .reduce((prevVal, curVal) => Math.max(prevVal, curVal), 0);
 }
 
 module.exports = (filter = '*') => {
