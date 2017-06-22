@@ -41,6 +41,10 @@ module.exports = (vorpal, extractOption) => {
             }).then(({ destFilePath }) => {
                 logger.log('Extraction complete');
 
+                setTimeout(() => {
+                    vorpal.ui.input(`${commandKey} ${previousToValue} `);
+                }, 10);
+
                 if (performerNamesAndCategories) {
                     categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath);
                 }
