@@ -62,7 +62,6 @@ module.exports = function (onGoToFile) {
                 type: 'input',
                 name: 'title'
             }, ({ title }) => {
-                console.log(title);
                 if (title) {
                     return noDownload(vorpal, title);
                 }
