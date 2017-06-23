@@ -1,7 +1,5 @@
 const fs = require('fs');
-// todo: fjern denne avhengigheten (utdatert)
-// vurder https://www.npmjs.com/package/fs-extra
-const fsTools = require('fs-tools');
+const klawSync = require('klaw-sync');
 const path = require('path');
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -18,18 +16,16 @@ function allFiles({ dirPath = process.cwd(), recursive = false } = {}) {
         dirPath = path.resolve(dirPath);
     }
 
+    let files;
+
     if (recursive) {
-        const files = [];
-        fsTools.walkSync(dirPath, filePath => {
-            files.push(filePath);
-        });
-        return files
-            .sort(collator.compare);
+        files = klawSync(dirPath).map(({ path }) => path);
+    } else {
+        files = fs.readdirSync(dirPath)
+            .map(fileName => path.resolve(process.cwd(), dirPath, fileName));
     }
 
-    return fs.readdirSync(dirPath)
-        .map(fileName => path.resolve(process.cwd(), dirPath, fileName))
-        .sort(collator.compare);
+    return files.sort(collator.compare);
 }
 
 exports.allFiles = allFiles;
