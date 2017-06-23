@@ -86,8 +86,8 @@ module.exports = function (onGoToFile) {
 
     vorpal
         .command('s [index]', 'Select file')
-        .action(args => {
-            const filePath = fileFinder.mediaFiles({ recursive: true })[Number(args.index) || 0];
+        .action(({ index = 0 }) => {
+            const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)];
             onGoToFile(filePath);
             return Promise.resolve();
         });
