@@ -6,6 +6,7 @@ const config = require('../config.json');
 const logger = require('../vorpals/logger');
 const { flatten, unique } = require('../helpers/array-helper');
 
+const REPLACE_REGEXP = /[^a-z0-9]/ig;
 let fileCache;
 
 // Assumes title is the first part of the file name and that parts are split by "_"
@@ -32,9 +33,7 @@ function allFiles() {
 }
 
 function clean(label) {
-    return label
-        .replace(/&/g, 'and')
-        .replace(/'/g, '');
+    return label.replace(REPLACE_REGEXP, ' ');
 }
 
 function isMatch(thisLabel, otherLabel) {
