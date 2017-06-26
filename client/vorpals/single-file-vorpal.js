@@ -69,7 +69,9 @@ function run(onComplete) {
                 name: 'confirmDelete'
             }, function ({ confirmDelete }) {
                 if (confirmDelete) {
-                    fileDeleter(currentFilePathStore.get());
+                    return fileDeleter(currentFilePathStore.get()).then(() => {
+                        onComplete();
+                    });
                 }
                 onComplete();
                 return Promise.resolve();

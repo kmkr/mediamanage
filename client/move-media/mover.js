@@ -9,6 +9,7 @@ const logger = require('../vorpals/logger');
 const { cleanFilePath } = require('../file-system/renamer-helper');
 const indexifyIfExists = require('../file-system/indexify-if-exists');
 const movedFiles = require('../file-system/moved-files-service');
+const fileDeleter = require('../file-system/deleter');
 
 exports.moveAll = ({ filePaths, destDirPath, destDirPaths, vorpalInstance }) => {
     return Promise.reduce(filePaths, (t, filePath, index) => {
@@ -118,11 +119,12 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         message: 'What do you want to do?',
         type: 'list',
         name: 'choice',
-        choices: ['Indexify', 'Overwrite', 'Skip file']
+        choices: ['Indexify', 'Overwrite', 'Skip file', 'Delete file']
     }).then(({ choice }) => {
-        if (choice === 'Indexify') {
+        switch (choice) {
+        case 'Indexify':
             return indexify(sourceFilePath, destFilePath);
-        } else if (choice === 'Overwrite') {
+        case 'Overwrite':
             return move(sourceFilePath, destFilePath).then(() => {
                 logger.log('Moved from / to (replaced existing file):');
                 printSourceDestService({
@@ -130,7 +132,9 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
                     destFilePaths: [destFilePath]
                 });
             });
-        } else {
+        case 'Delete file':
+            return fileDeleter(sourceFilePath);
+        default:
             logger.log(`Will not replace ${destFilePath}, continuing ...`);
             return Promise.resolve();
         }
