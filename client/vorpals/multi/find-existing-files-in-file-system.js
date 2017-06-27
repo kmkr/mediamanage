@@ -21,12 +21,10 @@ module.exports = function (vorpal) {
         const searchText = match[1];
         if (searchText) {
             const hits = searchForExistingMediaService.byText(searchText, false);
-            if (hits.length) {
-                vorpal.ui.redraw(hits.reduce((prevVal, curVal) => {
-                    const { sourcePath, filePath } = curVal;
-                    return `${prevVal}${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}\n`;
-                }, ''));
-            }
+            vorpal.ui.redraw(hits.reduce((prevVal, curVal) => {
+                const { sourcePath, filePath } = curVal;
+                return `${prevVal}${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}\n`;
+            }, ''));
         }
     });
 };
