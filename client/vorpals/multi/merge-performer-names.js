@@ -10,7 +10,8 @@ module.exports = vorpal => {
     const allVideos = finder.video({ recursive: true });
     const performerNamesFromVideos = allVideos
         .map(filePath => existingMediaParser.getPerformerNames(filePath))
-        .reduce(flatten, []);
+        .reduce(flatten, [])
+        .sort();
 
     vorpal.activeCommand.prompt({
         message: 'Which names do you want to merge?',
