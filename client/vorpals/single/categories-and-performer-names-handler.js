@@ -10,7 +10,7 @@ module.exports = (performerNamesAndCategories, destFilePath) => {
 
     if (performerNames.length) {
         [filePath] = fileRenamer.setPerformerNames(performerNames, [filePath]);
-        performerNameList.updateWith(performerNames);
+        performerNameList.add(performerNames);
     }
     if (categories.length) {
         [filePath] = fileRenamer.setCategories(categories, [filePath]);

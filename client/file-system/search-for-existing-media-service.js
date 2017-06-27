@@ -5,14 +5,10 @@ const finder = require('./finder');
 const config = require('../config.json');
 const logger = require('../vorpals/logger');
 const { flatten, unique } = require('../helpers/array-helper');
+const existingMediaParser = require('../helpers/existing-media-parser');
 
 const REPLACE_REGEXP = /[^a-z0-9]/ig;
 let fileCache;
-
-// Assumes title is the first part of the file name and that parts are split by "_"
-function getTitle(fileName) {
-    return fileName.split('_')[0];
-}
 
 function allFiles() {
     const sourcePaths = config.moveMediaOptions
@@ -60,7 +56,7 @@ exports.byTitle = thisTitle => {
 
     const hits = fileCache.filter(({ filePath }) => {
         const thatFileName = path.parse(filePath).name.toLowerCase();
-        const thatTitle = getTitle(thatFileName);
+        const thatTitle = existingMediaParser.getTitle(thatFileName);
         return isMatch(thisTitle.toLowerCase(), thatTitle);
     });
 

@@ -5,10 +5,16 @@ const path = require('path');
 const config = require('../config.json');
 const logger = require('../vorpals/logger');
 
-let performerNames = new Set();
-if (config && config.autocomplete && config.autocomplete.performerNames) {
-    performerNames = new Set(config.autocomplete.performerNames);
+function getFromFile() {
+    if (config && config.autocomplete && config.autocomplete.performerNames) {
+        return new Set(config.autocomplete.performerNames);
+    }
+
+    logger.log('Unable to find autocomplete.performerNames in config.json');
+    return new Set();
 }
+
+const performerNames = getFromFile();
 
 function performerNamesAsList() {
     return [
@@ -18,17 +24,17 @@ function performerNamesAsList() {
 
 exports.list = performerNamesAsList;
 
-exports.updateWith = names => {
-    assert(names.constructor === Array, `Names must be an array. Was ${names}`);
-    const newNames = names.filter(name => !performerNames.has(name));
+function update() {
+    const oldList = getFromFile();
+    const list = performerNamesAsList();
 
-    if (!newNames.length) {
+    const additions = [...list].filter(entry => !oldList.has(entry));
+    const removals = [...oldList].filter(entry => !list.includes(entry));
+
+    if (!additions.length && !removals.length) {
         return;
     }
 
-    newNames.forEach(name => performerNames.add(name));
-
-    const list = performerNamesAsList().sort();
     const newConfig = Object.assign({}, config, {
         autocomplete: {
             performerNames: list
@@ -38,5 +44,25 @@ exports.updateWith = names => {
     const configPath = path.resolve(__dirname, '../config.json');
 
     fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 4));
-    logger.log(`Updated autocomplete set with ${newNames.join(', ')}`);
+
+    const additionsStr = additions.length ? `Added ${additions.join(', ')}` : 'No additions';
+    const removalsStr = removals.length ? `removed ${removals.join(', ')}` : 'no removals';
+    logger.log(`Updated autocomplete set. ${additionsStr}, ${removalsStr}.`);
+}
+
+exports.add = names => {
+    assert(Array.isArray(names), `Names must be an array. Was ${names}`);
+    names
+        .filter(name => !performerNames.has(name))
+        .forEach(name => performerNames.add(name));
+    update();
+};
+
+exports.remove = names => {
+    assert(Array.isArray(names), `Names must be an array. Was ${names}`);
+
+    names
+        .filter(name => performerNames.has(name))
+        .forEach(name => performerNames.delete(name));
+    update();
 };
