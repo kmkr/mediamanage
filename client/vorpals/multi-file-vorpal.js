@@ -91,6 +91,13 @@ module.exports = function (onGoToFile) {
         ));
 
     vorpal
+        .command('f <searchText>', 'Find existing files by searching file system')
+        .action(({ searchText }) => {
+            searchForExistingMediaService.byText(searchText);
+            return Promise.resolve();
+        });
+
+    vorpal
         .command('s [index]', 'Select file')
         .action(({ index = 0 }) => {
             const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)];

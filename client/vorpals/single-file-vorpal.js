@@ -95,7 +95,7 @@ module.exports = function (filePath, onComplete) {
     currentFilePathStore.set(filePath);
     mediaPlayer.play(currentFilePathStore.get());
 
-    searchForExistingMediaService.byFileName(filePath);
+    searchForExistingMediaService.byText(path.parse(filePath).name);
 
     return run(() => {
         mediaPlayer.stop();

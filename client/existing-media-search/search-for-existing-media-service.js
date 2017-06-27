@@ -40,11 +40,11 @@ function isMatch(thisLabel, otherLabel) {
 
 function log(hits) {
     if (hits.length) {
-        logger.log(chalk.red('Found existing files matching this file:'));
+        logger.log(chalk.red('Found existing files matching this file:\n'));
     }
     hits.forEach(hit => {
         const { filePath, sourcePath } = hit;
-        logger.log(filePath.replace(sourcePath, ''));
+        logger.log(`${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}`);
     });
     logger.log('\n');
 }
@@ -63,15 +63,14 @@ exports.byTitle = thisTitle => {
     log(hits);
 };
 
-exports.byFileName = thisFilePath => {
+exports.byText = text => {
     if (!fileCache) {
         fileCache = allFiles();
     }
 
-    const thisFileName = path.parse(thisFilePath).name.toLowerCase();
     const hits = fileCache.filter(({ filePath }) => {
         const thatFileName = path.parse(filePath).name.toLowerCase();
-        return isMatch(thisFileName, thatFileName);
+        return isMatch(text, thatFileName);
     });
 
     log(hits);
