@@ -1,8 +1,8 @@
 const path = require('path');
 
-const { allFiles } = require('./finder');
-const removeCurrentWd = require('../helpers/remove-current-wd');
-const { flatten, unique } = require('../helpers/array-helper');
+const { allFiles } = require('../file-system/finder');
+const removeCurrentWd = require('./remove-current-wd');
+const { flatten, unique } = require('./array-helper');
 
 const REPLACE_REGEXP = /[^a-z0-9]/ig;
 

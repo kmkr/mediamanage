@@ -4,7 +4,7 @@ const path = require('path');
 const config = require('../config.json');
 
 const printSourceDestService = require('../helpers/print-source-dest-service');
-const renamerHelper = require('./renamer-helper');
+const renamerHelper = require('../helpers/renamer-helper');
 const indexifyIfExists = require('./indexify-if-exists');
 const movedFiles = require('./moved-files-service');
 

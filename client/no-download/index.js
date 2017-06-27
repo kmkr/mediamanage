@@ -3,7 +3,7 @@ const path = require('path');
 
 const config = require('../config');
 const touchFile = require('./toucher');
-const { cleanFilePath } = require('../file-system/renamer-helper');
+const { cleanFilePath } = require('../helpers/renamer-helper');
 
 module.exports = (vorpalInstance, label) => (
     new Promise((resolve, reject) => {

@@ -10,12 +10,12 @@ const currentFilePathStore = require('./single/current-file-path-store');
 const mediaPlayer = require('../media-player');
 const moveMedia = require('../move-media/move-media');
 
-const { cleanFilePath } = require('../file-system/renamer-helper');
+const { cleanFilePath } = require('../helpers/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 
 const removeCurrentWd = require('../helpers/remove-current-wd');
 const config = require('../config.json');
-const searchForExistingMediaService = require('../file-system/search-for-existing-media-service');
+const searchForExistingMediaService = require('../existing-media-search/search-for-existing-media-service');
 
 function run(onComplete) {
     const vorpal = new Vorpal();

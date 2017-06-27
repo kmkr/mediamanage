@@ -1,7 +1,7 @@
 const chalk = require('vorpal')().chalk;
 const fs = require('fs');
 const path = require('path');
-const finder = require('./finder');
+const finder = require('../file-system/finder');
 const config = require('../config.json');
 const logger = require('../vorpals/logger');
 const { flatten, unique } = require('../helpers/array-helper');

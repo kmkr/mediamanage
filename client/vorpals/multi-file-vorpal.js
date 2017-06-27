@@ -5,12 +5,12 @@ const Promise = require('bluebird');
 const noDownload = require('../no-download');
 const fileFinder = require('../file-system/finder');
 const fileRenamer = require('../file-system/renamer');
-const keywordsFromCurrentWd = require('../file-system/keywords-from-current-wd');
+const keywordsFromCurrentWd = require('../helpers/keywords-from-current-wd');
 const moveMedia = require('../move-media/move-media');
 const undoMove = require('../move-media/undo-move');
 const cleanDirectory = require('../clean-directory');
 const fileNamesLogger = require('./multi/file-names-logger');
-const searchForExistingMediaService = require('../file-system/search-for-existing-media-service');
+const searchForExistingMediaService = require('../existing-media-search/search-for-existing-media-service');
 const mergePerformerNames = require('./multi/merge-performer-names');
 
 const logger = require('./logger');

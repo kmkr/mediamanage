@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 
 const currentFilePathStore = require('./current-file-path-store');
 const fileRenamer = require('../../file-system/renamer');
-const keywordsFromCurrentWd = require('../../file-system/keywords-from-current-wd');
+const keywordsFromCurrentWd = require('../../helpers/keywords-from-current-wd');
 
 module.exports = function (vorpal) {
     vorpal
