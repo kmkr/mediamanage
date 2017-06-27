@@ -63,7 +63,7 @@ exports.byTitle = thisTitle => {
     log(hits);
 };
 
-exports.byText = text => {
+exports.byText = (text, log = true) => {
     if (!fileCache) {
         fileCache = allFiles();
     }
@@ -73,5 +73,9 @@ exports.byText = text => {
         return isMatch(text, thatFileName);
     });
 
-    log(hits);
+    if (log) {
+        log(hits);
+    }
+
+    return hits;
 };

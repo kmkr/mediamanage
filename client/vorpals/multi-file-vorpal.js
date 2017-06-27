@@ -90,12 +90,7 @@ module.exports = function (onGoToFile) {
             mergePerformerNames(vorpal)
         ));
 
-    vorpal
-        .command('f <searchText>', 'Find existing files by searching file system')
-        .action(({ searchText }) => {
-            searchForExistingMediaService.byText(searchText);
-            return Promise.resolve();
-        });
+    require('./multi/find-existing-files-in-file-system')(vorpal);
 
     vorpal
         .command('s [index]', 'Select file')
