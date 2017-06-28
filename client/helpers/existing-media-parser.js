@@ -1,3 +1,4 @@
+const assert = require('assert');
 const path = require('path');
 
 /* eslint-disable no-multi-spaces */
@@ -16,36 +17,41 @@ function filenameWithExt(filePath) {
     return `${parsed.name}${parsed.ext}`;
 }
 
+function match(filePath) {
+    const [, title, performerNamesStr] = filenameWithExt(filePath).match(STORED_FILE_REGEXP) || [];
+
+    return {
+        title,
+        performerNames: (performerNamesStr || '')
+            .split('_')
+            .filter(name => name)
+    };
+}
+
 function getPerformerNames(filePath) {
-    const match = filenameWithExt(filePath).match(STORED_FILE_REGEXP);
+    assert(filePath, 'filePath cannot be empty');
 
-    if (!match || !match[2]) {
-        return [];
-    }
-
-    const performerNames = match[2].split('_');
-    return performerNames.filter(name => name);
+    return match(filePath).performerNames;
 }
 
 exports.getPerformerNames = getPerformerNames;
 
 exports.getTitle = filePath => {
-    const match = filenameWithExt(filePath).match(STORED_FILE_REGEXP);
+    assert(filePath, 'filePath cannot be empty');
 
-    if (!match || !match[1]) {
-        return path.parse(filePath).name;
-    }
-
-    return match[1];
+    return match(filePath).title || path.parse(filePath).name;
 };
 
 exports.renamePerformerName = ({ filePath, fromName, toName }) => {
-    const newFileName = filenameWithExt(filePath).replace(STORED_FILE_REGEXP, (match, matchedTitle, matchedPerformerNames) => {
-        const strippedFromTrailingUnderscore = matchedPerformerNames.replace(/_$/, '');
-        const newPerformerNames = getPerformerNames(filePath)
-            .map(name => name === fromName ? toName : name);
+    assert(filePath, 'filePath cannot be empty');
+    assert(fromName, 'fromName cannot be empty');
+    assert(toName, 'fromName cannot be empty');
 
-        return match.replace(`_${strippedFromTrailingUnderscore}`, `_${newPerformerNames.join('_')}`);
+    const newFileName = filenameWithExt(filePath).replace(STORED_FILE_REGEXP, match => {
+        const performerNames = getPerformerNames(filePath);
+        const newPerformerNames = performerNames.map(name => name === fromName ? toName : name);
+
+        return match.replace(`_${performerNames.join('_')}`, `_${newPerformerNames.join('_')}`);
     });
 
     const { dir } = path.parse(filePath);
