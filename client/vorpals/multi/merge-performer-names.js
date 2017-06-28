@@ -12,7 +12,7 @@ module.exports = vorpal => {
         .map(filePath => existingMediaParser.getPerformerNames(filePath))
         .reduce(flatten, [])
         .sort()
-        .reduce(unique, []);
+        .filter(unique);
 
     vorpal.activeCommand.prompt({
         message: 'Which names do you want to merge?',
