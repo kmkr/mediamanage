@@ -55,8 +55,7 @@ exports.byTitle = thisTitle => {
     }
 
     const hits = fileCache.filter(({ filePath }) => {
-        const thatFileName = path.parse(filePath).name.toLowerCase();
-        const thatTitle = existingMediaParser.getTitle(thatFileName);
+        const thatTitle = existingMediaParser.getTitle(filePath);
         return isMatch(thisTitle.toLowerCase(), thatTitle);
     });
 
