@@ -24,6 +24,12 @@ test('performerNames when indexified without category', () => {
     expect(performerNames).toEqual(['winnie.the.pooh', 'piglet']);
 });
 
+test('exclude performerNames not matching rules', () => {
+    const fileName = 'video.name_Foozy_wab-z_16.10.2017_16-10-2017_piglet.mp4';
+    const performerNames = getPerformerNames(fileName);
+    expect(performerNames).toEqual(['piglet']);
+});
+
 test('title when only title', () => {
     const fileName = 'video.name.mp4';
     const title = getTitle(fileName);
