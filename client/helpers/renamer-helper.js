@@ -34,10 +34,10 @@ function normalize(directory, fileName) {
 
     let prefix = '';
 
-    if (directory === '/') {
-        prefix = '/';
+    if (directory === path.sep) {
+        prefix = path.sep;
     } else if (directory) {
-        prefix = `${directory}/`;
+        prefix = `${directory}${path.sep}`;
     }
     return `${prefix}${mainTitle}__${rest}`;
 }
