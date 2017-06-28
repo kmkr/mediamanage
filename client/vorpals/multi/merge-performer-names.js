@@ -52,12 +52,15 @@ module.exports = vorpal => (
                 }
 
                 const moveStatements = matchingVideos.map(filePath => {
-                    const { ext, dir, name: fileName } = path.parse(filePath);
-                    const newFileName = namesToMerge.reduce((prevVal, curVal) => (
-                        prevVal.replace(new RegExp(curVal, 'g'), nameToUse)
-                    ), fileName);
+                    const newFilePath = namesToMerge.reduce((prevVal, curVal) => (
+                        existingMediaParser.renamePerformerName({
+                            filePath: prevVal,
+                            fromName: curVal,
+                            toName: nameToUse
+                        })
+                    ), filePath);
 
-                    return `mv "${filePath}" "${dir}${path.sep}${newFileName}${ext}"`;
+                    return `mv "${filePath}" "${newFilePath}"`;
                 });
 
                 moveStatements.forEach(moveStatement => {

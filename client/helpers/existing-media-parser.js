@@ -5,7 +5,6 @@ const STORED_FILE_REGEXP = new RegExp(
     '([^_]{5,})' +          // title of at least five chars
     '_' +                   // required title - performer names separator
     '([a-z\'._]+)' +        // at least one performer name
-    '_?' +                  // optional performer name - categories separator
     '(\\[\\w+\\])*' +       // zero or more categories
     '(_\\(\\d+\\)){0,1}' +  // zero or one index
     '\\.\\w{2,4}$'          // required file extension
@@ -17,7 +16,7 @@ function filenameWithExt(filePath) {
     return `${parsed.name}${parsed.ext}`;
 }
 
-exports.getPerformerNames = filePath => {
+function getPerformerNames(filePath) {
     const match = filenameWithExt(filePath).match(STORED_FILE_REGEXP);
 
     if (!match || !match[2]) {
@@ -26,7 +25,9 @@ exports.getPerformerNames = filePath => {
 
     const performerNames = match[2].split('_');
     return performerNames.filter(name => name);
-};
+}
+
+exports.getPerformerNames = getPerformerNames;
 
 exports.getTitle = filePath => {
     const match = filenameWithExt(filePath).match(STORED_FILE_REGEXP);
@@ -36,4 +37,18 @@ exports.getTitle = filePath => {
     }
 
     return match[1];
+};
+
+exports.renamePerformerName = ({ filePath, fromName, toName }) => {
+    const newFileName = filenameWithExt(filePath).replace(STORED_FILE_REGEXP, (match, matchedTitle, matchedPerformerNames) => {
+        const strippedFromTrailingUnderscore = matchedPerformerNames.replace(/_$/, '');
+        const newPerformerNames = getPerformerNames(filePath)
+            .map(name => name === fromName ? toName : name);
+
+        return match.replace(`_${strippedFromTrailingUnderscore}`, `_${newPerformerNames.join('_')}`);
+    });
+
+    const { dir } = path.parse(filePath);
+
+    return dir ? `${dir}${path.sep}${newFileName}` : newFileName;
 };
