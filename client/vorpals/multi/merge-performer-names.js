@@ -69,7 +69,7 @@ module.exports = vorpal => (
 
                 performerNames.remove(namesToMerge);
 
-                textAppend(`${process.cwd()}${path.sep}move`, moveStatements.join('\n'));
+                textAppend(`${process.cwd()}${path.sep}move`, `\n${moveStatements.join('\n')}`);
             });
         });
     })
