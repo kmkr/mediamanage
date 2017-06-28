@@ -42,8 +42,8 @@ module.exports = vorpal => (
 
                 const matchingVideos = finder.video({ recursive: true })
                     .filter(filePath => {
-                        const fileName = path.parse(filePath).name;
-                        return namesToMerge.some(nameToMerge => fileName.includes(nameToMerge));
+                        const performerNames = existingMediaParser.getPerformerNames(filePath);
+                        return namesToMerge.some(nameToMerge => performerNames.includes(nameToMerge));
                     });
 
                 if (!matchingVideos.length) {
