@@ -3,7 +3,7 @@ const path = require('path');
 const logger = require('../logger');
 const finder = require('../../file-system/finder');
 const performerNames = require('../../performers/performer-name-list');
-const { flatten } = require('../../helpers/array-helper');
+const { flatten, unique } = require('../../helpers/array-helper');
 const existingMediaParser = require('../../helpers/existing-media-parser');
 
 module.exports = vorpal => {
@@ -11,7 +11,8 @@ module.exports = vorpal => {
     const performerNamesFromVideos = allVideos
         .map(filePath => existingMediaParser.getPerformerNames(filePath))
         .reduce(flatten, [])
-        .sort();
+        .sort()
+        .reduce(unique, []);
 
     vorpal.activeCommand.prompt({
         message: 'Which names do you want to merge?',
