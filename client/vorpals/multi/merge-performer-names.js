@@ -2,6 +2,7 @@ const path = require('path');
 
 const logger = require('../logger');
 const finder = require('../../file-system/finder');
+const textAppend = require('../../file-system/text-appender');
 const performerNames = require('../../performers/performer-name-list');
 const { flatten, unique } = require('../../helpers/array-helper');
 const existingMediaParser = require('../../helpers/existing-media-parser');
@@ -50,17 +51,22 @@ module.exports = vorpal => (
                     return resolve();
                 }
 
-                matchingVideos.map(filePath => {
+                const moveStatements = matchingVideos.map(filePath => {
                     const { ext, dir, name: fileName } = path.parse(filePath);
                     const newFileName = namesToMerge.reduce((prevVal, curVal) => (
                         prevVal.replace(new RegExp(curVal, 'g'), nameToUse)
                     ), fileName);
-                    logger.log(`mv "${filePath}" "${dir}${path.sep}${newFileName}${ext}"`);
+
+                    return `mv "${filePath}" "${dir}${path.sep}${newFileName}${ext}"`;
+                });
+
+                moveStatements.forEach(moveStatement => {
+                    logger.log(moveStatement);
                 });
 
                 performerNames.remove(namesToMerge);
 
-                return resolve();
+                textAppend(`${process.cwd()}${path.sep}move`, moveStatements.join('\n'));
             });
         });
     })
