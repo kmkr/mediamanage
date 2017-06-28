@@ -21,17 +21,23 @@ module.exports = function (vorpal) {
             return;
         }
         const searchText = match[1];
-        if (searchText) {
-            const hits = searchForExistingMediaService.byText(searchText, false);
-            const truncatedText = hits.length > MAX_HITS ?
-                `Too many results. ${hits.length - MAX_HITS} results are not shown.\n\n` : '';
-            const hitsStr = hits
-                .slice(0, MAX_HITS)
-                .reduce((prevVal, curVal) => {
-                    const { sourcePath, filePath } = curVal;
-                    return `${prevVal}${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}\n`;
-                }, '');
-            vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`);
+        if (!searchText) {
+            return;
         }
+        const hits = searchForExistingMediaService.byText(searchText, false);
+
+        if (!hits.length) {
+            vorpal.ui.redraw('No results');
+            return;
+        }
+        const truncatedText = hits.length > MAX_HITS ?
+            `Too many results. ${hits.length - MAX_HITS} results are not shown.\n\n` : '';
+        const hitsStr = hits
+            .slice(0, MAX_HITS)
+            .reduce((prevVal, curVal) => {
+                const { sourcePath, filePath } = curVal;
+                return `${prevVal}${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}\n`;
+            }, '');
+        vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`);
     });
 };
