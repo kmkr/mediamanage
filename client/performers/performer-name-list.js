@@ -25,11 +25,11 @@ function performerNamesAsList() {
 exports.list = performerNamesAsList;
 
 function update() {
-    const oldList = getFromFile();
-    const list = performerNamesAsList();
+    const persistedList = getFromFile();
+    const inMemoryList = performerNamesAsList();
 
-    const additions = [...list].filter(entry => !oldList.has(entry));
-    const removals = [...oldList].filter(entry => !list.includes(entry));
+    const additions = [...inMemoryList].filter(entry => !persistedList.has(entry));
+    const removals = [...persistedList].filter(entry => !inMemoryList.includes(entry));
 
     if (!additions.length && !removals.length) {
         return;
@@ -37,7 +37,7 @@ function update() {
 
     const newConfig = Object.assign({}, config, {
         autocomplete: {
-            performerNames: list
+            performerNames: inMemoryList
         }
     });
 
