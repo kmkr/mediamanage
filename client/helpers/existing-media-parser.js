@@ -2,8 +2,10 @@ const path = require('path');
 
 exports.getPerformerNames = filePath => {
     const fileName = path.parse(filePath).name;
-    const withoutCategories = fileName.replace(/\[[^.]+/, '');
-    const [, ...performerNames] = withoutCategories.split('_');
+    const withoutCategoriesAndIndex = fileName
+        .replace(/\[[^.]+/, '')
+        .replace(/\(\d+\)/, '');
+    const [, ...performerNames] = withoutCategoriesAndIndex.split('_');
 
     return performerNames
         .filter(name => name);

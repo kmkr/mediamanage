@@ -1,19 +1,25 @@
 const { getTitle, getPerformerNames } = require('./existing-media-parser');
 
-test('parse single', () => {
+test('single performerName', () => {
     const fileName = 'video.name_piglet.mp4';
     const performerNames = getPerformerNames(fileName);
     expect(performerNames).toEqual(['piglet']);
 });
 
-test('parse multiple without category', () => {
+test('multiple performerNames without category', () => {
     const fileName = 'video.name_winnie.the.pooh_piglet.mp4';
     const performerNames = getPerformerNames(fileName);
     expect(performerNames).toEqual(['winnie.the.pooh', 'piglet']);
 });
 
-test('parse with category', () => {
+test('performerNames with category', () => {
     const fileName = 'video.name_winnie.the.pooh_piglet_[woz][wiz].mp4';
+    const performerNames = getPerformerNames(fileName);
+    expect(performerNames).toEqual(['winnie.the.pooh', 'piglet']);
+});
+
+test('performerNames when indexified without category', () => {
+    const fileName = 'video.name_winnie.the.pooh_piglet_(12).mp4';
     const performerNames = getPerformerNames(fileName);
     expect(performerNames).toEqual(['winnie.the.pooh', 'piglet']);
 });
