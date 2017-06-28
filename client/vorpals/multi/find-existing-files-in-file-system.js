@@ -2,6 +2,8 @@ const Vorpal = require('vorpal');
 const chalk = Vorpal().chalk; // eslint-disable-line new-cap
 const searchForExistingMediaService = require('../../existing-media-search/search-for-existing-media-service');
 
+const MAX_HITS = 20;
+
 module.exports = function (vorpal) {
     vorpal
         .command('f <searchText>', 'Find existing files by searching file system')
@@ -21,11 +23,15 @@ module.exports = function (vorpal) {
         const searchText = match[1];
         if (searchText) {
             const hits = searchForExistingMediaService.byText(searchText, false);
-            const hitsStr = hits.reduce((prevVal, curVal) => {
-                const { sourcePath, filePath } = curVal;
-                return `${prevVal}${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}\n`;
-            }, '');
-            vorpal.ui.redraw(`${hitsStr}\n\nf ${searchText}`);
+            const truncatedText = hits.length > MAX_HITS ?
+                `Too many results. ${hits.length - MAX_HITS} results are not shown.\n\n` : '';
+            const hitsStr = hits
+                .slice(0, MAX_HITS)
+                .reduce((prevVal, curVal) => {
+                    const { sourcePath, filePath } = curVal;
+                    return `${prevVal}${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}\n`;
+                }, '');
+            vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`);
         }
     });
 };
