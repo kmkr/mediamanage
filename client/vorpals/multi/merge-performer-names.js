@@ -54,7 +54,7 @@ module.exports = vorpal => {
                 const newFileName = namesToMerge.reduce((prevVal, curVal) => (
                     prevVal.replace(new RegExp(curVal, 'g'), nameToUse)
                 ), fileName);
-                logger.log(`mv ${filePath} ${dir}${path.sep}${newFileName}${ext}`);
+                logger.log(`mv "${filePath}" "${dir}${path.sep}${newFileName}${ext}"`);
             });
 
             performerNames.remove(namesToMerge);
