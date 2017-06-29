@@ -4,9 +4,9 @@ const path = require('path');
 
 const logger = require('../vorpals/logger');
 
-module.exports = filePath => {
+module.exports = (filePath, content) => {
     assert(path.isAbsolute(filePath), `File path must be absolute. Was ${filePath}`);
 
-    fs.writeFileSync(filePath);
-    logger.log(`Touched ${filePath}`);
+    fs.writeFileSync(filePath, content);
+    logger.log(`Wrote ${filePath}`);
 };

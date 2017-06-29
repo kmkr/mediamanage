@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const path = require('path');
 
 const config = require('../config');
-const touchFile = require('./toucher');
+const fileWriter = require('../file-system/file-writer');
 const { cleanFilePath } = require('../helpers/renamer-helper');
 
 module.exports = (vorpalInstance, label) => (
@@ -31,7 +31,7 @@ module.exports = (vorpalInstance, label) => (
                 const nodlTitle = extName ? cleanedFileName.replace(extName, `_${reason}`) : `${cleanedFileName}_${reason}`;
 
                 const filePathToTouch = path.join(noDownloadPath, nodlTitle);
-                touchFile(filePathToTouch);
+                fileWriter(filePathToTouch);
             }
             resolve();
         });

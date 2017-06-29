@@ -2,7 +2,7 @@ const path = require('path');
 
 const logger = require('../logger');
 const finder = require('../../file-system/finder');
-const textAppend = require('../../file-system/text-appender');
+const append = require('../../file-system/file-appender');
 const performerNames = require('../../performers/performer-name-list');
 const { flatten, unique } = require('../../helpers/array-helper');
 const existingMediaParser = require('../../helpers/existing-media-parser');
@@ -69,7 +69,7 @@ module.exports = vorpal => (
 
                 performerNames.remove(namesToMerge);
 
-                textAppend(`${process.cwd()}${path.sep}move`, `\n${moveStatements.join('\n')}`);
+                append(`${process.cwd()}${path.sep}move`, `\n${moveStatements.join('\n')}`);
             });
         });
     })
