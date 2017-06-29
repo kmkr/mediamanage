@@ -1,6 +1,5 @@
-
+const chalk = require('chalk');
 const path = require('path');
-
 
 let add, configMock, jsonWriterMock, list, logMock, remove;
 
@@ -62,7 +61,7 @@ test('add updates list', () => {
 
 test('add logs', () => {
     add(['owl']);
-    expect(logMock.log).toHaveBeenCalledWith('Updated autocomplete set. Added owl, no removals.');
+    expect(logMock.log).toHaveBeenCalledWith(`Updated autocomplete set. Added ${chalk.bold('owl')}, no removals.`);
 });
 
 test('removes from list', () => {
@@ -90,5 +89,5 @@ test('remove updates list', () => {
 
 test('remove logs', () => {
     remove(['piglet', 'eeyore']);
-    expect(logMock.log).toHaveBeenCalledWith('Updated autocomplete set. No additions, removed piglet, eeyore.');
+    expect(logMock.log).toHaveBeenCalledWith(`Updated autocomplete set. No additions, removed ${chalk.bold('piglet')}, ${chalk.bold('eeyore')}.`);
 });

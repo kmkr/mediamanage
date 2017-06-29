@@ -41,7 +41,7 @@ function isMatch(thisLabel, otherLabel) {
 
 function log(hits) {
     if (hits.length) {
-        logger.log(chalk.red('Found existing files matching this file:\n'));
+        logger.log(`Found ${chalk.red(hits.length)} matching files:\n`);
     }
 
     printPathsService.asList(hits.map(({ filePath }) => filePath));

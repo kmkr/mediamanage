@@ -1,4 +1,5 @@
 const minimatch = require('minimatch');
+const chalk = require('chalk');
 
 const fileFinder = require('../../file-system/finder');
 const removeCurrentWd = require('../../helpers/remove-current-wd');
@@ -17,5 +18,5 @@ module.exports = (filter = '*') => {
 
     printPathsService.asList(data);
 
-    logger.log('\nSelect with s [index]');
+    logger.log(`\nSelect with ${chalk.bold('s [index]')}`);
 };

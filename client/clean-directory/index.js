@@ -24,7 +24,7 @@ module.exports = vorpalInstance => {
         return Promise.resolve();
     }
 
-    const message = `${filePaths.length} file(s) left (${videoFileNames.length} video, ${audioFileNames.length} audio). Delete?`;
+    const message = `${chalk.bold(filePaths.length)} file(s) left (${chalk.bold(videoFileNames.length)} video, ${chalk.bold(audioFileNames.length)} audio). Delete?`;
 
     return vorpalInstance.activeCommand.prompt({
         message,
@@ -37,6 +37,6 @@ module.exports = vorpalInstance => {
         }
 
         clean(rootDir, filePaths);
-        logger.log(`Removed ${filePaths.length} file(s) and containing dir`);
+        logger.log(`Removed ${chalk.bold(filePaths.length)} file(s) and containing dir`);
     });
 };
