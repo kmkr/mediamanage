@@ -1,4 +1,4 @@
-const chalk = require('vorpal')().chalk;
+const chalk = require('chalk');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const logger = require('../vorpals/logger');

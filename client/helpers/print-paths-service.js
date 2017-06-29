@@ -1,5 +1,5 @@
 const assert = require('assert');
-const chalk = require('vorpal')().chalk;
+const chalk = require('chalk');
 const leftPad = require('left-pad');
 const path = require('path');
 

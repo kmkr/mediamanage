@@ -1,5 +1,5 @@
 const rimraf = require('rimraf');
-const chalk = require('vorpal')().chalk;
+const chalk = require('chalk');
 
 const fileFinder = require('../file-system/finder');
 const logger = require('../vorpals/logger');

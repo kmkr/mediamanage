@@ -1,4 +1,4 @@
-const chalk = require('vorpal')().chalk;
+const chalk = require('chalk');
 jest.mock('../vorpals/logger', () => ({
     log: jest.fn()
 }));
