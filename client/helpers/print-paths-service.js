@@ -6,11 +6,9 @@ const path = require('path');
 const logger = require('../vorpals/logger');
 const findCommonPartsInStrings = require('./find-common-parts-in-strings');
 
-function getLongestLength(paths, type) {
-    assert(type === 'dir' || type === 'name', 'Type must be either dir or name.');
-
+function getLongestDirLength(paths) {
     return paths
-        .map(entry => path.parse(entry)[type].length)
+        .map(entry => path.parse(entry).dir.length)
         .reduce((prevVal, curVal) => Math.max(prevVal, curVal), 0);
 }
 
@@ -26,7 +24,7 @@ exports.asPairsOfLists = ({ sourceFilePaths, destFilePaths }) => {
     ]);
 
     const commonPartPrefix = '{..}';
-    const longestSourceDir = getLongestLength(sourceFilePaths, 'dir') - commonPart.length + commonPartPrefix.length - 1;
+    const longestSourceDir = getLongestDirLength(sourceFilePaths) - commonPart.length + commonPartPrefix.length - 1;
 
     function clean(input) {
         if (!commonPart) {
@@ -48,7 +46,7 @@ exports.asPairsOfLists = ({ sourceFilePaths, destFilePaths }) => {
 exports.asList = paths => {
     assert(Array.isArray(paths), 'Paths must be an array');
 
-    const longestDirLength = getLongestLength(paths.filter(p => !p.hidden).map(p => p.value || p), 'dir');
+    const longestDirLength = getLongestDirLength(paths.filter(p => !p.hidden).map(p => p.value || p));
     const indexLeftPad = `${paths.length}`.length;
 
     paths.forEach((entry, index) => {
