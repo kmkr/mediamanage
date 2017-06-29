@@ -1,5 +1,5 @@
 const assert = require('assert');
-const fs = require('fs');
+const jsonWriter = require('../file-system/json-writer');
 const path = require('path');
 
 const config = require('../config.json');
@@ -42,8 +42,7 @@ function update() {
     });
 
     const configPath = path.resolve(__dirname, '../config.json');
-
-    fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 4));
+    jsonWriter(configPath, newConfig);
 
     const additionsStr = additions.length ? `Added ${additions.join(', ')}` : 'No additions';
     const removalsStr = removals.length ? `removed ${removals.join(', ')}` : 'no removals';
