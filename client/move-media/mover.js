@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const Promise = require('bluebird');
 
-const printSourceDestService = require('../helpers/print-source-dest-service');
+const printPathsService = require('../helpers/print-paths-service');
 const logger = require('../vorpals/logger');
 const { cleanFilePath } = require('../helpers/renamer-helper');
 const indexifyIfExists = require('../file-system/indexify-if-exists');
@@ -69,7 +69,7 @@ function shouldAutoIndexify(sourceStats, destinationStats) {
 function indexify(sourceFilePath, destFilePath) {
     const indexifiedDestFilePath = indexifyIfExists(destFilePath);
     return move(sourceFilePath, indexifiedDestFilePath).then(() => {
-        printSourceDestService({
+        printPathsService.asPairsOfList({
             sourceFilePaths: [sourceFilePath],
             destFilePaths: [indexifiedDestFilePath]
         });
@@ -91,7 +91,7 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     } catch (err) {
         if (err.code === 'ENOENT') {
             return move(sourceFilePath, destFilePath).then(() => {
-                printSourceDestService({
+                printPathsService.asPairsOfList({
                     sourceFilePaths: [sourceFilePath],
                     destFilePaths: [destFilePath]
                 });
@@ -127,7 +127,7 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
         case 'Overwrite':
             return move(sourceFilePath, destFilePath).then(() => {
                 logger.log('Moved from / to (replaced existing file):');
-                printSourceDestService({
+                printPathsService.asPairsOfList({
                     sourceFilePaths: [sourceFilePath],
                     destFilePaths: [destFilePath]
                 });

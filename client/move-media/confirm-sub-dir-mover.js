@@ -6,13 +6,12 @@ const path = require('path');
 const logger = require('../vorpals/logger');
 const fileMover = require('./mover');
 const promptCreateFolder = require('./prompt-create-folder');
+const printPathsService = require('../helpers/print-paths-service');
 const removeCurrentWd = require('../helpers/remove-current-wd');
 
 function log(filePaths) {
-    logger.log('\n');
-    filePaths.forEach(filePath => {
-        logger.log(`Preparing to move ${chalk.yellow(removeCurrentWd(filePath))}`);
-    });
+    logger.log('\nPreparing to move the following files:');
+    printPathsService.asList(filePaths.map(entry => removeCurrentWd(entry)));
 }
 
 module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {

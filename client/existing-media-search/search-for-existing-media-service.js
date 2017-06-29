@@ -6,6 +6,7 @@ const config = require('../config.json');
 const logger = require('../vorpals/logger');
 const { flatten, unique } = require('../helpers/array-helper');
 const existingMediaParser = require('../helpers/existing-media-parser');
+const printPathsService = require('../helpers/print-paths-service');
 
 const REPLACE_REGEXP = /[^a-z0-9]/ig;
 let fileCache;
@@ -42,10 +43,8 @@ function log(hits) {
     if (hits.length) {
         logger.log(chalk.red('Found existing files matching this file:\n'));
     }
-    hits.forEach(hit => {
-        const { filePath, sourcePath } = hit;
-        logger.log(`${sourcePath}${chalk.yellow(filePath.replace(sourcePath, ''))}`);
-    });
+
+    printPathsService.asList(hits.map(({ filePath }) => filePath));
     logger.log('\n');
 }
 

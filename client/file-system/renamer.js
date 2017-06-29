@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../config.json');
 
-const printSourceDestService = require('../helpers/print-source-dest-service');
+const printPathsService = require('../helpers/print-paths-service');
 const renamerHelper = require('../helpers/renamer-helper');
 const indexifyIfExists = require('./indexify-if-exists');
 const movedFiles = require('./moved-files-service');
@@ -14,7 +14,7 @@ function rename(sourceFilePath, destFileName) {
     );
     fs.renameSync(sourceFilePath, destFilePath);
     movedFiles.add({ sourceFilePath, destFilePath });
-    printSourceDestService({
+    printPathsService.asPairsOfLists({
         sourceFilePaths: [sourceFilePath],
         destFilePaths: [destFilePath]
     });
