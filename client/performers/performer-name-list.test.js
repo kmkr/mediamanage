@@ -19,7 +19,7 @@ beforeEach(() => {
                 'tigger'
             ]
         }
-    }));
+    }), { virtual: true });
     const performerNameList = require('./performer-name-list');
     add = performerNameList.add;
     remove = performerNameList.remove;
