@@ -10,7 +10,6 @@ const currentFilePathStore = require('./single/current-file-path-store');
 const mediaPlayer = require('../media-player');
 const moveMedia = require('../move-media/move-media');
 
-const { cleanFilePath } = require('../helpers/renamer-helper');
 const fileDeleter = require('../file-system/deleter');
 
 const removeCurrentWd = require('../helpers/remove-current-wd');
@@ -24,7 +23,7 @@ function run(onComplete) {
         const filePath = currentFilePathStore.get();
         const fileName = removeCurrentWd(filePath);
 
-        vorpal.delimiter(`${chalk.yellow(fileName)} $`);
+        vorpal.delimiter(`${chalk.green(fileName)} ${chalk.yellow('$')}`);
     }
 
     setDelimiter();

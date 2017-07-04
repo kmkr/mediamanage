@@ -10,7 +10,7 @@ module.exports = filePath => (
     new Promise(resolve => {
         assert(path.isAbsolute(filePath), `File path must be absolute. Was ${filePath}`);
         fs.unlinkSync(filePath);
-        logger.log(`Deleted ${chalk.bold(removeCurrentWd(filePath))}`);
+        logger.log(`Deleted ${chalk.red(removeCurrentWd(filePath))}`);
 
         resolve();
     })
