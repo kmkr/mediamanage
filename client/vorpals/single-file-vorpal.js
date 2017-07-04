@@ -23,16 +23,8 @@ function run(onComplete) {
     function setDelimiter() {
         const filePath = currentFilePathStore.get();
         const fileName = removeCurrentWd(filePath);
-        const cleanedFileName = cleanFilePath(fileName)
-            .replace(path.parse(fileName).ext, '');
-        const line = [
-            fileName.substring(0, 30),
-            chalk.yellow(cleanedFileName)
-        ]
-            .filter(e => e)
-            .join('/');
 
-        vorpal.delimiter(`${line} $`);
+        vorpal.delimiter(`${chalk.yellow(fileName)} $`);
     }
 
     setDelimiter();
