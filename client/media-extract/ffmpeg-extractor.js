@@ -14,14 +14,14 @@ exports.supportsAudio = fileName => fileName.match(SUPPORT_AUDIO_EXTRACT_REGEXP)
 
 exports.extractVideo = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
-    logger.log(`Extracting to ${chalk.green(removeCurrentWd(destFilePath))} ...`);
+    logger.log(`Extracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`);
     return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -i "${sourceFilePath}" -t ${secondsToTimeParser(lengthInSeconds)} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`);
 };
 
 exports.extractAudio = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
     const lengthInSeconds = endsAtSeconds - startsAtSeconds;
 
-    logger.log(`Extracting to ${chalk.green(removeCurrentWd(destFilePath))} ...`);
+    logger.log(`Extracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`);
     return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -t ${secondsToTimeParser(lengthInSeconds)} -i "${sourceFilePath}" -acodec libmp3lame -ab 196k "${destFilePath}" -loglevel warning`);
 };
 
