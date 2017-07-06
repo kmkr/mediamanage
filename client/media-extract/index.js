@@ -61,12 +61,19 @@ exports.extractVideo = ({ destinationDir, filePath, from, to }) => {
     const { startsAtSeconds, endsAtSeconds } = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath);
     mkdir(path.parse(destFilePath).dir);
-    return extractor.extractVideo({
-        sourceFilePath: filePath,
+    return Promise.all([
+        extractor.extractVideo({
+            sourceFilePath: filePath,
+            destFilePath,
+            startsAtSeconds,
+            endsAtSeconds
+        }),
+        getLength(filePath)
+    ]).then(([, totalSeconds]) => ({
         destFilePath,
-        startsAtSeconds,
-        endsAtSeconds
-    }).then(() => ({ destFilePath }));
+        secondsRemaining: totalSeconds - endsAtSeconds,
+        totalSeconds
+    }));
 };
 
 exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
@@ -82,13 +89,30 @@ exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
     const { startsAtSeconds, endsAtSeconds } = map(from, to);
     const destFilePath = getDestFilePath(destinationDir, filePath, '.mp3');
     mkdir(path.parse(destFilePath).dir);
-    return extractor.extractAudio({
-        sourceFilePath: filePath,
+    return Promise.all([
+        extractor.extractAudio({
+            sourceFilePath: filePath,
+            destFilePath,
+            startsAtSeconds,
+            endsAtSeconds
+        }),
+        getLength(filePath)
+    ]).then(([, totalSeconds]) => ({
         destFilePath,
-        startsAtSeconds,
-        endsAtSeconds
-    }).then(() => ({ destFilePath }));
+        secondsRemaining: totalSeconds - endsAtSeconds,
+        totalSeconds
+    }));
 };
+
+function getLength(filePath) {
+    const extractor = extractors.find(extractor => extractor.supportsAudio(filePath) || extractor.supportsVideo(filePath));
+
+    if (!extractor) {
+        throw new Error(`Unable to find extractor for ${filePath}`);
+    }
+
+    return extractor.getLength(filePath);
+}
 
 function getDestFilePath(destinationDir, sourceFilePath, fileExtension) {
     const parsed = path.parse(sourceFilePath);

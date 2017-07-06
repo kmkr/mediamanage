@@ -38,16 +38,18 @@ module.exports = (vorpal, extractOption) => {
                 filePath: currentFilePathStore.get(),
                 from,
                 to
-            }).then(({ destFilePath }) => {
+            }).then(({ destFilePath, secondsRemaining }) => {
                 logger.log('Extraction complete');
 
                 if (performerNamesAndCategories) {
                     categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath);
                 }
 
-                setTimeout(() => {
-                    vorpal.ui.input(`${commandKey} ${previousToValue} `);
-                }, 10);
+                if (secondsRemaining > 60) {
+                    setTimeout(() => {
+                        vorpal.ui.input(`${commandKey} ${previousToValue} `);
+                    }, 10);
+                }
             });
         });
 };
