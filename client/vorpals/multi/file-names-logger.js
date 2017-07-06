@@ -18,5 +18,7 @@ module.exports = (filter = '*') => {
 
     printPathsService.asList(data);
 
-    logger.log(`\nSelect with ${chalk.bold('s [index]')}`);
+    const numMatch = data.filter(e => !e.hidden).length;
+
+    logger.log(`\n${numMatch}/${data.length} files. Select with ${chalk.bold('s [index]')}`);
 };
