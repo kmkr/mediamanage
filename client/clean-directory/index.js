@@ -11,7 +11,7 @@ function clean(rootDir) {
 module.exports = vorpalInstance => {
     const rootDir = process.cwd();
     const recursive = true;
-    const filePaths = fileFinder.allFiles({ dirPath: rootDir, recursive });
+    const filePaths = fileFinder.allFiles({ dirPath: rootDir, recursive, includeDir: true });
     const videoFileNames = fileFinder.video({ dirPath: rootDir, recursive });
     const audioFileNames = fileFinder.audio({ dirPath: rootDir, recursive });
 

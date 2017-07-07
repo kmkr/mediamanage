@@ -9,7 +9,7 @@ const REPLACE_REGEXP = /[^a-z0-9]/ig;
 module.exports = () => {
     const currentDirName = path.parse(process.cwd()).base;
 
-    const fileNames = allFiles()
+    const fileNames = allFiles({ includeDir: true })
         .map(filePath => removeCurrentWd(filePath));
 
     return [currentDirName, ...fileNames]

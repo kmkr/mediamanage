@@ -11,7 +11,7 @@ function isVideo(filePath) {
     return filePath.match(/\.(mkv|mp4|avi|mpeg|iso|wmv|m2ts)$/i);
 }
 
-function allFiles({ dirPath = process.cwd(), recursive = false } = {}) {
+function allFiles({ dirPath = process.cwd(), recursive = false, includeDir = false } = {}) {
     if (!path.isAbsolute(dirPath)) {
         dirPath = path.resolve(dirPath);
     }
@@ -19,10 +19,11 @@ function allFiles({ dirPath = process.cwd(), recursive = false } = {}) {
     let files;
 
     if (recursive) {
-        files = klawSync(dirPath).map(({ path }) => path);
+        files = klawSync(dirPath, { nodir: !includeDir }).map(({ path }) => path);
     } else {
         files = fs.readdirSync(dirPath)
-            .map(fileName => path.resolve(process.cwd(), dirPath, fileName));
+            .map(fileName => path.resolve(process.cwd(), dirPath, fileName))
+            .filter(filePath => includeDir || fs.statSync(filePath).isFile());
     }
 
     return files.sort(collator.compare);
