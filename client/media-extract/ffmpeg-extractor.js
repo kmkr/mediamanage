@@ -6,7 +6,7 @@ const removeCurrentWd = require('../helpers/remove-current-wd');
 
 const secondsToTimeParser = require('./seconds-to-time-parser')();
 
-const SUPPORT_VIDEO_EXTRACT_REGEXP = /\.(mp4|avi|mpeg|iso|wmv)$/i;
+const SUPPORT_VIDEO_EXTRACT_REGEXP = /\.(mp4|avi|mpeg|iso|wmv|mov)$/i;
 const SUPPORT_AUDIO_EXTRACT_REGEXP = /\.(mp4|avi|mpeg|iso|wmv|mp3)$/i;
 
 exports.supportsVideo = fileName => fileName.match(SUPPORT_VIDEO_EXTRACT_REGEXP);
