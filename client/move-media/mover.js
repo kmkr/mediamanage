@@ -69,7 +69,7 @@ function shouldAutoIndexify(sourceStats, destinationStats) {
 function indexify(sourceFilePath, destFilePath) {
     const indexifiedDestFilePath = indexifyIfExists(destFilePath);
     return move(sourceFilePath, indexifiedDestFilePath).then(() => {
-        printPathsService.asPairsOfList({
+        printPathsService.asPairsOfLists({
             sourceFilePaths: [sourceFilePath],
             destFilePaths: [indexifiedDestFilePath]
         });
@@ -91,7 +91,7 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     } catch (err) {
         if (err.code === 'ENOENT') {
             return move(sourceFilePath, destFilePath).then(() => {
-                printPathsService.asPairsOfList({
+                printPathsService.asPairsOfLists({
                     sourceFilePaths: [sourceFilePath],
                     destFilePaths: [destFilePath]
                 });
