@@ -21,7 +21,7 @@ module.exports = function (vorpal) {
                 if (filePaths && filePaths.length) {
                     filePaths.forEach(filePath => {
                         autonames(filePath);
-                    })
+                    });
                 } else {
                     logger.log('No file paths set');
                 }
