@@ -1,6 +1,6 @@
-const config = require('../../config.json');
-const fileRenamer = require('../../file-system/renamer');
-const performerNameList = require('../../performers/performer-name-list');
+const config = require('../config.json');
+const fileRenamer = require('../file-system/renamer');
+const performerNameList = require('./performer-name-list');
 
 module.exports = (performerNamesAndCategories, destFilePath) => {
     const categories = performerNamesAndCategories.filter(entry => config.categories.includes(entry));

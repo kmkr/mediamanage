@@ -12,6 +12,7 @@ const cleanDirectory = require('../clean-directory');
 const fileNamesLogger = require('./multi/file-names-logger');
 const searchForExistingMediaService = require('../existing-media-search/search-for-existing-media-service');
 const mergePerformerNames = require('./multi/merge-performer-names');
+const autonames = require('./multi/autonames');
 
 const logger = require('./logger');
 
@@ -77,6 +78,8 @@ module.exports = function (onGoToFile) {
             moveMedia.all(vorpal)
                 .then(() => cleanDirectory(vorpal))
         ));
+
+    autonames(vorpal);
 
     vorpal
         .command('u', 'Undo move')
