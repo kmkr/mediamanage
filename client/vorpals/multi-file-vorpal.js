@@ -103,6 +103,16 @@ module.exports = function (onGoToFile) {
             return Promise.resolve();
         });
 
+    vorpal
+        .command('r', 'Select random file (non recursive)')
+        .action(() => {
+            const mediaFiles = fileFinder.mediaFiles();
+            const idx = Math.round(Math.random() * mediaFiles.length);
+            const filePath = mediaFiles[idx];
+            onGoToFile(filePath);
+            return Promise.resolve();
+        });
+
     vorpal.delimiter(`${chalk.yellow('mediamanage')} $`);
 
     return vorpal;
