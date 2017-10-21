@@ -7,7 +7,7 @@ const { indexify } = require('../helpers/renamer-helper');
 
 module.exports = filePath => {
     while (fs.existsSync(filePath)) {
-        logger.log(`Found file ${chalk.green(removeCurrentWd(filePath))} to be present. Indexifying...`);
+        logger.log(`Indexifying ${chalk.green(removeCurrentWd(filePath))}`);
         filePath = indexify(filePath);
     }
     return filePath;
