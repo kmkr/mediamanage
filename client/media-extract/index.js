@@ -31,7 +31,7 @@ function map(from, to) {
 function validate({ from, to, performerNames }) {
     const { startsAtSeconds, endsAtSeconds } = map(from, to);
 
-    if (performerNames && performerNames.constructor !== Array) {
+    if (performerNames && !Array.isArray(performerNames)) {
         return false;
     }
 
