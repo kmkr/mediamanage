@@ -1,6 +1,7 @@
 const config = require('../../config.json');
 const currentFilePathStore = require('./current-file-path-store');
-const { extractAudio, extractVideo, validate } = require('../../media-extract');
+const { extractAudio, extractVideo, validate, mapToSeconds } = require('../../media-extract');
+const secondsToTimeParser = require('../../media-extract/seconds-to-time-parser')();
 const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
 const categoriesAndPerformerNamesHandler = require('../../performers/categories-and-performer-names-handler');
@@ -22,7 +23,10 @@ module.exports = (vorpal, extractOption) => {
                 logger.log('Invalid input');
             }
 
-            autoFillInput = [to].concat(performerNamesAndCategories).join(' ');
+            const { startsAtSeconds, endsAtSeconds } = mapToSeconds(from, to);
+            const previousRangeSpan = endsAtSeconds - startsAtSeconds;
+
+            autoFillInput = [to, secondsToTimeParser(endsAtSeconds + previousRangeSpan)].concat(performerNamesAndCategories).join(' ');
             return isValid;
         })
         .autocomplete({

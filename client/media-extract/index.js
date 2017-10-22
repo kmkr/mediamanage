@@ -28,6 +28,8 @@ function map(from, to) {
     };
 }
 
+exports.mapToSeconds = map;
+
 function validate({ from, to, performerNames }) {
     const { startsAtSeconds, endsAtSeconds } = map(from, to);
 
