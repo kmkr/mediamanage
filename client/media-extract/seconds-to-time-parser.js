@@ -4,7 +4,7 @@ function divmod(y, x) {
 
     return [div, rem];
 }
-module.exports = function ({ separator = ':', padZeros = true } = {}) {
+module.exports = function ({ separator = ':', padZeros = true, trimStart = false } = {}) {
     return seconds => {
         let dd, hh, mm, ms, ss; // eslint-disable-line no-unused-vars
         [ss, ms] = divmod(1000 * seconds, 1000);
@@ -14,7 +14,23 @@ module.exports = function ({ separator = ':', padZeros = true } = {}) {
         ms = Math.floor(ms);
 
         if (!padZeros) {
-            return [hh, mm, ss].join(separator);
+            let foundData = false;
+            return [hh, mm, ss]
+                .filter(entry => {
+                    if (trimStart && !foundData) {
+                        if (entry) {
+                            foundData = true;
+                        }
+                        return entry;
+                    }
+
+                    return true;
+                })
+                .join(separator);
+        }
+
+        if (trimStart) {
+            throw new Error('nyi: Trim start requires padZeros');
         }
 
         hh = hh >= 10 ? hh : `0${hh}`;

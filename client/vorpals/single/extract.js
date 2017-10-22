@@ -1,7 +1,7 @@
 const config = require('../../config.json');
 const currentFilePathStore = require('./current-file-path-store');
 const { extractAudio, extractVideo, validate, mapToSeconds } = require('../../media-extract');
-const secondsToTimeParser = require('../../media-extract/seconds-to-time-parser')({ separator: '.', padZeros: false });
+const secondsToTimeParser = require('../../media-extract/seconds-to-time-parser')({ separator: '.', padZeros: false, trimStart: true });
 const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
 const categoriesAndPerformerNamesHandler = require('../../performers/categories-and-performer-names-handler');
