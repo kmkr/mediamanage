@@ -5,7 +5,7 @@ const logger = require('../logger');
 const performerNameList = require('../../performers/performer-name-list');
 const categoriesAndPerformerNamesHandler = require('../../performers/categories-and-performer-names-handler');
 
-let previousToValue = '';
+let autoFillInput = '';
 
 module.exports = (vorpal, extractOption) => {
     const { commandKey, destination, type } = extractOption;
@@ -16,22 +16,22 @@ module.exports = (vorpal, extractOption) => {
         .types({
             string: ['_']
         })
-        .validate(({ from, to, performerNames }) => {
-            const isValid = validate({ from, to, performerNames });
+        .validate(({ from, to, performerNamesAndCategories = [] }) => {
+            const isValid = validate({ from, to, performerNamesAndCategories });
             if (!isValid) {
                 logger.log('Invalid input');
             }
 
-            previousToValue = to;
+            autoFillInput = [to].concat(performerNamesAndCategories).join(' ');
             return isValid;
         })
         .autocomplete({
-            data: () => [previousToValue]
-                .concat(config.categories)
+            data: () => config.categories
                 .concat(performerNameList.list())
         })
-        .action(({ from, to, performerNamesAndCategories }) => {
+        .action(({ from, to, performerNamesAndCategories = [] }) => {
             const fn = type === 'video' ? extractVideo : extractAudio;
+            performerNamesAndCategories = performerNamesAndCategories.map(entry => entry.trim());
 
             return fn({
                 destinationDir: destination,
@@ -47,7 +47,7 @@ module.exports = (vorpal, extractOption) => {
 
                 if (secondsRemaining > 60) {
                     setTimeout(() => {
-                        vorpal.ui.input(`${commandKey} ${previousToValue} `);
+                        vorpal.ui.input(`${commandKey} ${autoFillInput} `);
                     }, 10);
                 }
             });
