@@ -25,8 +25,13 @@ module.exports = (vorpal, extractOption) => {
 
             const { startsAtSeconds, endsAtSeconds } = mapToSeconds(from, to);
             const previousRangeSpan = endsAtSeconds - startsAtSeconds;
+            const ffmpegTime = secondsToTimeParser(endsAtSeconds + previousRangeSpan);
+            const time = ffmpegTime.split(':')
+                .map(timeElement => Number(timeElement))
+                .filter(timeElement => timeElement)
+                .join('.');
 
-            autoFillInput = [to, secondsToTimeParser(endsAtSeconds + previousRangeSpan)].concat(performerNamesAndCategories).join(' ');
+            autoFillInput = [to, time].concat(performerNamesAndCategories).join(' ');
             return isValid;
         })
         .autocomplete({
