@@ -6,9 +6,13 @@ const removeCurrentWd = require('../helpers/remove-current-wd');
 const { indexify } = require('../helpers/renamer-helper');
 
 module.exports = filePath => {
+    let changed = false;
     while (fs.existsSync(filePath)) {
-        logger.log(`Indexifying ${chalk.green(removeCurrentWd(filePath))}`);
         filePath = indexify(filePath);
+        changed = true;
+    }
+    if (changed) {
+        logger.log(`Indexified to ${chalk.green(removeCurrentWd(filePath))}`);
     }
     return filePath;
 };
