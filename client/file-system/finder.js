@@ -2,6 +2,7 @@ const fs = require('fs');
 const klawSync = require('klaw-sync');
 const path = require('path');
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+const matchesGlob = require('../file-system/matches-glob')
 
 function isAudio(filePath) {
     return filePath.match(/\.(mp3|wav|wma|flac|ogg)$/i);
@@ -11,7 +12,7 @@ function isVideo(filePath) {
     return filePath.match(/\.(mkv|mp4|avi|mpeg|iso|wmv|m2ts|mov)$/i);
 }
 
-function allFiles({ dirPath = process.cwd(), recursive = false, includeDir = false } = {}) {
+function allFiles({ dirPath = process.cwd(), filter, recursive = false, includeDir = false } = {}) {
     if (!path.isAbsolute(dirPath)) {
         dirPath = path.resolve(dirPath);
     }
@@ -26,21 +27,25 @@ function allFiles({ dirPath = process.cwd(), recursive = false, includeDir = fal
             .filter(filePath => includeDir || fs.statSync(filePath).isFile());
     }
 
+    if (filter) {
+        files = files.filter(file => matchesGlob(file.replace(`${dirPath}${path.sep}`, ''), filter));
+    }
+
     return files.sort(collator.compare);
 }
 
 exports.allFiles = allFiles;
 
-exports.mediaFiles = ({ dirPath = process.cwd(), recursive = false } = {}) => {
-    return allFiles({ dirPath, recursive }).filter(filePath => (
+exports.mediaFiles = ({ dirPath = process.cwd(), filter, recursive = false } = {}) => {
+    return allFiles({ dirPath, filter, recursive }).filter(filePath => (
         isAudio(filePath) || isVideo(filePath)
     ));
 };
 
-exports.video = ({ dirPath = process.cwd(), recursive = false, filter = '' } = {}) => {
-    return allFiles({ dirPath, recursive, filter }).filter(isVideo);
+exports.video = ({ dirPath = process.cwd(), filter, recursive = false } = {}) => {
+    return allFiles({ dirPath, filter, recursive }).filter(isVideo);
 };
 
-exports.audio = ({ dirPath = process.cwd(), recursive = false, filter = '' } = {}) => {
-    return allFiles({ dirPath, recursive, filter }).filter(isAudio);
+exports.audio = ({ dirPath = process.cwd(), filter, recursive = false } = {}) => {
+    return allFiles({ dirPath, filter, recursive }).filter(isAudio);
 };

@@ -1,6 +1,6 @@
-const minimatch = require('minimatch');
 const chalk = require('chalk');
 
+const matchesGlob = require('../../file-system/matches-glob')
 const fileFinder = require('../../file-system/finder');
 const removeCurrentWd = require('../../helpers/remove-current-wd');
 const logger = require('../logger');
@@ -13,7 +13,7 @@ module.exports = (filter = '*') => {
 
     const data = allRelativeFilePaths.map(relativeFileName => ({
         value: relativeFileName,
-        hidden: !minimatch(relativeFileName, filter, { nocase: true })
+        hidden: !matchesGlob(relativeFileName, filter)
     }));
 
     printPathsService.asList(data);

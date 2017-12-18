@@ -104,12 +104,30 @@ module.exports = function (onGoToFile) {
         });
 
     vorpal
-        .command('r', 'Select random file (non recursive)')
-        .action(() => {
-            const mediaFiles = fileFinder.mediaFiles();
-            const idx = Math.round(Math.random() * mediaFiles.length);
+        .command('r [filter]', 'Select random file (non recursive)')
+        .action(({ filter }) => {
+            const mediaFiles = fileFinder.mediaFiles({ filter });
+            const idx = Math.floor(Math.random() * mediaFiles.length);
             const filePath = mediaFiles[idx];
-            onGoToFile(filePath);
+            if (filePath) {
+                onGoToFile(filePath);
+            } else {
+                logger.log(`No files found. Length ${mediaFiles.length}`)
+            }
+            return Promise.resolve();
+        });
+
+    vorpal
+        .command('rr [filter]', 'Select random file (recursive)')
+        .action(({ filter }) => {
+            const mediaFiles = fileFinder.mediaFiles({ recursive: true, filter });
+            const idx = Math.floor(Math.random() * mediaFiles.length);
+            const filePath = mediaFiles[idx];
+            if (filePath) {
+                onGoToFile(filePath);
+            } else {
+                logger.log(`No files found. Length ${mediaFiles.length}`)
+            }
             return Promise.resolve();
         });
 
