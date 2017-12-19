@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const config = require('../../config.json')
 const currentFilePathStore = require('./current-file-path-store')
 const { extractAudio, extractVideo, validate, mapToSeconds } = require('../../media-extract')
@@ -5,11 +6,12 @@ const secondsToTimeParser = require('../../media-extract/seconds-to-time-parser'
 const logger = require('../logger')
 const performerNameList = require('../../performers/performer-name-list')
 const categoriesAndPerformerNamesHandler = require('../../performers/categories-and-performer-names-handler')
+const mover = require('../../file-system/mover')
 
 let autoFillInput = ''
 
 module.exports = (vorpal, extractOption) => {
-  const { commandKey, destination, type } = extractOption
+  const { commandKey, destination, replaceFile, type } = extractOption
   const commandPrompt = `${commandKey} <from> <to> [performerNamesAndCategories...]`
 
   vorpal
@@ -37,10 +39,11 @@ module.exports = (vorpal, extractOption) => {
         .action(({ from, to, performerNamesAndCategories = [] }) => {
           const fn = type === 'video' ? extractVideo : extractAudio
           performerNamesAndCategories = performerNamesAndCategories.map(entry => entry.trim())
+          const filePath = currentFilePathStore.get()
 
           return fn({
             destinationDir: destination,
-            filePath: currentFilePathStore.get(),
+            filePath,
             from,
             to
           }).then(({ destFilePath, secondsRemaining }) => {
@@ -48,6 +51,20 @@ module.exports = (vorpal, extractOption) => {
 
             if (performerNamesAndCategories) {
               categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath)
+            }
+
+            if (replaceFile) {
+              return vorpal.activeCommand.prompt({
+                message: `Do you want to replace ${chalk.yellow(filePath)}?`,
+                name: 'confirmReplace',
+                type: 'confirm'
+              }).then(({ confirmReplace }) => {
+                if (!confirmReplace) {
+                  return
+                }
+
+                mover(destFilePath, filePath)
+              })
             }
 
             if (secondsRemaining > 60) {

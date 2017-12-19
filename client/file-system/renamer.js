@@ -1,24 +1,16 @@
 const assert = require('assert')
-const fs = require('fs')
 const path = require('path')
 const config = require('../config.json')
 
-const printPathsService = require('../helpers/print-paths-service')
-const renamerHelper = require('../helpers/renamer-helper')
 const indexifyIfExists = require('./indexify-if-exists')
-const movedFiles = require('./moved-files-service')
+const renamerHelper = require('../helpers/renamer-helper')
+const mover = require('./mover')
 
-function rename (sourceFilePath, destFileName) {
+function move (sourceFilePath, destFileName) {
   const destFilePath = indexifyIfExists(
-        path.resolve(destFileName)
-    )
-  fs.renameSync(sourceFilePath, destFilePath)
-  movedFiles.add({ sourceFilePath, destFilePath })
-  printPathsService.asPairsOfLists({
-    sourceFilePaths: [sourceFilePath],
-    destFilePaths: [destFilePath]
-  })
-  return destFilePath
+    path.resolve(destFileName)
+  )
+  mover(sourceFilePath, destFilePath)
 }
 
 exports.rename = (newFileName, filePath) => {
@@ -29,13 +21,13 @@ exports.rename = (newFileName, filePath) => {
   const currentFileName = path.parse(sourceFilePath).name
   const destFilePath = sourceFilePath.replace(currentFileName, newFileName)
 
-  return rename(sourceFilePath, destFilePath)
+  return move(sourceFilePath, destFilePath)
 }
 
 exports.setTitle = (title, filePaths) => {
   return filePaths.map(filePath => {
     const newFileName = renamerHelper.setTitle(title, filePath)
-    return rename(filePath, newFileName)
+    return move(filePath, newFileName)
   })
 }
 
@@ -45,7 +37,7 @@ exports.setPerformerNames = (performerNames, filePaths) => {
 
   return filePaths.map(filePath => {
     const newFileName = renamerHelper.setPerformerNames(performerNames, filePath)
-    return rename(filePath, newFileName)
+    return move(filePath, newFileName)
   })
 }
 
@@ -56,6 +48,6 @@ exports.setCategories = (categories, filePaths) => {
   return filePaths.map(filePath => {
     const sortedCategories = config.categories.filter(category => categories.includes(category))
     const newFileName = renamerHelper.setCategories(sortedCategories, filePath)
-    return rename(filePath, newFileName)
+    return move(filePath, newFileName)
   })
 }
