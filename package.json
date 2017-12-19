@@ -7,7 +7,7 @@
     "start:server": "node server/index.js",
     "pretest": "npm run lint",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "standard --global test --global jest --global expect --global beforeEach"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "eslint": "^4.0.0",
-    "jest": "^20.0.4"
+    "jest": "^20.0.4",
+    "standard": "^10.0.3"
   }
 }

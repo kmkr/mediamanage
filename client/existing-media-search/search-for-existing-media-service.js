@@ -1,79 +1,79 @@
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const finder = require('../file-system/finder');
-const config = require('../config.json');
-const logger = require('../vorpals/logger');
-const { flatten, unique } = require('../helpers/array-helper');
-const existingMediaParser = require('../helpers/existing-media-parser');
-const printPathsService = require('../helpers/print-paths-service');
+const chalk = require('chalk')
+const fs = require('fs')
+const path = require('path')
+const finder = require('../file-system/finder')
+const config = require('../config.json')
+const logger = require('../vorpals/logger')
+const { flatten, unique } = require('../helpers/array-helper')
+const existingMediaParser = require('../helpers/existing-media-parser')
+const printPathsService = require('../helpers/print-paths-service')
 
-const REPLACE_REGEXP = /[^a-z0-9]/ig;
-let fileCache;
+const REPLACE_REGEXP = /[^a-z0-9]/ig
+let fileCache
 
-function allFiles() {
-    const sourcePaths = config.moveMediaOptions
+function allFiles () {
+  const sourcePaths = config.moveMediaOptions
         .map(o => o.toDir)
         .sort()
         .filter(unique)
-        .filter(filePath => fs.existsSync(filePath));
+        .filter(filePath => fs.existsSync(filePath))
 
-    return sourcePaths.map(sourcePath => (
+  return sourcePaths.map(sourcePath => (
         finder.mediaFiles({
-            dirPath: sourcePath,
-            recursive: true
+          dirPath: sourcePath,
+          recursive: true
         }).map(filePath => ({
-            filePath,
-            sourcePath
+          filePath,
+          sourcePath
         }))
-    )).reduce(flatten, []);
+    )).reduce(flatten, [])
 }
 
-function clean(label) {
-    return label.replace(REPLACE_REGEXP, ' ');
+function clean (label) {
+  return label.replace(REPLACE_REGEXP, ' ')
 }
 
-function isMatch(thisLabel, otherLabel) {
-    const cleanedThisLabel = clean(thisLabel);
-    const cleanedOtherLabel = clean(otherLabel);
-    return cleanedThisLabel.includes(cleanedOtherLabel) || cleanedOtherLabel.includes(cleanedThisLabel);
+function isMatch (thisLabel, otherLabel) {
+  const cleanedThisLabel = clean(thisLabel)
+  const cleanedOtherLabel = clean(otherLabel)
+  return cleanedThisLabel.includes(cleanedOtherLabel) || cleanedOtherLabel.includes(cleanedThisLabel)
 }
 
-function log(hits) {
-    if (hits.length) {
-        logger.log(`Found ${chalk.red(hits.length)} matching files:\n`);
-    }
+function log (hits) {
+  if (hits.length) {
+    logger.log(`Found ${chalk.red(hits.length)} matching files:\n`)
+  }
 
-    printPathsService.asList(hits.map(({ filePath }) => filePath));
-    logger.log('\n');
+  printPathsService.asList(hits.map(({ filePath }) => filePath))
+  logger.log('\n')
 }
 
 exports.byTitle = thisTitle => {
-    if (!fileCache) {
-        fileCache = allFiles();
-    }
+  if (!fileCache) {
+    fileCache = allFiles()
+  }
 
-    const hits = fileCache.filter(({ filePath }) => {
-        const thatTitle = existingMediaParser.getTitle(filePath);
-        return isMatch(thisTitle.toLowerCase(), thatTitle);
-    });
+  const hits = fileCache.filter(({ filePath }) => {
+    const thatTitle = existingMediaParser.getTitle(filePath)
+    return isMatch(thisTitle.toLowerCase(), thatTitle)
+  })
 
-    log(hits);
-};
+  log(hits)
+}
 
 exports.byText = (text, logHits = true) => {
-    if (!fileCache) {
-        fileCache = allFiles();
-    }
+  if (!fileCache) {
+    fileCache = allFiles()
+  }
 
-    const hits = fileCache.filter(({ filePath }) => {
-        const thatFileName = path.parse(filePath).name.toLowerCase();
-        return isMatch(text, thatFileName);
-    });
+  const hits = fileCache.filter(({ filePath }) => {
+    const thatFileName = path.parse(filePath).name.toLowerCase()
+    return isMatch(text, thatFileName)
+  })
 
-    if (logHits) {
-        log(hits);
-    }
+  if (logHits) {
+    log(hits)
+  }
 
-    return hits;
-};
+  return hits
+}

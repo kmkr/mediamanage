@@ -1,10 +1,10 @@
-const movedFiles = [];
+const movedFiles = []
 
 exports.add = ({ sourceFilePath, destFilePath }) => {
-    const timestamp = Date.now();
-    movedFiles.push({ sourceFilePath, destFilePath, timestamp });
-};
+  const timestamp = Date.now()
+  movedFiles.push({ sourceFilePath, destFilePath, timestamp })
+}
 
 exports.get = () => {
-    return [...movedFiles];
-};
+  return [...movedFiles]
+}

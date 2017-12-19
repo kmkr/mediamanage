@@ -1,137 +1,137 @@
-const Vorpal = require('vorpal');
-const chalk = Vorpal().chalk; // eslint-disable-line new-cap
-const Promise = require('bluebird');
+const Vorpal = require('vorpal')
+const chalk = Vorpal().chalk // eslint-disable-line new-cap
+const Promise = require('bluebird')
 
-const noDownload = require('../no-download');
-const fileFinder = require('../file-system/finder');
-const fileRenamer = require('../file-system/renamer');
-const keywordsFromCurrentWd = require('../helpers/keywords-from-current-wd');
-const moveMedia = require('../move-media/move-media');
-const undoMove = require('../move-media/undo-move');
-const cleanDirectory = require('../clean-directory');
-const fileNamesLogger = require('./multi/file-names-logger');
-const searchForExistingMediaService = require('../existing-media-search/search-for-existing-media-service');
-const mergePerformerNames = require('./multi/merge-performer-names');
-const autonames = require('./multi/autonames');
+const noDownload = require('../no-download')
+const fileFinder = require('../file-system/finder')
+const fileRenamer = require('../file-system/renamer')
+const keywordsFromCurrentWd = require('../helpers/keywords-from-current-wd')
+const moveMedia = require('../move-media/move-media')
+const undoMove = require('../move-media/undo-move')
+const cleanDirectory = require('../clean-directory')
+const fileNamesLogger = require('./multi/file-names-logger')
+const searchForExistingMediaService = require('../existing-media-search/search-for-existing-media-service')
+const mergePerformerNames = require('./multi/merge-performer-names')
+const autonames = require('./multi/autonames')
 
-const logger = require('./logger');
+const logger = require('./logger')
 
 module.exports = function (onGoToFile) {
-    const vorpal = new Vorpal();
-    logger.setLogger(vorpal.log.bind(vorpal));
-    vorpal.on('client_command_executed', () => {
-        logger.log('\n');
-    });
+  const vorpal = new Vorpal()
+  logger.setLogger(vorpal.log.bind(vorpal))
+  vorpal.on('client_command_executed', () => {
+    logger.log('\n')
+  })
 
-    fileNamesLogger();
-    logger.log('\n');
+  fileNamesLogger()
+  logger.log('\n')
 
-    vorpal
+  vorpal
         .command('l [filter]', 'List media. Filter is a minimatch pattern. Defaults to "*".')
         .action(({ filter }) => {
-            fileNamesLogger(filter);
-            return Promise.resolve();
-        });
+          fileNamesLogger(filter)
+          return Promise.resolve()
+        })
 
-    vorpal
+  vorpal
         .command('ll', 'List recursive media')
         .action(() => {
-            fileNamesLogger('**/**');
-            return Promise.resolve();
-        });
+          fileNamesLogger('**/**')
+          return Promise.resolve()
+        })
 
-    vorpal
+  vorpal
         .command('title <title...>', 'Set title')
         .autocomplete(keywordsFromCurrentWd())
         .action(args => {
-            const title = args.title.join('.');
-            fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }));
-            searchForExistingMediaService.byTitle(title);
-            return Promise.resolve();
-        });
+          const title = args.title.join('.')
+          fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }))
+          searchForExistingMediaService.byTitle(title)
+          return Promise.resolve()
+        })
 
-    vorpal
+  vorpal
         .command('nodl', 'Add to no download')
         .action(() => {
-            const filePaths = fileFinder.video();
+          const filePaths = fileFinder.video()
 
-            if (filePaths.length) {
-                return noDownload(vorpal, filePaths[0]);
+          if (filePaths.length) {
+            return noDownload(vorpal, filePaths[0])
+          }
+
+          return vorpal.activeCommand.prompt({
+            message: 'Set title',
+            type: 'input',
+            name: 'title'
+          }, ({ title }) => {
+            if (title) {
+              return noDownload(vorpal, title)
             }
 
-            return vorpal.activeCommand.prompt({
-                message: 'Set title',
-                type: 'input',
-                name: 'title'
-            }, ({ title }) => {
-                if (title) {
-                    return noDownload(vorpal, title);
-                }
+            return Promise.resolve()
+          })
+        })
 
-                return Promise.resolve();
-            });
-        });
-
-    vorpal
+  vorpal
         .command('m', 'Move media')
         .action(() => (
             moveMedia.all(vorpal)
                 .then(() => cleanDirectory(vorpal))
-        ));
+        ))
 
-    autonames(vorpal);
+  autonames(vorpal)
 
-    vorpal
+  vorpal
         .command('u', 'Undo move')
         .action(() => (
             undoMove(vorpal)
-        ));
+        ))
 
-    vorpal
+  vorpal
         .command('merge', 'Merge performer names')
         .action(() => (
             mergePerformerNames(vorpal)
-        ));
+        ))
 
-    require('./multi/find-existing-files-in-file-system')(vorpal);
+  require('./multi/find-existing-files-in-file-system')(vorpal)
 
-    vorpal
+  vorpal
         .command('s [index]', 'Select file')
         .action(({ index = 0 }) => {
-            const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)];
-            onGoToFile(filePath);
-            return Promise.resolve();
-        });
+          const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)]
+          onGoToFile(filePath)
+          return Promise.resolve()
+        })
 
-    vorpal
+  vorpal
         .command('r [filter]', 'Select random file (non recursive)')
         .action(({ filter }) => {
-            const mediaFiles = fileFinder.mediaFiles({ filter });
-            const idx = Math.floor(Math.random() * mediaFiles.length);
-            const filePath = mediaFiles[idx];
-            if (filePath) {
-                onGoToFile(filePath);
-            } else {
-                logger.log(`No files found. Length ${mediaFiles.length}`)
-            }
-            return Promise.resolve();
-        });
+          const mediaFiles = fileFinder.mediaFiles({ filter })
+          const idx = Math.floor(Math.random() * mediaFiles.length)
+          const filePath = mediaFiles[idx]
+          if (filePath) {
+            onGoToFile(filePath)
+          } else {
+            logger.log(`No files found. Length ${mediaFiles.length}`)
+          }
+          return Promise.resolve()
+        })
 
-    vorpal
+  vorpal
         .command('rr [filter]', 'Select random file (recursive)')
         .action(({ filter }) => {
-            const mediaFiles = fileFinder.mediaFiles({ recursive: true, filter });
-            const idx = Math.floor(Math.random() * mediaFiles.length);
-            const filePath = mediaFiles[idx];
-            if (filePath) {
-                onGoToFile(filePath);
-            } else {
-                logger.log(`No files found. Length ${mediaFiles.length}`)
-            }
-            return Promise.resolve();
-        });
+          const mediaFiles = fileFinder.mediaFiles({ recursive: true, filter })
+          const idx = Math.floor(Math.random() * mediaFiles.length)
+          const filePath = mediaFiles[idx]
+          if (filePath) {
+            onGoToFile(filePath)
+          } else {
+            logger.log(`No files found. Length ${mediaFiles.length}`)
+          }
+          return Promise.resolve()
+        })
 
-    vorpal.delimiter(`${chalk.yellow('mediamanage')} $`);
+  vorpal.delimiter(`${chalk.yellow('mediamanage')} $`)
 
-    return vorpal;
-};
+  return vorpal
+}
