@@ -7,6 +7,7 @@ const logger = require('../logger')
 const performerNameList = require('../../performers/performer-name-list')
 const categoriesAndPerformerNamesHandler = require('../../performers/categories-and-performer-names-handler')
 const mover = require('../../file-system/mover')
+const removeCurrentWd = require('../../helpers/remove-current-wd')
 
 let autoFillInput = ''
 
@@ -49,13 +50,12 @@ module.exports = (vorpal, extractOption) => {
           }).then(({ destFilePath, secondsRemaining }) => {
             logger.log('Extraction complete')
 
-            if (performerNamesAndCategories) {
-              categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath)
-            }
-
             if (replaceFile) {
+              if (performerNamesAndCategories.length) {
+                logger.log(`${chalk.red('WARN: ')} replace file cannot be combined with changing performer names nor categories`)
+              }
               return vorpal.activeCommand.prompt({
-                message: `Do you want to replace ${chalk.yellow(filePath)}?`,
+                message: `Do you want to replace ${chalk.yellow(removeCurrentWd(filePath))} with ${removeCurrentWd(destFilePath)}?`,
                 name: 'confirmReplace',
                 type: 'confirm'
               }).then(({ confirmReplace }) => {
@@ -66,6 +66,8 @@ module.exports = (vorpal, extractOption) => {
                 mover(destFilePath, filePath)
               })
             }
+
+            categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath)
 
             if (secondsRemaining > 60) {
               setTimeout(() => {
