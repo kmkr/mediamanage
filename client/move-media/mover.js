@@ -6,7 +6,7 @@ const Promise = require('bluebird')
 
 const printPathsService = require('../helpers/print-paths-service')
 const logger = require('../vorpals/logger')
-const { cleanFilePath } = require('../helpers/renamer-helper')
+const { cleanFilePath } = require('../helpers/on-processing-renamer-helper')
 const indexifyIfExists = require('../file-system/indexify-if-exists')
 const movedFiles = require('../file-system/moved-files-service')
 const fileDeleter = require('../file-system/deleter')

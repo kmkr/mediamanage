@@ -112,7 +112,7 @@ exports.setCategories = (categories, filePath) => {
   const fileName = path.parse(filePath).base
   const directory = path.parse(filePath).dir
 
-  const categoryStr = `[${categories.join('][')}]`
+  const categoryStr = categoriesAsStr(categories)
   if (hasCategories(fileName)) {
     return normalize(directory, fileName.replace(CATEGORIES, `(c:${categoryStr})`))
   }
@@ -132,3 +132,9 @@ exports.indexify = filePath => {
     return filePath.replace(extension, `_(1)${extension}`)
   }
 }
+
+function categoriesAsStr (categories) {
+  return `[${categories.join('][')}]`
+}
+
+exports.categoriesAsStr = categoriesAsStr

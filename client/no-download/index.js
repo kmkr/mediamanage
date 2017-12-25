@@ -3,7 +3,7 @@ const path = require('path')
 
 const config = require('../config')
 const fileWriter = require('../file-system/file-writer')
-const { cleanFilePath } = require('../helpers/renamer-helper')
+const { cleanFilePath } = require('../helpers/on-processing-renamer-helper')
 
 module.exports = (vorpalInstance, label) => (
     new Promise((resolve, reject) => {

@@ -1,4 +1,4 @@
-const renamerHelper = require('./renamer-helper')
+const renamerHelper = require('./on-processing-renamer-helper')
 
 test('set title', () => {
   const fileName = 'file.mp4'

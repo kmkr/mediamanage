@@ -3,7 +3,7 @@ const chalk = require('chalk')
 
 const logger = require('../vorpals/logger')
 const removeCurrentWd = require('../helpers/remove-current-wd')
-const { indexify } = require('../helpers/renamer-helper')
+const { indexify } = require('../helpers/on-processing-renamer-helper')
 
 module.exports = filePath => {
   let changed = false
