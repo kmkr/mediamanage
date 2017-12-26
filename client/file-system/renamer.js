@@ -1,6 +1,7 @@
 const assert = require('assert')
 const path = require('path')
 const config = require('../config.json')
+const logger = require('../vorpals/logger')
 
 const indexifyIfExists = require('./indexify-if-exists')
 const onProcessingRenamerHelper = require('../helpers/on-processing-renamer-helper')
@@ -15,6 +16,10 @@ function getRenamerHelper (filePath) {
 }
 
 function move (sourceFilePath, destFileName) {
+  if (sourceFilePath === destFileName) {
+    logger.log('Source and destination is the same - noop')
+    return sourceFilePath
+  }
   const destFilePath = indexifyIfExists(
     path.resolve(destFileName)
   )
