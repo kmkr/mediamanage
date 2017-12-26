@@ -10,6 +10,11 @@ module.exports = function (vorpal) {
   .action(({ filter }) => {
     const mediaFilePaths = fileFinder.mediaFiles({ recursive: true, filter })
 
+    if (!mediaFilePaths.length) {
+      logger.log('No files found')
+      return Promise.resolve()
+    }
+
     return vorpal.activeCommand.prompt({
       message: 'Choose files',
       type: 'checkbox',
