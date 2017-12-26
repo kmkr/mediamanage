@@ -23,31 +23,19 @@ exports.indexify = filePath => {
   throw new Error('NYI')
 }
 
-function getUnderscoreIndices (fileName) {
-  return fileName.split('').reduce((ary, char, index) => {
-    if (char === '_') {
-      ary.push(index)
-    }
-
-    return ary
-  }, [])
-}
-
 function getCategories (_fileName) {
   assert(_fileName, `File name must be present. Was: ${_fileName}`)
 
   const fileName = path.parse(_fileName).name
-  const underscoreIndexes = getUnderscoreIndices(fileName)
-  const lastUnderscoreIndex = underscoreIndexes[underscoreIndexes.length - 1]
 
-  const categoryPart = fileName
-    .substring(lastUnderscoreIndex + 1)
+  const categoryPart = fileName.match(/_\[[^_]+/)
 
-  if (!categoryPart.match(/\[/)) {
+  if (!categoryPart) {
     return []
   }
 
-  return categoryPart
+  return categoryPart[0]
+    .substring(1)
     .split(']')
     .map(str => str.replace('[', ''))
     .filter(e => e)
@@ -57,9 +45,9 @@ exports.getCategories = getCategories
 
 exports.isProcessed = fileName => {
   assert(fileName, `File name must be present. Was: ${fileName}`)
-  const underscoreIndexes = getUnderscoreIndices(fileName)
+  const underscores = fileName.match(/_/g)
 
-  if (underscoreIndexes.length < 2) {
+  if (!underscores || underscores.length < 2) {
     return false
   }
 
