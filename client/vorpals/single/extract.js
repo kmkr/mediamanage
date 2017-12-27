@@ -40,6 +40,7 @@ module.exports = (vorpal, extractOption) => {
         .action(({ from, to, performerNamesAndCategories = [] }) => {
           const fn = type === 'video' ? extractVideo : extractAudio
           performerNamesAndCategories = performerNamesAndCategories.map(entry => entry.trim())
+
           const filePath = currentFilePathStore.get()
 
           return fn({
@@ -47,15 +48,14 @@ module.exports = (vorpal, extractOption) => {
             filePath,
             from,
             to
-          }).then(({ destFilePath, secondsRemaining }) => {
+          }).then(({ destFilePath: tempFilePath, secondsRemaining }) => {
             logger.log('Extraction complete')
 
+            tempFilePath = categoriesAndPerformerNamesHandler(performerNamesAndCategories, tempFilePath)
+
             if (replaceFile) {
-              if (performerNamesAndCategories.length) {
-                logger.log(`${chalk.red('WARN: ')} replace file cannot be combined with changing performer names nor categories`)
-              }
               return vorpal.activeCommand.prompt({
-                message: `Do you want to replace ${chalk.yellow(removeCurrentWd(filePath))} with ${removeCurrentWd(destFilePath)}?`,
+                message: `Do you want to replace ${chalk.yellow(removeCurrentWd(filePath))} with ${removeCurrentWd(tempFilePath)}?`,
                 name: 'confirmReplace',
                 type: 'confirm'
               }).then(({ confirmReplace }) => {
@@ -63,11 +63,15 @@ module.exports = (vorpal, extractOption) => {
                   return
                 }
 
-                mover(destFilePath, filePath)
+                const filePathWithUpdates = categoriesAndPerformerNamesHandler(performerNamesAndCategories, filePath)
+                mover(tempFilePath, filePath)
+                if (filePathWithUpdates !== filePath) {
+                  logger.log('Adding changes in categories / performer names to file ...')
+                  mover(filePath, filePathWithUpdates)
+                  currentFilePathStore.set(filePathWithUpdates)
+                }
               })
             }
-
-            categoriesAndPerformerNamesHandler(performerNamesAndCategories, destFilePath)
 
             if (secondsRemaining > 60) {
               setTimeout(() => {
