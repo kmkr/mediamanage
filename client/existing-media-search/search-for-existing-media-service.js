@@ -77,3 +77,5 @@ exports.byText = (text, logHits = true) => {
 
   return hits
 }
+
+exports._isMatch = isMatch

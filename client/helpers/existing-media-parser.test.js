@@ -1,4 +1,4 @@
-const { getTitle, getPerformerNames, renamePerformerName } = require('./existing-media-parser')
+const { getTitle, getPerformerNames, getCategories, renamePerformerName } = require('./existing-media-parser')
 
 test('single performerName', () => {
   const fileName = 'video.name_piglet.mp4'
@@ -86,4 +86,20 @@ test('rename performer name with full path, categories, index and multiple perfo
     toName: 'piglet'
   })
   expect(newName).toEqual('/foo/bar/video.name_piglet_winnie.the.pooh_[foo][bar]_(100).mp4')
+})
+
+test('category extraction', () => {
+  expect(getCategories('foozzy_waz_[bar].mp4')).toEqual(['bar'])
+})
+
+test('category extraction as path', () => {
+  expect(getCategories('/foo/bar/foozzy_waz_[bar].mp4')).toEqual(['bar'])
+})
+
+test('category extraction on indexed file', () => {
+  expect(getCategories('foozzy_waz_[bar]_(1).mp4')).toEqual(['bar'])
+})
+
+test('multi category extraction', () => {
+  expect(getCategories('foozzy_waz_[bar][foo].mp4')).toEqual(['bar', 'foo'])
 })

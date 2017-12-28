@@ -6,7 +6,7 @@ const STORED_FILE_REGEXP = new RegExp(
     '([^_]{5,})' +          // title of at least five chars
     '_' +                   // required title - performer names separator
     '([a-z\'._]{4,})' +     // at least one performer name, four chars minimum
-    '(\\[\\w+\\])*' +       // zero or more categories
+    '((\\[\\w+\\])*)' +       // zero or more categories
     '(_\\(\\d+\\)){0,1}' +  // zero or one index
     '\\.\\w{2,4}$'          // required file extension
 )
@@ -17,11 +17,19 @@ function filenameWithExt (filePath) {
   return `${parsed.name}${parsed.ext}`
 }
 
+function parseCategories (str = '') {
+  return str
+    .split(']')
+    .map(str => str.replace('[', ''))
+    .filter(e => e)
+}
+
 function match (filePath) {
-  const [, title, performerNamesStr] = filenameWithExt(filePath).match(STORED_FILE_REGEXP) || []
+  const [, title, performerNamesStr, categoriesStr] = filenameWithExt(filePath).match(STORED_FILE_REGEXP) || []
 
   return {
     title,
+    categories: parseCategories(categoriesStr),
     performerNames: (performerNamesStr || '')
             .split('_')
             .filter(name => name)
@@ -57,4 +65,10 @@ exports.renamePerformerName = ({ filePath, fromName, toName }) => {
   const { dir } = path.parse(filePath)
 
   return dir ? `${dir}${path.sep}${newFileName}` : newFileName
+}
+
+exports.getCategories = filePath => {
+  assert(filePath, 'filePath cannot be empty')
+
+  return match(filePath).categories
 }
