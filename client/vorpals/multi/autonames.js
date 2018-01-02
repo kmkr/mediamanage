@@ -8,5 +8,7 @@ module.exports = function (vorpal) {
           fileFinder.mediaFiles({ recursive: true }).forEach(filePath => {
             autonames(filePath)
           })
+
+          return Promise.resolve()
         })
 }
