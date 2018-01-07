@@ -1,5 +1,6 @@
 const assert = require('assert')
 const path = require('path')
+const { parseCategoriesAsArrayStr } = require('../categories-as-array-str-helper')
 
 const TITLE = /\(t:([^)]+)\)/
 const PERFORMERS = /\(p:([\w._]+)\)/
@@ -138,3 +139,10 @@ function categoriesAsStr (categories) {
 }
 
 exports.categoriesAsStr = categoriesAsStr
+exports.getCategories = filePath => {
+  assertNotBlank(filePath)
+
+  const fileName = path.parse(filePath).name
+
+  return parseCategoriesAsArrayStr((hasCategories(fileName) || [])[1])
+}

@@ -66,6 +66,18 @@ test('overwrite categories', () => {
   expect(actual).toBe('(t:my.title)_(p:brumm)_(c:[woz])__file.mp4')
 })
 
+test('get categories', () => {
+  const fileName = '(c:[woz])__file.mp4'
+  const categories = renamerHelper.getCategories(fileName)
+  expect(categories).toEqual(['woz'])
+})
+
+test('get categories is empty when missing', () => {
+  const fileName = 'file.mp4'
+  const categories = renamerHelper.getCategories(fileName)
+  expect(categories).toEqual([])
+})
+
 test('keep underscores in original title when no new title is set', () => {
   const fileName = 'my_original_file.mp4'
   const actual = renamerHelper.setCategories(['waz'], fileName)

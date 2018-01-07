@@ -1,7 +1,6 @@
-const assert = require('assert')
 const path = require('path')
 const { categoriesAsStr } = require('./on-processing-renamer-helper')
-const { getCategories } = require('./existing-media-parser')
+const { getCategories } = require('../existing-media-parser')
 
 exports.cleanFilePath = uncleanedFilePath => {
   throw new Error('NYI')
@@ -25,14 +24,3 @@ exports.indexify = filePath => {
 }
 
 exports.getCategories = getCategories
-
-exports.isProcessed = fileName => {
-  assert(fileName, `File name must be present. Was: ${fileName}`)
-  const underscores = fileName.match(/_/g)
-
-  if (!underscores || underscores.length < 2) {
-    return false
-  }
-
-  return !!getCategories(fileName).length
-}

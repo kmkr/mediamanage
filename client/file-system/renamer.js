@@ -4,16 +4,9 @@ const config = require('../config.json')
 const logger = require('../vorpals/logger')
 
 const indexifyIfExists = require('./indexify-if-exists')
-const onProcessingRenamerHelper = require('../helpers/on-processing-renamer-helper')
-const nonProcessingRenamerHelper = require('../helpers/non-processing-renamer-helper')
+const getRenamerHelper = require('../helpers/renamer')
 const mover = require('./mover')
 const { unique } = require('../helpers/array-helper')
-
-function getRenamerHelper (filePath) {
-  const isProcessed = nonProcessingRenamerHelper.isProcessed(path.parse(filePath).base)
-
-  return isProcessed ? nonProcessingRenamerHelper : onProcessingRenamerHelper
-}
 
 function move (sourceFilePath, destFileName) {
   if (sourceFilePath === destFileName) {

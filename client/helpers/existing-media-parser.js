@@ -1,5 +1,6 @@
 const assert = require('assert')
 const path = require('path')
+const { parseCategoriesAsArrayStr } = require('./categories-as-array-str-helper')
 
 /* eslint-disable no-multi-spaces */
 const STORED_FILE_REGEXP = new RegExp(
@@ -17,19 +18,12 @@ function filenameWithExt (filePath) {
   return `${parsed.name}${parsed.ext}`
 }
 
-function parseCategories (str = '') {
-  return str
-    .split(']')
-    .map(str => str.replace('[', ''))
-    .filter(e => e)
-}
-
 function match (filePath) {
   const [, title, performerNamesStr, categoriesStr] = filenameWithExt(filePath).match(STORED_FILE_REGEXP) || []
 
   return {
     title,
-    categories: parseCategories(categoriesStr),
+    categories: parseCategoriesAsArrayStr(categoriesStr),
     performerNames: (performerNamesStr || '')
             .split('_')
             .filter(name => name)
