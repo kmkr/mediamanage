@@ -9,7 +9,7 @@ function isAudio (filePath) {
 }
 
 function isVideo (filePath) {
-  return filePath.match(/\.(mkv|mp4|avi|mpeg|iso|wmv|m2ts|mov)$/i)
+  return filePath.match(/\.(mkv|mp4|avi|mpeg|iso|wmv|m2ts|mov|m4v)$/i)
 }
 
 function allFiles ({ dirPath = process.cwd(), filter, recursive = false, includeDir = false } = {}) {
