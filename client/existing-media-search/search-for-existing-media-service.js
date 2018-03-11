@@ -1,6 +1,8 @@
 const chalk = require('chalk')
 const fs = require('fs')
 const path = require('path')
+const levenshtein = require('fast-levenshtein')
+
 const finder = require('../file-system/finder')
 const config = require('../config.json')
 const logger = require('../vorpals/logger')
@@ -30,13 +32,17 @@ function allFiles () {
 }
 
 function clean (label) {
-  return label.replace(REPLACE_REGEXP, ' ')
+  return label
+    .replace('&', 'and')
+    .replace(REPLACE_REGEXP, ' ')
 }
 
 function isMatch (thisLabel, otherLabel) {
   const cleanedThisLabel = clean(thisLabel)
   const cleanedOtherLabel = clean(otherLabel)
-  return cleanedThisLabel.includes(cleanedOtherLabel) || cleanedOtherLabel.includes(cleanedThisLabel)
+  return cleanedThisLabel.includes(cleanedOtherLabel) ||
+    cleanedOtherLabel.includes(cleanedThisLabel) ||
+    levenshtein.get(thisLabel, otherLabel) < 10
 }
 
 function log (hits) {
