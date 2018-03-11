@@ -40,7 +40,7 @@ function clean (label) {
 function getDistance (thisLabel, otherLabel) {
   const cleanedThisLabel = clean(thisLabel)
   const cleanedOtherLabel = clean(otherLabel)
-  return levenshtein.get(thisLabel, otherLabel)
+  return levenshtein.get(cleanedThisLabel, cleanedOtherLabel)
 }
 
 function isMatch (thisLabel, otherLabel) {
