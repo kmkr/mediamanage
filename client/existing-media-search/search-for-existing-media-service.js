@@ -37,14 +37,13 @@ function clean (label) {
     .replace(REPLACE_REGEXP, ' ')
 }
 
-function getDistance (thisLabel, otherLabel) {
+function isMatch (thisLabel, otherLabel) {
   const cleanedThisLabel = clean(thisLabel)
   const cleanedOtherLabel = clean(otherLabel)
-  return levenshtein.get(cleanedThisLabel, cleanedOtherLabel)
-}
-
-function isMatch (thisLabel, otherLabel) {
-  return getDistance(thisLabel, otherLabel) < Math.ceil(thisLabel.length * 0.2)
+  const distance = levenshtein.get(cleanedThisLabel, cleanedOtherLabel)
+  return cleanedThisLabel.includes(cleanedOtherLabel) ||
+    cleanedOtherLabel.includes(cleanedThisLabel) ||
+    distance < Math.ceil(thisLabel.length * 0.2)
 }
 
 function log (hits) {
