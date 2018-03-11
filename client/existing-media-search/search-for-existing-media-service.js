@@ -37,12 +37,14 @@ function clean (label) {
     .replace(REPLACE_REGEXP, ' ')
 }
 
-function isMatch (thisLabel, otherLabel) {
+function getDistance (thisLabel, otherLabel) {
   const cleanedThisLabel = clean(thisLabel)
   const cleanedOtherLabel = clean(otherLabel)
-  return cleanedThisLabel.includes(cleanedOtherLabel) ||
-    cleanedOtherLabel.includes(cleanedThisLabel) ||
-    levenshtein.get(thisLabel, otherLabel) < 10
+  return levenshtein.get(thisLabel, otherLabel)
+}
+
+function isMatch (thisLabel, otherLabel) {
+  return getDistance(thisLabel, otherLabel) < Math.ceil(thisLabel.length * 0.2)
 }
 
 function log (hits) {
