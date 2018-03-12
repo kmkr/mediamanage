@@ -43,7 +43,10 @@ function isMatch (thisLabel, otherLabel) {
   const distance = levenshtein.get(cleanedThisLabel, cleanedOtherLabel)
   return cleanedThisLabel.includes(cleanedOtherLabel) ||
     cleanedOtherLabel.includes(cleanedThisLabel) ||
-    distance < Math.ceil(thisLabel.length * 0.2)
+    distance < Math.max(
+      Math.ceil(thisLabel.length * 0.2),
+      6
+    )
 }
 
 function log (hits) {
