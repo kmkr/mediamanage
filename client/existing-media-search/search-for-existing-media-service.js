@@ -33,20 +33,26 @@ function allFiles () {
 
 function clean (label) {
   return label
+    .toLowerCase()
     .replace('&', 'and')
     .replace(REPLACE_REGEXP, ' ')
 }
 
-function isMatch (thisLabel, otherLabel) {
+function getDistance (thisLabel, otherLabel) {
   const cleanedThisLabel = clean(thisLabel)
   const cleanedOtherLabel = clean(otherLabel)
-  const distance = levenshtein.get(cleanedThisLabel, cleanedOtherLabel)
-  return cleanedThisLabel.includes(cleanedOtherLabel) ||
-    cleanedOtherLabel.includes(cleanedThisLabel) ||
-    distance < Math.max(
-      Math.ceil(thisLabel.length * 0.2),
-      6
-    )
+  if (cleanedThisLabel.includes(cleanedOtherLabel) ||
+    cleanedOtherLabel.includes(cleanedThisLabel)) {
+    return 0
+  }
+  return levenshtein.get(cleanedThisLabel, cleanedOtherLabel)
+}
+
+function isMatch (thisLabel, distance) {
+  return distance < Math.max(
+    Math.ceil(thisLabel.length * 0.2),
+    6
+  )
 }
 
 function log (hits) {
@@ -58,34 +64,55 @@ function log (hits) {
   logger.log('\n')
 }
 
-exports.byTitle = thisTitle => {
+function search (fun, logHits = true) {
   if (!fileCache) {
     fileCache = allFiles()
   }
 
-  const hits = fileCache.filter(({ filePath }) => {
-    const thatTitle = existingMediaParser.getTitle(filePath)
-    return isMatch(thisTitle.toLowerCase(), thatTitle)
-  })
-
-  log(hits)
-}
-
-exports.byText = (text, logHits = true) => {
-  if (!fileCache) {
-    fileCache = allFiles()
+  const bestMatch = {
+    distance: Infinity,
+    value: null
   }
 
-  const hits = fileCache.filter(({ filePath }) => {
-    const thatFileName = path.parse(filePath).name.toLowerCase()
-    return isMatch(text, thatFileName)
-  })
+  const hits = fileCache.reduce((prevVal, curVal) => {
+    const { thisLabel, thatLabel } = fun(curVal)
+    const distance = getDistance(thisLabel, thatLabel)
+
+    const match = isMatch(thisLabel, distance)
+    if (match) {
+      prevVal.push(curVal)
+    }
+    if (distance < bestMatch.distance) {
+      bestMatch.distance = distance
+      bestMatch.value = thatLabel
+    }
+    return prevVal
+  }, [])
 
   if (logHits) {
+    logger.log(`Best match - distance ${bestMatch.distance} chars\n${bestMatch.value}`)
     log(hits)
   }
 
   return hits
+}
+
+exports.byTitle = thisTitle => {
+  search(function ({ filePath }) {
+    return {
+      thisLabel: thisTitle,
+      thatLabel: existingMediaParser.getTitle(filePath)
+    }
+  })
+}
+
+exports.byText = (text, logHits = true) => {
+  return search(function ({ filePath }) {
+    return {
+      thisLabel: text,
+      thatLabel: path.parse(filePath).name
+    }
+  }, logHits)
 }
 
 exports._isMatch = isMatch
