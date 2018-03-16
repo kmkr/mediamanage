@@ -90,7 +90,7 @@ function search (fun, logHits = true) {
   }, [])
 
   if (logHits) {
-    logger.log(`Best match - distance ${bestMatch.distance} chars\n${bestMatch.value}`)
+    logger.log(`Best match - distance ${chalk.yellow(bestMatch.distance)} chars\n${bestMatch.value}`)
     log(hits)
   }
 
