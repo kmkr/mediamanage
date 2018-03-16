@@ -127,7 +127,7 @@ function prepareMove (sourceFilePath, destFilePath, vorpalInstance) {
       case 'Overwrite':
         return move(sourceFilePath, destFilePath).then(() => {
           logger.log('Moved from / to (replaced existing file):')
-          printPathsService.asPairsOfList({
+          printPathsService.asPairsOfLists({
             sourceFilePaths: [sourceFilePath],
             destFilePaths: [destFilePath]
           })
