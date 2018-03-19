@@ -18,12 +18,12 @@ function filenameWithExt (filePath) {
   return `${parsed.name}${parsed.ext}`
 }
 
-function match (filePath) {
+function match (filePath, categoriesAsString = false) {
   const [, title, performerNamesStr, categoriesStr] = filenameWithExt(filePath).match(STORED_FILE_REGEXP) || []
 
   return {
     title,
-    categories: parseCategoriesAsArrayStr(categoriesStr),
+    categories: categoriesAsString ? categoriesStr : parseCategoriesAsArrayStr(categoriesStr),
     performerNames: (performerNamesStr || '')
             .split('_')
             .filter(name => name)
@@ -61,8 +61,8 @@ exports.renamePerformerName = ({ filePath, fromName, toName }) => {
   return dir ? `${dir}${path.sep}${newFileName}` : newFileName
 }
 
-exports.getCategories = filePath => {
+exports.getCategories = (filePath, asString) => {
   assert(filePath, 'filePath cannot be empty')
 
-  return match(filePath).categories
+  return match(filePath, asString).categories
 }

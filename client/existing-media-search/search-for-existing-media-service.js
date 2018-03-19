@@ -1,39 +1,21 @@
 const chalk = require('chalk')
-const fs = require('fs')
 const path = require('path')
 const levenshtein = require('fast-levenshtein')
 
-const finder = require('../file-system/finder')
-const config = require('../config.json')
 const logger = require('../vorpals/logger')
-const { flatten, unique } = require('../helpers/array-helper')
 const existingMediaParser = require('../helpers/existing-media-parser')
 const printPathsService = require('../helpers/print-paths-service')
 
+const getAllFilePaths = require('./get-all-file-paths')
+
 const REPLACE_REGEXP = /[^a-z0-9]/ig
-let fileCache
 
-function allFiles () {
-  const sourcePaths = config.moveMediaOptions
-        .map(o => o.toDir)
-        .sort()
-        .filter(unique)
-        .filter(filePath => fs.existsSync(filePath))
-
-  return sourcePaths.map(sourcePath => (
-        finder.mediaFiles({
-          dirPath: sourcePath,
-          recursive: true
-        }).map(filePath => ({
-          filePath,
-          sourcePath
-        }))
-    )).reduce(flatten, [])
-}
-
+// todo: clean cats
 function clean (label) {
-  return label
-    .toLowerCase()
+  const lowerCased = label.toLowerCase()
+  const categories = existingMediaParser.getCategories(lowerCased)
+  return lowerCased
+    .replace(categories, '')
     .replace('&', 'and')
     .replace(REPLACE_REGEXP, ' ')
 }
@@ -60,13 +42,13 @@ function log (hits) {
     logger.log(`Found ${chalk.red(hits.length)} matching files:\n`)
   }
 
-  printPathsService.asList(hits.map(({ filePath }) => filePath))
+  printPathsService.asList(hits)
   logger.log('\n')
 }
 
-function search (fun, logHits = true) {
-  if (!fileCache) {
-    fileCache = allFiles()
+function search (filePaths, fun, logHits = true) {
+  if (!filePaths) {
+    filePaths = getAllFilePaths()
   }
 
   const bestMatch = {
@@ -74,7 +56,7 @@ function search (fun, logHits = true) {
     value: null
   }
 
-  const hits = fileCache.reduce((prevVal, curVal) => {
+  const hits = filePaths.reduce((prevVal, curVal) => {
     const { thisLabel, thatLabel } = fun(curVal)
     const distance = getDistance(thisLabel, thatLabel)
 
@@ -90,15 +72,15 @@ function search (fun, logHits = true) {
   }, [])
 
   if (logHits) {
-    logger.log(`Best match - distance ${chalk.yellow(bestMatch.distance)} chars\n${bestMatch.value}`)
+    logger.log(`\nBest match - distance ${chalk.yellow(bestMatch.distance)} chars\n${bestMatch.value}`)
     log(hits)
   }
 
   return hits
 }
 
-exports.byTitle = thisTitle => {
-  search(function ({ filePath }) {
+exports.byTitle = (thisTitle, filePaths) => {
+  search(filePaths, function (filePath) {
     return {
       thisLabel: thisTitle,
       thatLabel: existingMediaParser.getTitle(filePath)
@@ -106,8 +88,8 @@ exports.byTitle = thisTitle => {
   })
 }
 
-exports.byText = (text, logHits = true) => {
-  return search(function ({ filePath }) {
+exports.byText = (text, logHits = true, filePaths) => {
+  return search(filePaths, function (filePath) {
     return {
       thisLabel: text,
       thatLabel: path.parse(filePath).name
