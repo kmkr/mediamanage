@@ -14,7 +14,7 @@ exports.supportsAudio = fileName => fileName.match(SUPPORT_AUDIO_EXTRACT_REGEXP)
 
 exports.extractVideo = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
   const lengthInSeconds = endsAtSeconds - startsAtSeconds
-  logger.log(`Extracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`)
+  logger.log(`\nExtracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`)
   return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -i "${sourceFilePath}" -t ${secondsToTimeParser(lengthInSeconds)} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`)
         .then(output => {
           output.forEach(line => {
@@ -26,7 +26,7 @@ exports.extractVideo = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtS
 exports.extractAudio = ({ sourceFilePath, destFilePath, startsAtSeconds, endsAtSeconds }) => {
   const lengthInSeconds = endsAtSeconds - startsAtSeconds
 
-  logger.log(`Extracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`)
+  logger.log(`\nExtracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`)
   return run(`ffmpeg -ss ${secondsToTimeParser(startsAtSeconds)} -t ${secondsToTimeParser(lengthInSeconds)} -i "${sourceFilePath}" -acodec libmp3lame -ab 196k "${destFilePath}" -loglevel warning`)
         .then(output => {
           output.forEach(line => {

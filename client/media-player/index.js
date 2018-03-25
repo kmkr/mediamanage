@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const config = require('../config.json')
 
 const logger = require('../vorpals/logger')
@@ -34,7 +35,7 @@ function getMediaPlayer () {
 const mediaPlayer = getMediaPlayer()
 
 exports.play = filePath => {
-  logger.log(`Playing ${removeCurrentWd(filePath)}`)
+  logger.log(`\nPlaying ${chalk.yellow(removeCurrentWd(filePath))}`)
   mediaPlayer.play(filePath)
 }
 

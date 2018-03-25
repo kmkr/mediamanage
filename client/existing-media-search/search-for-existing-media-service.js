@@ -71,7 +71,7 @@ function search (filePaths, fun, logHits = true) {
   }, [])
 
   if (logHits) {
-    logger.log(`\nBest match - distance ${chalk.yellow(bestMatch.distance)} chars\n${bestMatch.value}`)
+    logger.log(`\n${bestMatch.value} (diff ${chalk.yellow(bestMatch.distance)})\n`)
     log(hits)
   }
 
