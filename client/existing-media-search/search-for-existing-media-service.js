@@ -10,7 +10,6 @@ const getAllFilePaths = require('./get-all-file-paths')
 
 const REPLACE_REGEXP = /[^a-z0-9]/ig
 
-// todo: clean cats
 function clean (label) {
   const lowerCased = label.toLowerCase()
   const categories = existingMediaParser.getCategories(lowerCased)

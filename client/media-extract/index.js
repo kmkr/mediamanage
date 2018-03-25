@@ -30,10 +30,10 @@ function map (from, to) {
 
 exports.mapToSeconds = map
 
-function validate ({ from, to, performerNames }) {
+function validate ({ from, to, performerNamesAndCategories }) {
   const { startsAtSeconds, endsAtSeconds } = map(from, to)
 
-  if (performerNames && !Array.isArray(performerNames)) {
+  if (performerNamesAndCategories && !Array.isArray(performerNamesAndCategories)) {
     return false
   }
 

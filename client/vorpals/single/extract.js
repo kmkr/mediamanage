@@ -11,16 +11,25 @@ const removeCurrentWd = require('../../helpers/remove-current-wd')
 
 let autoFillInput = ''
 
+function extractToTime (toAndPerformerNamesAndCategories) {
+  const TIME_REGEXP = /^[\d\W]+$/i
+  const to = toAndPerformerNamesAndCategories.find(e => e.match(TIME_REGEXP))
+  const performerNamesAndCategories = toAndPerformerNamesAndCategories.filter(e => e !== to)
+
+  return { performerNamesAndCategories, to }
+}
+
 module.exports = (vorpal, extractOption) => {
   const { commandKey, destination, replaceFile, type } = extractOption
-  const commandPrompt = `${commandKey} <from> <to> [performerNamesAndCategories...]`
+  const commandPrompt = `${commandKey} <from> [toAndPerformerNamesAndCategories...]`
 
   vorpal
         .command(commandPrompt, `Extract to ${destination}`)
         .types({
           string: ['_']
         })
-        .validate(({ from, to, performerNamesAndCategories = [] }) => {
+        .validate(({ from, toAndPerformerNamesAndCategories = [] }) => {
+          const { performerNamesAndCategories, to } = extractToTime(toAndPerformerNamesAndCategories)
           const isValid = validate({ from, to, performerNamesAndCategories })
           if (!isValid) {
             logger.log('Invalid input')
@@ -37,9 +46,10 @@ module.exports = (vorpal, extractOption) => {
           data: () => config.categories
                 .concat(performerNameList.list())
         })
-        .action(({ from, to, performerNamesAndCategories = [] }) => {
+        .action(({ from, toAndPerformerNamesAndCategories = [] }) => {
+          const { performerNamesAndCategories, to } = extractToTime(toAndPerformerNamesAndCategories)
           const fn = type === 'video' ? extractVideo : extractAudio
-          performerNamesAndCategories = performerNamesAndCategories.map(entry => entry.trim())
+          const trimmedPerformerNamesAndCategories = performerNamesAndCategories.map(entry => entry.trim())
 
           const filePath = currentFilePathStore.get()
 
@@ -51,7 +61,7 @@ module.exports = (vorpal, extractOption) => {
           }).then(({ destFilePath: tempFilePath, secondsRemaining }) => {
             logger.log('Extraction complete')
 
-            tempFilePath = categoriesAndPerformerNamesHandler(performerNamesAndCategories, tempFilePath)
+            tempFilePath = categoriesAndPerformerNamesHandler(trimmedPerformerNamesAndCategories, tempFilePath)
 
             if (replaceFile) {
               return vorpal.activeCommand.prompt({
@@ -63,7 +73,7 @@ module.exports = (vorpal, extractOption) => {
                   return
                 }
 
-                const filePathWithUpdates = categoriesAndPerformerNamesHandler(performerNamesAndCategories, filePath)
+                const filePathWithUpdates = categoriesAndPerformerNamesHandler(trimmedPerformerNamesAndCategories, filePath)
                 mover(tempFilePath, filePath)
                 if (filePathWithUpdates !== filePath) {
                   logger.log('Adding changes in categories / performer names to file ...')
