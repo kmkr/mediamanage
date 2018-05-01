@@ -1,13 +1,14 @@
 const path = require('path')
 const { categoriesAsStr } = require('./on-processing-renamer-helper')
-const { getCategories, getPerformerNames } = require('../existing-media-parser')
+const { getCategories, getPerformerNames, getTitle } = require('../existing-media-parser')
 
 exports.cleanFilePath = uncleanedFilePath => {
   throw new Error('NYI')
 }
 
 exports.setTitle = (title, filePath) => {
-  throw new Error('NYI')
+  const existingTitle = getTitle(filePath)
+  return filePath.replace(existingTitle, title)
 }
 
 exports.setPerformerNames = (performers, filePath) => {
