@@ -100,6 +100,10 @@ test('category extraction on indexed file', () => {
   expect(getCategories('foozzy_waz_[bar]_(1).mp4')).toEqual(['bar'])
 })
 
+test('category extraction with hyphen', () => {
+  expect(getCategories('foozzy_waz_[woz-waz]_(1).mp4')).toEqual(['woz-waz'])
+})
+
 test('multi category extraction', () => {
   expect(getCategories('foozzy_waz_[bar][foo].mp4')).toEqual(['bar', 'foo'])
 })

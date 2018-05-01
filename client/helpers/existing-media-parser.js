@@ -7,7 +7,7 @@ const STORED_FILE_REGEXP = new RegExp(
     '([^_]{5,})' +          // title of at least five chars
     '_' +                   // required title - performer names separator
     '([a-z\'._]{4,})' +     // at least one performer name, four chars minimum
-    '((\\[\\w+\\])*)' +       // zero or more categories
+    '((\\[(\\w|-)+\\])*)' + // zero or more categories
     '(_\\(\\d+\\)){0,1}' +  // zero or one index
     '\\.\\w{2,4}$'          // required file extension
 )
