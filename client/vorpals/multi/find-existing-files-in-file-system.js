@@ -37,8 +37,8 @@ module.exports = function (vorpal) {
     const hitsStr = hits
             .slice(0, MAX_HITS)
             .reduce((prevVal, curVal) => {
-              const { sourcePath, filePath } = curVal
-              return `${prevVal}${sourcePath}${chalk.green(filePath.replace(sourcePath, ''))}\n`
+              const filePath = curVal
+              return `${prevVal}${chalk.green(filePath)}\n`
             }, '')
     vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`)
   }
