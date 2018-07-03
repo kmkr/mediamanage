@@ -16,7 +16,7 @@ module.exports = function (vorpal) {
     if (!value) {
       return
     }
-    const match = value.match(/f (.*)/)
+    const match = value.match(/^f (.*)/)
     if (!match) {
       return
     }
