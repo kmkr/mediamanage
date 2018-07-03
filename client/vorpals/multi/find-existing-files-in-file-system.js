@@ -4,6 +4,8 @@ const searchForExistingMediaService = require('../../existing-media-search/searc
 
 const MAX_HITS = 20
 
+let listenerLoaded = false
+
 module.exports = function (vorpal) {
   vorpal
         .command('f <searchText>', 'Find existing files by searching file system')
@@ -12,7 +14,7 @@ module.exports = function (vorpal) {
           return Promise.resolve()
         })
 
-  vorpal.on('keypress', ({ value }) => {
+  function listener ({ value }) {
     if (!value) {
       return
     }
@@ -39,5 +41,10 @@ module.exports = function (vorpal) {
               return `${prevVal}${sourcePath}${chalk.green(filePath.replace(sourcePath, ''))}\n`
             }, '')
     vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`)
-  })
+  }
+
+  if (!listenerLoaded) {
+    vorpal.on('keypress', listener)
+    listenerLoaded = true
+  }
 }
