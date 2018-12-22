@@ -16,12 +16,6 @@ function getMediaPlayer () {
       }
     }
   } else {
-    if (config.mediaPlayer.remote) {
-      const remoteMediaPlayer = require('./remote-media-player')
-      logger.log(`Using ${config.mediaPlayer.remote} as remote media player`)
-      return remoteMediaPlayer
-    }
-
     if (config.mediaPlayer.local) {
       const PLAYER = config.mediaPlayer.local
       const LocalMediaPlayer = require('../../common/media-player/local-media-player')
@@ -29,6 +23,9 @@ function getMediaPlayer () {
       logger.log(`Using ${config.mediaPlayer.local} as local media player`)
       return localMediaPlayer
     }
+    const remoteMediaPlayer = require('./remote-media-player')
+    logger.log(`Using ${remoteMediaPlayer.remoteIp} as remote media player`)
+    return remoteMediaPlayer
   }
 }
 

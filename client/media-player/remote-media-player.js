@@ -5,7 +5,8 @@ const querystring = require('querystring')
 const logger = require('../vorpals/logger')
 const config = require('../config.json')
 
-const remote = config.mediaPlayer.remote
+const defaultPort = 2000
+const remote = config.mediaPlayer.remote || `${process.env.SSH_CLIENT.split(' ')[0]}:${defaultPort}`
 const [hostname, port] = remote.split(':')
 
 exports.play = filePath => {
@@ -27,3 +28,5 @@ exports.stop = () => {
     logger.log(`Got error: ${e.message}`)
   })
 }
+
+exports.remoteIp = remote;
