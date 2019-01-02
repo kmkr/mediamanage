@@ -23,6 +23,9 @@ module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {
           if (destinationDirAlternatives.length) {
                 // Add root dir as an option
             destinationDirAlternatives.unshift('.')
+            // Add abort as an option while waiting for https://github.com/dthree/vorpal/issues/165
+            const ABORT = 'Abort move'
+            destinationDirAlternatives.unshift(ABORT)
 
             return vorpalInstance.activeCommand.prompt({
               message: `Where do you want to move the above ${chalk.yellow(filePaths.length)} files?`,
@@ -30,7 +33,7 @@ module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {
               type: 'list',
               choices: destinationDirAlternatives
             }).then(({ moveDestination }) => {
-              if (!moveDestination) {
+              if (!moveDestination || moveDestination === ABORT) {
                 return
               }
               destDirPath = path.resolve(destDirPath, moveDestination)
