@@ -23,8 +23,6 @@ module.exports = ({ filePaths, destDirPath, vorpalInstance }) => {
         ))
         .then(destinationDirAlternatives => {
           if (destinationDirAlternatives.length) {
-                // Add root dir as an option
-            destinationDirAlternatives.unshift('.')
             // Add abort as an option while waiting for https://github.com/dthree/vorpal/issues/165
             const ABORT = 'Abort move'
             destinationDirAlternatives.unshift(ABORT)
