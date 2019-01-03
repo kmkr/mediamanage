@@ -112,7 +112,7 @@ Iterated when using "Move media". Files from the `fromDir` are moved to `toDir`.
 
 ### mediaPlayer
 
-mediamanage will try to play the file you select, and supports local and remote playing of the file. If `remote` is set in the configuration, mediamanage sends a HTTP GET request to the configured host. Otherwise, mediamanage will open the file in the mediaplayer of your choive. Use the `local` setting for playing media locally.
+mediamanage will try to play the file you select, and supports local and remote playing of the file. Use `local` to open the media player of your choice. If `remote` is set to a host in the configuration, mediamanage sends a HTTP GET request to the specified host. Otherwise, mediamanage will send the request to the IP of the current SSH session using the environment variable `SSH_CLIENT`.
 
 ## Configuring the server
 
