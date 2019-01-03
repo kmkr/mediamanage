@@ -103,13 +103,6 @@ The client is configured via `client/config.json`.
         "mediaPlayer": {
             "local": "/usr/bin/vlc",
             "remote": "10.45.12.42:2000"
-        },
-        "nodownload": {
-            "path": "/tmp/nodl",
-            "reasons": [
-                "boring",
-                "dull"
-            ]
         }
     }
 

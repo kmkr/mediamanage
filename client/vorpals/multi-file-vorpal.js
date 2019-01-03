@@ -2,7 +2,6 @@ const Vorpal = require('vorpal')
 const chalk = Vorpal().chalk // eslint-disable-line new-cap
 const Promise = require('bluebird')
 
-const noDownload = require('../no-download')
 const fileFinder = require('../file-system/finder')
 const fileRenamer = require('../file-system/renamer')
 const keywordsFromCurrentWd = require('../helpers/keywords-from-current-wd')
@@ -48,28 +47,6 @@ module.exports = function (onGoToFile) {
           fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }))
           searchForExistingMediaService.byTitle(title)
           return Promise.resolve()
-        })
-
-  vorpal
-        .command('nodl', 'Add to no download')
-        .action(() => {
-          const filePaths = fileFinder.video()
-
-          if (filePaths.length) {
-            return noDownload(vorpal, filePaths[0])
-          }
-
-          return vorpal.activeCommand.prompt({
-            message: 'Set title',
-            type: 'input',
-            name: 'title'
-          }, ({ title }) => {
-            if (title) {
-              return noDownload(vorpal, title)
-            }
-
-            return Promise.resolve()
-          })
         })
 
   vorpal

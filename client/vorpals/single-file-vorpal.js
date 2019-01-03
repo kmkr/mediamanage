@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 
 const logger = require('./logger')
 
-const noDownload = require('../no-download')
 const currentFilePathStore = require('./single/current-file-path-store')
 const mediaPlayer = require('../media-player')
 const moveMedia = require('../move-media/move-media')
@@ -73,10 +72,6 @@ function run (onComplete) {
   vorpal
         .command('autonames', 'Set names based on file title')
         .action(() => autonames(currentFilePathStore.get()))
-
-  vorpal
-        .command('nodl', 'Add to no download')
-        .action(() => noDownload(vorpal, currentFilePathStore.get()))
 
   vorpal.command('n', 'Go back')
         .action(() => {
