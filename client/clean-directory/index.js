@@ -18,7 +18,7 @@ module.exports = vorpalInstance => {
   filePaths
         .forEach(filePath => logger.log(filePath))
 
-  const autoDelete = filePaths.length === 0 || (videoFileNames.length === 0 && audioFileNames.length === 0);
+  const autoDelete = filePaths.length === 0 || (videoFileNames.length === 0 && audioFileNames.length === 0)
 
   if (autoDelete) {
     logger.log(`Removing ${chalk.red(rootDir)}`)

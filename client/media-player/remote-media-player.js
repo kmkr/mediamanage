@@ -29,4 +29,4 @@ exports.stop = () => {
   })
 }
 
-exports.remoteIp = remote;
+exports.remoteIp = remote

@@ -14,7 +14,7 @@ module.exports = function (vorpal) {
           return Promise.resolve()
         })
 
-  function listener ({ value }) {
+  function listener ({ value }) {
     if (!value) {
       return
     }
