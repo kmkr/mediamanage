@@ -9,7 +9,7 @@ const categoriesAndPerformerNamesHandler = require('../../performers/categories-
 const mover = require('../../file-system/mover')
 const removeCurrentWd = require('../../helpers/remove-current-wd')
 
-let autoFillInput = ''
+let autoFillData
 
 function extractToTime (toAndPerformerNamesAndCategories) {
   const TIME_REGEXP = /^[\d\W]+$/i
@@ -35,11 +35,11 @@ module.exports = (vorpal, extractOption) => {
             logger.log('Invalid input')
           }
 
-          const { startsAtSeconds, endsAtSeconds } = mapToSeconds(from, to)
-          const previousRangeSpan = endsAtSeconds - startsAtSeconds
-          const time = secondsToTimeParser(endsAtSeconds + previousRangeSpan)
-
-          autoFillInput = [to, time].concat(performerNamesAndCategories).join(' ')
+          autoFillData = {
+            from,
+            to,
+            performerNamesAndCategories
+          }
           return isValid
         })
         .autocomplete({
@@ -58,7 +58,7 @@ module.exports = (vorpal, extractOption) => {
             filePath,
             from,
             to
-          }).then(({ destFilePath: tempFilePath, secondsRemaining }) => {
+          }).then(({ destFilePath: tempFilePath, secondsRemaining, totalSeconds }) => {
             logger.log('Extraction complete')
 
             tempFilePath = categoriesAndPerformerNamesHandler(trimmedPerformerNamesAndCategories, tempFilePath)
@@ -83,8 +83,13 @@ module.exports = (vorpal, extractOption) => {
               })
             }
 
+            const { from, to, performerNamesAndCategories } = autoFillData
+            let { startsAtSeconds, endsAtSeconds } = mapToSeconds(from, to)
+            const previousRangeSpan = endsAtSeconds - startsAtSeconds
+            const time = secondsToTimeParser(Math.min(totalSeconds, endsAtSeconds + previousRangeSpan))
             if (secondsRemaining > 60) {
               setTimeout(() => {
+                const autoFillInput = [to, time].concat(performerNamesAndCategories).join(' ')
                 vorpal.ui.input(`${commandKey} ${autoFillInput} `)
               }, 10)
             }
