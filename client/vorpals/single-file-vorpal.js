@@ -11,7 +11,6 @@ const moveMedia = require("../move-media/move-media");
 
 const fileDeleter = require("../file-system/deleter");
 
-const autonames = require("./single/autonames");
 const removeCurrentWd = require("../helpers/remove-current-wd");
 const config = require("../config.json");
 const searchForExistingMediaService = require("../existing-media-search/search-for-existing-media-service");
@@ -67,10 +66,6 @@ function run(onComplete) {
       }
     );
   });
-
-  vorpal
-    .command("autonames", "Set names based on file title")
-    .action(() => autonames(currentFilePathStore.get()));
 
   vorpal.command("n", "Go back").action(() => {
     onComplete();

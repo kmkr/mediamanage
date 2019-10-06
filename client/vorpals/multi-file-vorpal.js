@@ -8,7 +8,6 @@ const undoMove = require("../move-media/undo-move");
 const cleanDirectory = require("../clean-directory");
 const fileNamesLogger = require("./multi/file-names-logger");
 const mergePerformerNames = require("./multi/merge-performer-names");
-const autonames = require("./multi/autonames");
 
 const logger = require("./logger");
 
@@ -40,8 +39,6 @@ module.exports = function(onGoToFile) {
   vorpal
     .command("m", "Move media")
     .action(() => moveMedia.all(vorpal).then(() => cleanDirectory(vorpal)));
-
-  autonames(vorpal);
 
   vorpal.command("u", "Undo move").action(() => undoMove(vorpal));
 
