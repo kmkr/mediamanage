@@ -7,7 +7,6 @@ const moveMedia = require("../move-media/move-media");
 const undoMove = require("../move-media/undo-move");
 const cleanDirectory = require("../clean-directory");
 const fileNamesLogger = require("./multi/file-names-logger");
-const mergePerformerNames = require("./multi/merge-performer-names");
 
 const logger = require("./logger");
 
@@ -41,10 +40,6 @@ module.exports = function(onGoToFile) {
     .action(() => moveMedia.all(vorpal).then(() => cleanDirectory(vorpal)));
 
   vorpal.command("u", "Undo move").action(() => undoMove(vorpal));
-
-  vorpal
-    .command("merge", "Merge performer names")
-    .action(() => mergePerformerNames(vorpal));
 
   require("./multi/find-existing-files-in-file-system")(vorpal);
 
