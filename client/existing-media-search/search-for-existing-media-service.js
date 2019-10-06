@@ -79,15 +79,6 @@ function search(filePaths, fun, logHits = true) {
   return hits;
 }
 
-exports.byTitle = (thisTitle, filePaths) => {
-  search(filePaths, function(filePath) {
-    return {
-      thisLabel: thisTitle,
-      thatLabel: existingMediaParser.getTitle(filePath)
-    };
-  });
-};
-
 exports.byText = (text, logHits = true, filePaths) => {
   return search(
     filePaths,

@@ -37,7 +37,6 @@ function run(onComplete) {
 
   require("./single/set-performer-names")(vorpal);
   require("./single/set-categories")(vorpal);
-  require("./single/set-title")(vorpal);
   require("./single/rename-file")(vorpal);
 
   config.extractOptions.forEach(extractOption => {

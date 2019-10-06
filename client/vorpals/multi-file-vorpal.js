@@ -3,13 +3,10 @@ const chalk = Vorpal().chalk; // eslint-disable-line new-cap
 const Promise = require("bluebird");
 
 const fileFinder = require("../file-system/finder");
-const fileRenamer = require("../file-system/renamer");
-const keywordsFromCurrentWd = require("../helpers/keywords-from-current-wd");
 const moveMedia = require("../move-media/move-media");
 const undoMove = require("../move-media/undo-move");
 const cleanDirectory = require("../clean-directory");
 const fileNamesLogger = require("./multi/file-names-logger");
-const searchForExistingMediaService = require("../existing-media-search/search-for-existing-media-service");
 const mergePerformerNames = require("./multi/merge-performer-names");
 const autonames = require("./multi/autonames");
 
@@ -39,16 +36,6 @@ module.exports = function(onGoToFile) {
     fileNamesLogger("**/**");
     return Promise.resolve();
   });
-
-  vorpal
-    .command("title <title...>", "Set title")
-    .autocomplete(keywordsFromCurrentWd())
-    .action(args => {
-      const title = args.title.join(".");
-      fileRenamer.setTitle(title, fileFinder.mediaFiles({ recursive: true }));
-      searchForExistingMediaService.byTitle(title);
-      return Promise.resolve();
-    });
 
   vorpal
     .command("m", "Move media")
