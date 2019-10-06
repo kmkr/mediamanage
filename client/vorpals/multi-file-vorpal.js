@@ -47,16 +47,23 @@ module.exports = function(onGoToFile) {
     return Promise.resolve();
   });
 
+  function getRandomFilePath({ filter, recursive }) {
+    const mediaFiles = fileFinder.mediaFiles({ recursive, filter });
+    const idx = Math.floor(Math.random() * mediaFiles.length);
+    const filePath = mediaFiles[idx];
+    if (filePath) {
+      return filePath;
+    } else {
+      logger.log(`No files found. Length ${mediaFiles.length}`);
+    }
+  }
+
   vorpal
     .command("r [filter]", "Select random file (non recursive)")
     .action(({ filter }) => {
-      const mediaFiles = fileFinder.mediaFiles({ filter });
-      const idx = Math.floor(Math.random() * mediaFiles.length);
-      const filePath = mediaFiles[idx];
+      const filePath = getRandomFilePath({ filter });
       if (filePath) {
         onGoToFile(filePath);
-      } else {
-        logger.log(`No files found. Length ${mediaFiles.length}`);
       }
       return Promise.resolve();
     });
@@ -64,13 +71,9 @@ module.exports = function(onGoToFile) {
   vorpal
     .command("rr [filter]", "Select random file (recursive)")
     .action(({ filter }) => {
-      const mediaFiles = fileFinder.mediaFiles({ recursive: true, filter });
-      const idx = Math.floor(Math.random() * mediaFiles.length);
-      const filePath = mediaFiles[idx];
+      const filePath = getRandomFilePath({ recursive: true, filter });
       if (filePath) {
         onGoToFile(filePath);
-      } else {
-        logger.log(`No files found. Length ${mediaFiles.length}`);
       }
       return Promise.resolve();
     });
