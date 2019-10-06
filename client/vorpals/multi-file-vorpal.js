@@ -41,8 +41,6 @@ module.exports = function(onGoToFile) {
 
   vorpal.command("u", "Undo move").action(() => undoMove(vorpal));
 
-  require("./multi/find-existing-files-in-file-system")(vorpal);
-
   vorpal.command("s [index]", "Select file").action(({ index = 0 }) => {
     const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)];
     onGoToFile(filePath);
