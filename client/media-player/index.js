@@ -32,7 +32,7 @@ function getMediaPlayer() {
 const mediaPlayer = getMediaPlayer();
 
 exports.play = filePath => {
-  logger.log(`\nPlaying ${chalk.yellow(removeCurrentWd(filePath))}`);
+  logger.log(`\n▶ ${chalk.yellow(removeCurrentWd(filePath))}`);
   mediaPlayer.play(filePath);
 };
 
