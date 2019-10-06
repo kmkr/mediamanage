@@ -44,10 +44,8 @@ function log(hits) {
   logger.log("\n");
 }
 
-function search(filePaths, fun, logHits = true) {
-  if (!filePaths) {
-    filePaths = getAllFilePaths();
-  }
+function search(fun) {
+  const filePaths = getAllFilePaths();
 
   const bestMatch = {
     distance: Infinity,
@@ -69,27 +67,21 @@ function search(filePaths, fun, logHits = true) {
     return prevVal;
   }, []);
 
-  if (logHits) {
+  return { bestMatch, hits };
+}
+
+module.exports = text => {
+  const { bestMatch, hits } = search(filePath => ({
+    thisLabel: text,
+    thatLabel: path.parse(filePath).name
+  }));
+
+  if (bestMatch && bestMatch.distance < 10) {
     logger.log(
       `\n${bestMatch.value} (diff ${chalk.yellow(bestMatch.distance)})\n`
     );
     log(hits);
   }
-
-  return hits;
-}
-
-exports.byText = (text, logHits = true, filePaths) => {
-  return search(
-    filePaths,
-    function(filePath) {
-      return {
-        thisLabel: text,
-        thatLabel: path.parse(filePath).name
-      };
-    },
-    logHits
-  );
 };
 
 exports._isMatch = isMatch;

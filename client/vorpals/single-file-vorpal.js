@@ -13,7 +13,7 @@ const fileDeleter = require("../file-system/deleter");
 
 const removeCurrentWd = require("../helpers/remove-current-wd");
 const config = require("../config.json");
-const searchForExistingMediaService = require("../existing-media-search/search-for-existing-media-service");
+const searchForExistingMedia = require("../existing-media-search/search-for-existing-media-service");
 
 function run(onComplete) {
   const vorpal = new Vorpal();
@@ -79,7 +79,7 @@ module.exports = function(filePath, onComplete) {
   currentFilePathStore.set(filePath);
   mediaPlayer.play(currentFilePathStore.get());
 
-  searchForExistingMediaService.byText(path.parse(filePath).name);
+  searchForExistingMedia(path.parse(filePath).name);
 
   return run(() => {
     mediaPlayer.stop();
