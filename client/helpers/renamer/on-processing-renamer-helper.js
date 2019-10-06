@@ -98,7 +98,7 @@ exports.setTitle = (title, filePath) => {
 exports.setPerformerNames = (performers, filePath) => {
   assertNotBlank(filePath);
   assert(
-    performers.constructor === Array,
+    Array.isArray(performers),
     `Performers must be an array. Was ${performers}`
   );
   const performersStr = performers.join("_");

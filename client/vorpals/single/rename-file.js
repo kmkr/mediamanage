@@ -5,13 +5,13 @@ const currentFilePathStore = require("./current-file-path-store");
 const fileRenamer = require("../../file-system/renamer");
 const logger = require("../logger");
 
-module.exports = function(vorpal) {
+module.exports = vorpal => {
   vorpal
     .command("rename <newName>", "Rename file")
     .autocomplete({
       data: () => [path.parse(currentFilePathStore.get()).name]
     })
-    .action(args => {
+    .action(async args => {
       if (args.newName) {
         const [newPath] = fileRenamer.rename(args.newName, [
           currentFilePathStore.get()
@@ -20,6 +20,5 @@ module.exports = function(vorpal) {
       } else {
         logger.log("No rename");
       }
-      return Promise.resolve();
     });
 };
