@@ -23,7 +23,7 @@ exports.all = vorpalInstance => {
 
   return Promise.reduce(
     moveMediaOptions,
-    (t, moveMediaOption) => {
+    async (t, moveMediaOption) => {
       const fn = fileFinder[moveMediaOption.type];
       if (!fn) {
         throw new Error(
@@ -40,7 +40,7 @@ exports.all = vorpalInstance => {
           logger.log(
             `Directory ${moveMediaOption.fromDir} not found - continuing`
           );
-          return Promise.resolve();
+          return;
         }
         throw err;
       }
@@ -49,7 +49,7 @@ exports.all = vorpalInstance => {
         logger.log(
           `No ${moveMediaOption.type} files found in ${moveMediaOption.fromDir} - continuing`
         );
-        return Promise.resolve();
+        return;
       }
 
       return confirmSubDirMover({
