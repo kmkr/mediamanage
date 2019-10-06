@@ -1,18 +1,16 @@
 module.exports = filePath => {
-  let cwd
+  let cwd;
   try {
-    cwd = process.cwd()
+    cwd = process.cwd();
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      return filePath
+    if (err.code === "ENOENT") {
+      return filePath;
     }
-    throw err
+    throw err;
   }
   if (filePath.includes(cwd)) {
-    return filePath
-            .replace(cwd, '')
-            .replace(/^\//, '')
+    return filePath.replace(cwd, "").replace(/^\//, "");
   }
 
-  return filePath
-}
+  return filePath;
+};

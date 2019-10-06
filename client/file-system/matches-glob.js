@@ -1,3 +1,4 @@
-const minimatch = require('minimatch')
+const minimatch = require("minimatch");
 
-module.exports = (arg, filter = '*') => minimatch(arg, filter, { nocase: true })
+module.exports = (arg, filter = "*") =>
+  minimatch(arg, filter, { nocase: true });

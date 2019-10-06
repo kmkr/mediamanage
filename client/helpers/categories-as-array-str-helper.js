@@ -1,6 +1,6 @@
-exports.parseCategoriesAsArrayStr = (str = '') => {
+exports.parseCategoriesAsArrayStr = (str = "") => {
   return str
-    .split(']')
-    .map(str => str.replace('[', ''))
-    .filter(e => e)
-}
+    .split("]")
+    .map(str => str.replace("[", ""))
+    .filter(e => e);
+};

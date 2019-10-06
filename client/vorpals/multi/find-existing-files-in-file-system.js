@@ -1,50 +1,51 @@
-const Vorpal = require('vorpal')
-const chalk = Vorpal().chalk // eslint-disable-line new-cap
-const searchForExistingMediaService = require('../../existing-media-search/search-for-existing-media-service')
+const Vorpal = require("vorpal");
+const chalk = Vorpal().chalk; // eslint-disable-line new-cap
+const searchForExistingMediaService = require("../../existing-media-search/search-for-existing-media-service");
 
-const MAX_HITS = 20
+const MAX_HITS = 20;
 
-let listenerLoaded = false
+let listenerLoaded = false;
 
-module.exports = function (vorpal) {
+module.exports = function(vorpal) {
   vorpal
-        .command('f <searchText>', 'Find existing files by searching file system')
-        .action(() => {
-          vorpal.ui.redraw.clear()
-          return Promise.resolve()
-        })
+    .command("f <searchText>", "Find existing files by searching file system")
+    .action(() => {
+      vorpal.ui.redraw.clear();
+      return Promise.resolve();
+    });
 
-  function listener ({ value }) {
+  function listener({ value }) {
     if (!value) {
-      return
+      return;
     }
-    const match = value.match(/^f (.*)/)
+    const match = value.match(/^f (.*)/);
     if (!match) {
-      return
+      return;
     }
-    const searchText = match[1]
+    const searchText = match[1];
     if (!searchText) {
-      return
+      return;
     }
-    const hits = searchForExistingMediaService.byText(searchText, false)
+    const hits = searchForExistingMediaService.byText(searchText, false);
 
     if (!hits.length) {
-      vorpal.ui.redraw('No results')
-      return
+      vorpal.ui.redraw("No results");
+      return;
     }
-    const truncatedText = hits.length > MAX_HITS
-            ? `Too many results. ${hits.length - MAX_HITS} results are not shown.\n\n` : ''
-    const hitsStr = hits
-            .slice(0, MAX_HITS)
-            .reduce((prevVal, curVal) => {
-              const filePath = curVal
-              return `${prevVal}${chalk.green(filePath)}\n`
-            }, '')
-    vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`)
+    const truncatedText =
+      hits.length > MAX_HITS
+        ? `Too many results. ${hits.length -
+            MAX_HITS} results are not shown.\n\n`
+        : "";
+    const hitsStr = hits.slice(0, MAX_HITS).reduce((prevVal, curVal) => {
+      const filePath = curVal;
+      return `${prevVal}${chalk.green(filePath)}\n`;
+    }, "");
+    vorpal.ui.redraw(`${hitsStr}\n\n${truncatedText}f ${searchText}`);
   }
 
   if (!listenerLoaded) {
-    vorpal.on('keypress', listener)
-    listenerLoaded = true
+    vorpal.on("keypress", listener);
+    listenerLoaded = true;
   }
-}
+};

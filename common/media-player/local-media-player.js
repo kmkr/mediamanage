@@ -1,15 +1,15 @@
-const spawn = require('child_process').spawn
+const spawn = require("child_process").spawn;
 
 class LocalMediaPlayer {
-  constructor (player) {
-    this.player = player
+  constructor(player) {
+    this.player = player;
   }
-  play (filePath) {
-    this.playingProcess = spawn(this.player, [filePath])
+  play(filePath) {
+    this.playingProcess = spawn(this.player, [filePath]);
   }
-  stop () {
-    this.playingProcess && this.playingProcess.kill()
+  stop() {
+    this.playingProcess && this.playingProcess.kill();
   }
 }
 
-module.exports = LocalMediaPlayer
+module.exports = LocalMediaPlayer;
