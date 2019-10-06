@@ -38,34 +38,31 @@ exports.moveAll = ({
 };
 
 function move(sourceFilePath, destFilePath) {
-  return new Promise((resolve, reject) => {
-    return fs
-      .renameAsync(sourceFilePath, destFilePath)
-      .catch(e => {
-        if (e.code === "EXDEV") {
-          let size = fs.statSync(sourceFilePath).size;
-          if (size <= 1024) {
-            size = `${Math.floor(size / 1024)}k`;
-          } else if (size < 1024 * 1024) {
-            size = `${Math.floor(size / 1024 / 1024)}m`;
-          }
-          logger.log(`Moving ${size} cross-device`);
-          const is = fs.createReadStream(sourceFilePath);
-          const os = fs.createWriteStream(destFilePath);
+  return new Promise(async (resolve, reject) => {
+    try {
+      await fs.renameAsync(sourceFilePath, destFilePath);
+    } catch (e) {
+      if (e.code !== "EXDEV") {
+        return reject(e);
+      }
+      let size = fs.statSync(sourceFilePath).size;
+      if (size <= 1024) {
+        size = `${Math.floor(size / 1024)}k`;
+      } else if (size < 1024 * 1024) {
+        size = `${Math.floor(size / 1024 / 1024)}m`;
+      }
+      logger.log(`Moving ${size} cross-device`);
+      const is = fs.createReadStream(sourceFilePath);
+      const os = fs.createWriteStream(destFilePath);
 
-          is.pipe(os);
-          is.on("end", function() {
-            fs.unlinkSync(sourceFilePath);
-            return resolve();
-          });
-        } else {
-          return reject(e);
-        }
-      })
-      .then(() => {
-        movedFiles.add({ sourceFilePath, destFilePath });
-        resolve();
+      is.pipe(os);
+      is.on("end", function() {
+        fs.unlinkSync(sourceFilePath);
+        return resolve();
       });
+    }
+    movedFiles.add({ sourceFilePath, destFilePath });
+    resolve();
   });
 }
 
@@ -77,17 +74,16 @@ function shouldAutoIndexify(sourceStats, destinationStats) {
   );
 }
 
-function indexify(sourceFilePath, destFilePath) {
+async function indexify(sourceFilePath, destFilePath) {
   const indexifiedDestFilePath = indexifyIfExists(destFilePath);
-  return move(sourceFilePath, indexifiedDestFilePath).then(() => {
-    printPathsService.asPairsOfLists({
-      sourceFilePaths: [sourceFilePath],
-      destFilePaths: [indexifiedDestFilePath]
-    });
+  await move(sourceFilePath, indexifiedDestFilePath);
+  printPathsService.asPairsOfLists({
+    sourceFilePaths: [sourceFilePath],
+    destFilePaths: [indexifiedDestFilePath]
   });
 }
 
-function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
+async function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
   assert(
     path.isAbsolute(sourceFilePath) && path.extname(sourceFilePath),
     `Source file must be an absolute pathed file. Was ${sourceFilePath}`
@@ -107,12 +103,12 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     destinationStats = fs.statSync(destFilePath);
   } catch (err) {
     if (err.code === "ENOENT") {
-      return move(sourceFilePath, destFilePath).then(() => {
-        printPathsService.asPairsOfLists({
-          sourceFilePaths: [sourceFilePath],
-          destFilePaths: [destFilePath]
-        });
+      await move(sourceFilePath, destFilePath);
+      printPathsService.asPairsOfLists({
+        sourceFilePaths: [sourceFilePath],
+        destFilePaths: [destFilePath]
       });
+      return;
     }
 
     throw err;
@@ -144,30 +140,25 @@ function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     )} times the destination size.`
   );
 
-  return vorpalInstance.activeCommand
-    .prompt({
-      message: "What do you want to do?",
-      type: "list",
-      name: "choice",
-      choices: ["Indexify", "Overwrite", "Skip file", "Delete file"]
-    })
-    .then(({ choice }) => {
-      switch (choice) {
-        case "Indexify":
-          return indexify(sourceFilePath, destFilePath);
-        case "Overwrite":
-          return move(sourceFilePath, destFilePath).then(() => {
-            logger.log("Moved from / to (replaced existing file):");
-            printPathsService.asPairsOfLists({
-              sourceFilePaths: [sourceFilePath],
-              destFilePaths: [destFilePath]
-            });
-          });
-        case "Delete file":
-          return fileDeleter(sourceFilePath);
-        default:
-          logger.log(`Will not replace ${destFilePath}, continuing ...`);
-          return Promise.resolve();
-      }
-    });
+  const { choice } = await vorpalInstance.activeCommand.prompt({
+    message: "What do you want to do?",
+    type: "list",
+    name: "choice",
+    choices: ["Indexify", "Overwrite", "Skip file", "Delete file"]
+  });
+  switch (choice) {
+    case "Indexify":
+      await indexify(sourceFilePath, destFilePath);
+    case "Overwrite":
+      await move(sourceFilePath, destFilePath);
+      logger.log("Moved from / to (replaced existing file):");
+      printPathsService.asPairsOfLists({
+        sourceFilePaths: [sourceFilePath],
+        destFilePaths: [destFilePath]
+      });
+    case "Delete file":
+      await fileDeleter(sourceFilePath);
+    default:
+      logger.log(`Will not replace ${destFilePath}, continuing ...`);
+  }
 }

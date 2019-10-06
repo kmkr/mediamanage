@@ -48,14 +48,15 @@ module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
     }
     previousChoice = moveDestination;
     destDirPath = path.resolve(destDirPath, moveDestination);
-    return fileMover.moveAll({
+    await fileMover.moveAll({
       filePaths,
       destDirPath,
       vorpalInstance
     });
+    return;
   } else {
     // Guard while waiting for https://github.com/dthree/vorpal/issues/165
-    const { confirmMove } = vorpalInstance.activeCommand.prompt({
+    const { confirmMove } = await vorpalInstance.activeCommand.prompt({
       message: `Confirm move of ${chalk.yellow(filePaths.length)} files`,
       name: "confirmMove",
       type: "confirm"
@@ -65,7 +66,7 @@ module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
     }
 
     destDirPath = path.resolve(destDirPath);
-    return fileMover.moveAll({
+    await fileMover.moveAll({
       filePaths,
       destDirPath,
       vorpalInstance

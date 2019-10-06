@@ -58,7 +58,7 @@ module.exports = async vorpalInstance => {
     (t, dir) => promptCreateFolder(dir, vorpalInstance),
     null
   );
-  return moveAll({
+  await moveAll({
     filePaths,
     destDirPaths,
     vorpalInstance
