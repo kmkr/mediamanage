@@ -74,7 +74,6 @@ module.exports = function(onGoToFile) {
       }
       return Promise.resolve();
     });
-  require("./multi/add-categories")(vorpal);
 
   vorpal.delimiter(`${chalk.yellow("mediamanage")} $`);
 
