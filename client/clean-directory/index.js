@@ -8,7 +8,7 @@ function clean(rootDir) {
   rimraf.sync(rootDir);
 }
 
-module.exports = vorpalInstance => {
+module.exports = async vorpalInstance => {
   const rootDir = process.cwd();
   const recursive = true;
   const filePaths = fileFinder.allFiles({
@@ -28,28 +28,25 @@ module.exports = vorpalInstance => {
   if (autoDelete) {
     logger.log(`Removing ${chalk.red(rootDir)}`);
     clean(rootDir);
-    return Promise.resolve();
+    return;
   }
 
   const message = `${chalk.bold(filePaths.length)} file(s) left (${chalk.bold(
     videoFileNames.length
   )} video, ${chalk.bold(audioFileNames.length)} audio). Delete?`;
 
-  return vorpalInstance.activeCommand
-    .prompt({
-      message,
-      name: "confirmDelete",
-      type: "confirm",
-      default: false
-    })
-    .then(({ confirmDelete }) => {
-      if (!confirmDelete) {
-        return;
-      }
+  const { confirmDelete } = await vorpalInstance.activeCommand.prompt({
+    message,
+    name: "confirmDelete",
+    type: "confirm",
+    default: false
+  });
+  if (!confirmDelete) {
+    return;
+  }
 
-      clean(rootDir, filePaths);
-      logger.log(
-        `Removed ${chalk.bold(filePaths.length)} file(s) and containing dir`
-      );
-    });
+  clean(rootDir, filePaths);
+  logger.log(
+    `Removed ${chalk.bold(filePaths.length)} file(s) and containing dir`
+  );
 };

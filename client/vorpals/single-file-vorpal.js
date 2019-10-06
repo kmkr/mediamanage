@@ -42,11 +42,10 @@ function run(onComplete) {
     require("./single/extract")(vorpal, extractOption);
   });
 
-  vorpal
-    .command("m", "Move file")
-    .action(() =>
-      moveMedia.single(vorpal, currentFilePathStore.get()).then(onComplete)
-    );
+  vorpal.command("m", "Move file").action(async () => {
+    await moveMedia.single(vorpal, currentFilePathStore.get());
+    onComplete();
+  });
 
   vorpal.command("d", "Delete file").action(() => {
     vorpal.activeCommand.prompt(
@@ -55,21 +54,17 @@ function run(onComplete) {
         type: "confirm",
         name: "confirmDelete"
       },
-      function({ confirmDelete }) {
+      async function({ confirmDelete }) {
         if (confirmDelete) {
-          return fileDeleter(currentFilePathStore.get()).then(() => {
-            onComplete();
-          });
+          await fileDeleter(currentFilePathStore.get());
         }
         onComplete();
-        return Promise.resolve();
       }
     );
   });
 
-  vorpal.command("n", "Go back").action(() => {
+  vorpal.command("n", "Go back").action(async () => {
     onComplete();
-    return Promise.resolve();
   });
 
   return vorpal;

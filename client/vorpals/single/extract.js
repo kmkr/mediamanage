@@ -56,75 +56,74 @@ module.exports = (vorpal, extractOption) => {
     .autocomplete({
       data: () => config.categories.concat(performerNameList.list())
     })
-    .action(({ from, toAndPerformerNamesAndCategories = [] }) => {
+    .action(async ({ from, toAndPerformerNamesAndCategories = [] }) => {
       const { performerNamesAndCategories, to } = extractToTime(
         toAndPerformerNamesAndCategories
       );
-      const fn = type === "video" ? extractVideo : extractAudio;
+      const extractFunction = type === "video" ? extractVideo : extractAudio;
       const trimmedPerformerNamesAndCategories = performerNamesAndCategories.map(
         entry => entry.trim()
       );
 
       const filePath = currentFilePathStore.get();
 
-      return fn({
+      const {
+        destFilePath,
+        secondsRemaining,
+        totalSeconds
+      } = await extractFunction({
         destinationDir: destination,
         filePath,
         from,
         to
-      }).then(
-        ({ destFilePath: tempFilePath, secondsRemaining, totalSeconds }) => {
-          logger.log("Extraction complete");
+      });
+      logger.log("Extraction complete");
 
-          tempFilePath = categoriesAndPerformerNamesHandler(
+      const tempFilePath = categoriesAndPerformerNamesHandler(
+        trimmedPerformerNamesAndCategories,
+        destFilePath
+      );
+
+      if (replaceFile) {
+        const { confirmReplace } = await vorpal.activeCommand.prompt({
+          message: `Do you want to replace ${chalk.yellow(
+            removeCurrentWd(filePath)
+          )} with ${removeCurrentWd(tempFilePath)}?`,
+          name: "confirmReplace",
+          type: "confirm"
+        });
+
+        if (confirmReplace) {
+          const filePathWithUpdates = categoriesAndPerformerNamesHandler(
             trimmedPerformerNamesAndCategories,
-            tempFilePath
+            filePath
           );
-
-          if (replaceFile) {
-            return vorpal.activeCommand
-              .prompt({
-                message: `Do you want to replace ${chalk.yellow(
-                  removeCurrentWd(filePath)
-                )} with ${removeCurrentWd(tempFilePath)}?`,
-                name: "confirmReplace",
-                type: "confirm"
-              })
-              .then(({ confirmReplace }) => {
-                if (!confirmReplace) {
-                  return;
-                }
-
-                const filePathWithUpdates = categoriesAndPerformerNamesHandler(
-                  trimmedPerformerNamesAndCategories,
-                  filePath
-                );
-                mover(tempFilePath, filePath);
-                if (filePathWithUpdates !== filePath) {
-                  logger.log(
-                    "Adding changes in categories / performer names to file ..."
-                  );
-                  mover(filePath, filePathWithUpdates);
-                  currentFilePathStore.set(filePathWithUpdates);
-                }
-              });
-          }
-
-          const { from, to, performerNamesAndCategories } = autoFillData;
-          let { startsAtSeconds, endsAtSeconds } = mapToSeconds(from, to);
-          const previousRangeSpan = endsAtSeconds - startsAtSeconds;
-          const time = secondsToTimeParser(
-            Math.min(totalSeconds, endsAtSeconds + previousRangeSpan)
-          );
-          if (secondsRemaining > 60) {
-            setTimeout(() => {
-              const autoFillInput = [to, time]
-                .concat(performerNamesAndCategories)
-                .join(" ");
-              vorpal.ui.input(`${commandKey} ${autoFillInput} `);
-            }, 10);
+          mover(tempFilePath, filePath);
+          if (filePathWithUpdates !== filePath) {
+            logger.log(
+              "Adding changes in categories / performer names to file ..."
+            );
+            mover(filePath, filePathWithUpdates);
+            currentFilePathStore.set(filePathWithUpdates);
           }
         }
+      }
+
+      let { startsAtSeconds, endsAtSeconds } = mapToSeconds(
+        autoFillData.from,
+        autoFillData.to
       );
+      const previousRangeSpan = endsAtSeconds - startsAtSeconds;
+      const time = secondsToTimeParser(
+        Math.min(totalSeconds, endsAtSeconds + previousRangeSpan)
+      );
+      if (secondsRemaining > 60) {
+        setTimeout(() => {
+          const autoFillInput = [autoFillData.to, time]
+            .concat(autoFillData.performerNamesAndCategories)
+            .join(" ");
+          vorpal.ui.input(`${commandKey} ${autoFillInput} `);
+        }, 10);
+      }
     });
 };

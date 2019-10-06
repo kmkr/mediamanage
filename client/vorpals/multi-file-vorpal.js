@@ -30,21 +30,20 @@ module.exports = function(onGoToFile) {
       return Promise.resolve();
     });
 
-  vorpal.command("ll", "List recursive media").action(() => {
+  vorpal.command("ll", "List recursive media").action(async () => {
     fileNamesLogger("**/**");
-    return Promise.resolve();
   });
 
-  vorpal
-    .command("m", "Move media")
-    .action(() => moveMedia.all(vorpal).then(() => cleanDirectory(vorpal)));
+  vorpal.command("m", "Move media").action(async () => {
+    await moveMedia.all(vorpal);
+    cleanDirectory(vorpal);
+  });
 
   vorpal.command("u", "Undo move").action(() => undoMove(vorpal));
 
-  vorpal.command("s [index]", "Select file").action(({ index = 0 }) => {
+  vorpal.command("s [index]", "Select file").action(async ({ index = 0 }) => {
     const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)];
     onGoToFile(filePath);
-    return Promise.resolve();
   });
 
   function getRandomFilePath({ filter, recursive }) {
@@ -54,28 +53,26 @@ module.exports = function(onGoToFile) {
     if (filePath) {
       return filePath;
     } else {
-      logger.log(`No files found. Length ${mediaFiles.length}`);
+      logger.log(`No files found (of total ${mediaFiles.length} files)`);
     }
   }
 
   vorpal
     .command("r [filter]", "Select random file (non recursive)")
-    .action(({ filter }) => {
+    .action(async ({ filter }) => {
       const filePath = getRandomFilePath({ filter });
       if (filePath) {
         onGoToFile(filePath);
       }
-      return Promise.resolve();
     });
 
   vorpal
     .command("rr [filter]", "Select random file (recursive)")
-    .action(({ filter }) => {
+    .action(async ({ filter }) => {
       const filePath = getRandomFilePath({ recursive: true, filter });
       if (filePath) {
         onGoToFile(filePath);
       }
-      return Promise.resolve();
     });
 
   vorpal.delimiter(`${chalk.yellow("mediamanage")} $`);

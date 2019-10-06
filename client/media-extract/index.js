@@ -51,7 +51,7 @@ function validate({ from, to, performerNamesAndCategories }) {
 
 exports.validate = validate;
 
-exports.extractVideo = ({ destinationDir, filePath, from, to }) => {
+exports.extractVideo = async ({ destinationDir, filePath, from, to }) => {
   const extractor = extractors.find(extractor =>
     extractor.supportsVideo(filePath)
   );
@@ -66,7 +66,8 @@ exports.extractVideo = ({ destinationDir, filePath, from, to }) => {
   const { startsAtSeconds, endsAtSeconds } = map(from, to);
   const destFilePath = getDestFilePath(destinationDir, filePath);
   mkdir(path.parse(destFilePath).dir);
-  return Promise.all([
+
+  const [, totalSeconds] = await Promise.all([
     extractor.extractVideo({
       sourceFilePath: filePath,
       destFilePath,
@@ -74,14 +75,16 @@ exports.extractVideo = ({ destinationDir, filePath, from, to }) => {
       endsAtSeconds
     }),
     getLength(filePath)
-  ]).then(([, totalSeconds]) => ({
+  ]);
+
+  return {
     destFilePath,
     secondsRemaining: totalSeconds - endsAtSeconds,
     totalSeconds
-  }));
+  };
 };
 
-exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
+exports.extractAudio = async ({ destinationDir, filePath, from, to }) => {
   const extractor = extractors.find(extractor =>
     extractor.supportsAudio(filePath)
   );
@@ -96,7 +99,7 @@ exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
   const { startsAtSeconds, endsAtSeconds } = map(from, to);
   const destFilePath = getDestFilePath(destinationDir, filePath, ".mp3");
   mkdir(path.parse(destFilePath).dir);
-  return Promise.all([
+  const [, totalSeconds] = await Promise.all([
     extractor.extractAudio({
       sourceFilePath: filePath,
       destFilePath,
@@ -104,11 +107,12 @@ exports.extractAudio = ({ destinationDir, filePath, from, to }) => {
       endsAtSeconds
     }),
     getLength(filePath)
-  ]).then(([, totalSeconds]) => ({
+  ]);
+  return {
     destFilePath,
     secondsRemaining: totalSeconds - endsAtSeconds,
     totalSeconds
-  }));
+  };
 };
 
 function getLength(filePath) {

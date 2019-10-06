@@ -10,7 +10,7 @@ const { unique } = require("../helpers/array-helper");
 
 const TIME_THRESHOLD_MS = 5000;
 
-module.exports = vorpalInstance => {
+module.exports = async vorpalInstance => {
   const movedFiles = movedFilesService.get();
 
   if (!movedFiles.length) {
@@ -33,38 +33,34 @@ module.exports = vorpalInstance => {
     }
   );
 
-  return vorpalInstance.activeCommand
-    .prompt({
-      message: "Which moves do you want to undo?",
-      name: "indexes",
-      type: "checkbox",
-      choices
-    })
-    .then(({ indexes }) => {
-      if (!indexes.length) {
-        return;
-      }
+  const { indexes } = await vorpalInstance.activeCommand.prompt({
+    message: "Which moves do you want to undo?",
+    name: "indexes",
+    type: "checkbox",
+    choices
+  });
+  if (!indexes.length) {
+    return;
+  }
 
-      const filePaths = indexes
-        .map(index => movedFiles[index].destFilePath)
-        .reverse();
-      const destDirPaths = indexes
-        .map(index => movedFiles[index].sourceFilePath)
-        .reverse();
-      const uniqueDirs = destDirPaths
-        .map(destDirPath => path.parse(destDirPath).dir)
-        .sort()
-        .filter(unique);
-      return Promise.reduce(
-        uniqueDirs,
-        (t, dir) => promptCreateFolder(dir, vorpalInstance),
-        null
-      ).then(() => {
-        return moveAll({
-          filePaths,
-          destDirPaths,
-          vorpalInstance
-        });
-      });
-    });
+  const filePaths = indexes
+    .map(index => movedFiles[index].destFilePath)
+    .reverse();
+  const destDirPaths = indexes
+    .map(index => movedFiles[index].sourceFilePath)
+    .reverse();
+  const uniqueDirs = destDirPaths
+    .map(destDirPath => path.parse(destDirPath).dir)
+    .sort()
+    .filter(unique);
+  await Promise.reduce(
+    uniqueDirs,
+    (t, dir) => promptCreateFolder(dir, vorpalInstance),
+    null
+  );
+  return moveAll({
+    filePaths,
+    destDirPaths,
+    vorpalInstance
+  });
 };

@@ -14,7 +14,7 @@ exports.supportsVideo = fileName =>
 exports.supportsAudio = fileName =>
   fileName.match(SUPPORT_AUDIO_EXTRACT_REGEXP);
 
-exports.extractVideo = ({
+exports.extractVideo = async ({
   sourceFilePath,
   destFilePath,
   startsAtSeconds,
@@ -24,20 +24,19 @@ exports.extractVideo = ({
   logger.log(
     `\nExtracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`
   );
-  return run(
+  const output = await run(
     `ffmpeg -ss ${secondsToTimeParser(
       startsAtSeconds
     )} -i "${sourceFilePath}" -t ${secondsToTimeParser(
       lengthInSeconds
     )} -vcodec copy -acodec copy "${destFilePath}" -loglevel warning`
-  ).then(output => {
-    output.forEach(line => {
-      logger.log(line);
-    });
+  );
+  output.forEach(line => {
+    logger.log(line);
   });
 };
 
-exports.extractAudio = ({
+exports.extractAudio = async ({
   sourceFilePath,
   destFilePath,
   startsAtSeconds,
@@ -48,27 +47,25 @@ exports.extractAudio = ({
   logger.log(
     `\nExtracting to ${chalk.yellow(removeCurrentWd(destFilePath))} ...`
   );
-  return run(
+  const output = await run(
     `ffmpeg -ss ${secondsToTimeParser(
       startsAtSeconds
     )} -t ${secondsToTimeParser(
       lengthInSeconds
     )} -i "${sourceFilePath}" -acodec libmp3lame -ab 196k "${destFilePath}" -loglevel warning`
-  ).then(output => {
-    output.forEach(line => {
-      logger.log(line);
-    });
+  );
+  output.forEach(line => {
+    logger.log(line);
   });
 };
 
-exports.getLength = filePath => {
-  return run(
+exports.getLength = async filePath => {
+  const output = await run(
     `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`
-  ).then(output => {
-    if (output.length) {
-      return Number(output[0]);
-    }
-  });
+  );
+  if (output.length) {
+    return Number(output[0]);
+  }
 };
 
 function run(command) {
