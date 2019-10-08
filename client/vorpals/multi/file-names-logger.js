@@ -1,3 +1,4 @@
+const assert = require("assert");
 const chalk = require("chalk");
 
 const matchesGlob = require("../../file-system/matches-glob");
@@ -6,7 +7,9 @@ const removeCurrentWd = require("../../helpers/remove-current-wd");
 const logger = require("../logger");
 const printPathsService = require("../../helpers/print-paths-service");
 
-module.exports = (filter = "*") => {
+module.exports = filter => {
+  assert(filter);
+
   const allRelativeFilePaths = fileFinder
     .mediaFiles({ recursive: true })
     .map(removeCurrentWd);
