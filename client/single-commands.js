@@ -22,8 +22,8 @@ module.exports = (filePath, handleBack) => {
   mediaPlayer.play(currentFilePathStore.get());
   searchForExistingMedia(path.parse(filePath).name);
 
-  function prompt() {
-    return wuzbar({
+  async function prompt() {
+    const result = await wuzbar({
       prompt: filePath,
       commands: [
         {
@@ -42,11 +42,11 @@ module.exports = (filePath, handleBack) => {
         ...getExtractCommands()
       ],
       context: 1
-    }).then(exitCode => {
-      if (exitCode !== returnToMultiSelectionSymbol) {
-        return prompt();
-      }
     });
+    if (result === returnToMultiSelectionSymbol) {
+      return;
+    }
+    return prompt();
   }
 
   return prompt();
