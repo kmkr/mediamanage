@@ -20,14 +20,13 @@ module.exports = async ({ filePaths, destDirPath }) => {
   printPathsService.asList(filePaths.map(entry => removeCurrentWd(entry)));
 
   const fileNameCandidates = await promptCreateFolder(destDirPath);
-  const destinationDirAlternatives = fileNameCandidates.filter(
-    fileNameCandidate =>
-      fs.statSync(path.join(destDirPath, fileNameCandidate)).isDirectory()
+  const subDirectories = fileNameCandidates.filter(fileNameCandidate =>
+    fs.statSync(path.join(destDirPath, fileNameCandidate)).isDirectory()
   );
-  if (destinationDirAlternatives.length) {
-    const defaultChoice = destinationDirAlternatives.includes(previousChoice)
+  if (subDirectories.length) {
+    const defaultChoice = subDirectories.includes(previousChoice)
       ? previousChoice
-      : destinationDirAlternatives[0];
+      : subDirectories[0];
     const { moveDestination } = await inquirer.prompt({
       default: defaultChoice,
       message: `Where do you want to move the above ${chalk.yellow(
@@ -35,33 +34,16 @@ module.exports = async ({ filePaths, destDirPath }) => {
       )} files?`,
       name: "moveDestination",
       type: "list",
-      choices: destinationDirAlternatives
+      choices: subDirectories
     });
-    if (!moveDestination) {
-      return;
-    }
+
     previousChoice = moveDestination;
     destDirPath = path.resolve(destDirPath, moveDestination);
-    await fileMover.moveAll({
-      filePaths,
-      destDirPath
-    });
-    return;
   } else {
-    // Guard while waiting for https://github.com/dthree/vorpal/issues/165
-    const { confirmMove } = await inquirer.prompt({
-      message: `Confirm move of ${chalk.yellow(filePaths.length)} files`,
-      name: "confirmMove",
-      type: "confirm"
-    });
-    if (!confirmMove) {
-      return;
-    }
-
     destDirPath = path.resolve(destDirPath);
-    await fileMover.moveAll({
-      filePaths,
-      destDirPath
-    });
   }
+  await fileMover.moveAll({
+    filePaths,
+    destDirPath
+  });
 };
