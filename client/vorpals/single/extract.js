@@ -110,22 +110,22 @@ module.exports = extractOption => {
         // }
       }
 
-      // let { startsAtSeconds, endsAtSeconds } = mapToSeconds(
-      //   autoFillData.from,
-      //   autoFillData.to
-      // );
-      // const previousRangeSpan = endsAtSeconds - startsAtSeconds;
-      // const time = secondsToTimeParser(
-      //   Math.min(totalSeconds, endsAtSeconds + previousRangeSpan)
-      // );
-      // if (secondsRemaining > 60) {
-      //   setTimeout(() => {
-      //     const autoFillInput = [autoFillData.to, time]
-      //       .concat(autoFillData.performerNamesAndCategories)
-      //       .join(" ");
-      //     vorpal.ui.input(`${commandKey} ${autoFillInput} `);
-      //   }, 10);
-      // }
+      let { startsAtSeconds, endsAtSeconds } = mapToSeconds(
+        autoFillData.from,
+        autoFillData.to
+      );
+      const previousRangeSpan = endsAtSeconds - startsAtSeconds;
+      const time = secondsToTimeParser(
+        Math.min(totalSeconds, endsAtSeconds + previousRangeSpan)
+      );
+      if (secondsRemaining > 60) {
+        setTimeout(() => {
+          const autoFillInput = [autoFillData.to, time]
+            .concat(autoFillData.performerNamesAndCategories)
+            .join(" ");
+          process.stdin.write(`${commandKey} ${autoFillInput} `);
+        }, 10);
+      }
     }
   };
 };
