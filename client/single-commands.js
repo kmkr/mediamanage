@@ -30,7 +30,6 @@ module.exports = (filePath, handleBack) => {
           prompt: "n",
           description: "Go back",
           handle() {
-            mediaPlayer.stop();
             return returnToMultiSelectionSymbol;
           }
         },
@@ -48,6 +47,7 @@ module.exports = (filePath, handleBack) => {
       context: 1
     });
     if (result === returnToMultiSelectionSymbol) {
+      mediaPlayer.stop();
       return;
     }
     return prompt();
