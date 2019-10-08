@@ -9,6 +9,7 @@ const cleanDirectory = require("../clean-directory");
 const fileNamesLogger = require("./multi/file-names-logger");
 
 const logger = require("./logger");
+const getRandomFilePath = require("../get-random-file-path");
 
 module.exports = function(onGoToFile) {
   const vorpal = new Vorpal();
@@ -44,17 +45,6 @@ module.exports = function(onGoToFile) {
     const filePath = fileFinder.mediaFiles({ recursive: true })[Number(index)];
     onGoToFile(filePath);
   });
-
-  function getRandomFilePath({ filter, recursive }) {
-    const mediaFiles = fileFinder.mediaFiles({ recursive, filter });
-    const idx = Math.floor(Math.random() * mediaFiles.length);
-    const filePath = mediaFiles[idx];
-    if (filePath) {
-      return filePath;
-    } else {
-      logger.log(`No files found (of total ${mediaFiles.length} files)`);
-    }
-  }
 
   vorpal
     .command("r [filter]", "Select random file (non recursive)")
