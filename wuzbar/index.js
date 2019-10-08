@@ -15,6 +15,13 @@ module.exports = async ({ commands, context = 0, prompt }) => {
     return commands.find(command => getKey(command.prompt) === getKey(line));
   }
 
+  function logHelp() {
+    console.log("Available commands");
+    commands.forEach(command => {
+      console.log(command.prompt);
+    });
+  }
+
   const { cmd } = await inquirer.prompt([
     {
       type: "command",
@@ -22,19 +29,21 @@ module.exports = async ({ commands, context = 0, prompt }) => {
       message: prompt,
       validate: line => {
         const command = getCommand(line);
+        if (!command) {
+          return true;
+        }
         try {
           const data = parser(command.prompt, line);
           if (command && command.validate) {
             return command.validate(data);
           }
         } catch (err) {
-          console.log("Invalid", err);
+          console.log("Unable to parse command prompt", err);
           return false;
         }
         return true;
       },
       autoCompletion(line) {
-        console.log("Checking autocomplete for ", line);
         const command = getCommand(line);
         if (command && command.autoComplete) {
           return command.autoComplete();
@@ -48,7 +57,7 @@ module.exports = async ({ commands, context = 0, prompt }) => {
   const command = getCommand(cmd);
 
   if (!command) {
-    console.log("No command found");
+    logHelp();
     return;
   }
 
