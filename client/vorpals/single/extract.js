@@ -37,22 +37,21 @@ module.exports = extractOption => {
     description: `Extract to ${destination}`,
     validate({ from, toAndPerformerNamesAndCategories = [] }) {
       if (!from) {
-        return false;
+        return "Missing required 'from' argument";
       }
       const { performerNamesAndCategories, to } = extractToTime(
         toAndPerformerNamesAndCategories
       );
       const isValid = validate({ from, to, performerNamesAndCategories });
-      if (!isValid) {
-        logger.log("Invalid input");
-      }
-
       autoFillData = {
         from,
         to,
         performerNamesAndCategories
       };
-      return isValid;
+      if (!isValid) {
+        return "Invalid input";
+      }
+      return true;
     },
     autocomplete() {
       return config.categories.concat(performerNameList.list());

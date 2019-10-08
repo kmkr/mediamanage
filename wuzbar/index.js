@@ -44,8 +44,7 @@ module.exports = async ({ commands, context = 0, prompt }) => {
             return command.validate(data);
           }
         } catch (err) {
-          console.log("Unable to parse command prompt", err);
-          return false;
+          return `Unable to parse command prompt ${err}`;
         }
         return true;
       },
