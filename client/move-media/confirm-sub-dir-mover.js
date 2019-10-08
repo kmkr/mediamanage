@@ -9,7 +9,9 @@ const promptCreateFolder = require("./prompt-create-folder");
 const printPathsService = require("../helpers/print-paths-service");
 const removeCurrentWd = require("../helpers/remove-current-wd");
 
-let previousChoice;
+inquirer.registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
+
+let previousBaseName;
 
 module.exports = async ({ filePaths, destDirPath }) => {
   assert(
@@ -20,27 +22,27 @@ module.exports = async ({ filePaths, destDirPath }) => {
   printPathsService.asList(filePaths.map(entry => removeCurrentWd(entry)));
 
   const fileNameCandidates = await promptCreateFolder(destDirPath);
-  const subDirectories = fileNameCandidates.filter(fileNameCandidate =>
-    fs.statSync(path.join(destDirPath, fileNameCandidate)).isDirectory()
-  );
-  if (subDirectories.length) {
-    const defaultChoice = subDirectories.includes(previousChoice)
-      ? previousChoice
-      : subDirectories[0];
+  const subdirectoryPaths = fileNameCandidates
+    .map(fileNameCandidate => path.join(destDirPath, fileNameCandidate))
+    .filter(filePathCandidate => fs.statSync(filePathCandidate).isDirectory());
+  if (subdirectoryPaths.length) {
+    const defaultChoice = subdirectoryPaths.find(
+      subdirectoryPath => path.parse(subdirectoryPath).base === previousBaseName
+    );
     const { moveDestination } = await inquirer.prompt({
+      type: "fuzzypath",
+      itemType: "directory",
+      depthLimit: 2,
+      rootPath: destDirPath,
       default: defaultChoice,
       message: `Where do you want to move the above ${chalk.yellow(
         filePaths.length
       )} files?`,
-      name: "moveDestination",
-      type: "list",
-      choices: subDirectories
+      name: "moveDestination"
     });
 
-    previousChoice = moveDestination;
-    destDirPath = path.resolve(destDirPath, moveDestination);
-  } else {
-    destDirPath = path.resolve(destDirPath);
+    previousBaseName = path.parse(moveDestination).base;
+    destDirPath = moveDestination;
   }
   await fileMover.moveAll({
     filePaths,
