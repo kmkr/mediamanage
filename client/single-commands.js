@@ -6,6 +6,7 @@ const currentFilePathStore = require("./vorpals/single/current-file-path-store")
 const mediaPlayer = require("./media-player");
 const searchForExistingMedia = require("./existing-media-search/search-for-existing-media-service");
 const buildExtractCommand = require("./vorpals/single/extract");
+const handleDeleteCommand = require("./vorpals/single/delete");
 
 function getExtractCommands() {
   return config.extractOptions.map(extractOption => {
@@ -28,6 +29,12 @@ module.exports = (filePath, handleBack) => {
           handle() {
             mediaPlayer.stop();
             return -1;
+          }
+        },
+        {
+          prompt: "d",
+          handle() {
+            return handleDeleteCommand();
           }
         },
         ...getExtractCommands()
