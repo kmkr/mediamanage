@@ -25,10 +25,8 @@ async function runMulti() {
     await multiCommands({
       onSelectFile: async filePath => {
         await singleCommands(filePath);
-        runMulti();
       }
     });
-    runMulti();
   } catch (err) {
     console.error(err);
   }
