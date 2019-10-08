@@ -1,16 +1,17 @@
+const inquirer = require("inquirer");
 const chalk = require("chalk");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
 const logger = require("../vorpals/logger");
 
-module.exports = async (path, vorpalInstance) => {
+module.exports = async path => {
   try {
     return await fs.readdirAsync(path);
   } catch (err) {
     if (err.code !== "ENOENT") {
       throw err;
     }
-    const { create } = await vorpalInstance.activeCommand.prompt({
+    const { create } = await inquirer.prompt({
       message: `${chalk.yellow(
         path
       )} does not exist, do you want to create it?`,

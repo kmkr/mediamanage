@@ -1,3 +1,4 @@
+const inquirer = require("inquirer");
 const chalk = require("chalk");
 const assert = require("assert");
 const fs = require("fs");
@@ -13,12 +14,7 @@ const indexifyIfExists = require("../file-system/indexify-if-exists");
 const movedFiles = require("../file-system/moved-files-service");
 const fileDeleter = require("../file-system/deleter");
 
-exports.moveAll = ({
-  filePaths,
-  destDirPath,
-  destDirPaths,
-  vorpalInstance
-}) => {
+exports.moveAll = ({ filePaths, destDirPath, destDirPaths }) => {
   return Promise.reduce(
     filePaths,
     (t, filePath, index) => {
@@ -31,7 +27,7 @@ exports.moveAll = ({
         destFilePath = destDirPaths[index];
       }
 
-      return prepareMove(filePath, destFilePath, vorpalInstance);
+      return prepareMove(filePath, destFilePath);
     },
     null
   );
@@ -83,7 +79,7 @@ async function indexify(sourceFilePath, destFilePath) {
   });
 }
 
-async function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
+async function prepareMove(sourceFilePath, destFilePath) {
   assert(
     path.isAbsolute(sourceFilePath) && path.extname(sourceFilePath),
     `Source file must be an absolute pathed file. Was ${sourceFilePath}`
@@ -140,7 +136,7 @@ async function prepareMove(sourceFilePath, destFilePath, vorpalInstance) {
     )} times the destination size.`
   );
 
-  const { choice } = await vorpalInstance.activeCommand.prompt({
+  const { choice } = await inquirer.prompt({
     message: "What do you want to do?",
     type: "list",
     name: "choice",

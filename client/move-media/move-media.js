@@ -15,7 +15,7 @@ function resolveToDir(toDir) {
   return path.resolve(toDir);
 }
 
-exports.all = vorpalInstance => {
+exports.all = () => {
   // Include only those media options with fromDir. The others are used for singleFile only.
   const moveMediaOptions = config.moveMediaOptions.filter(
     moveMediaOption => moveMediaOption.fromDir
@@ -54,8 +54,7 @@ exports.all = vorpalInstance => {
 
       return confirmSubDirMover({
         filePaths,
-        destDirPath: resolveToDir(moveMediaOption.toDir),
-        vorpalInstance
+        destDirPath: resolveToDir(moveMediaOption.toDir)
       });
     },
     null
@@ -63,27 +62,28 @@ exports.all = vorpalInstance => {
 };
 
 exports.single = async (vorpalInstance, filePath) => {
-  assert(
-    path.isAbsolute(filePath),
-    `File path must be absolute. Was ${filePath}`
-  );
+  throw new Error("NYI");
+  // assert(
+  //   path.isAbsolute(filePath),
+  //   `File path must be absolute. Was ${filePath}`
+  // );
 
-  const moveToChoices = config.moveMediaOptions.map(moveMediaOption =>
-    resolveToDir(moveMediaOption.toDir)
-  );
+  // const moveToChoices = config.moveMediaOptions.map(moveMediaOption =>
+  //   resolveToDir(moveMediaOption.toDir)
+  // );
 
-  const { destDirPath } = await vorpalInstance.activeCommand.prompt({
-    message: `Where do you want to move ${filePath}?`,
-    name: "destDirPath",
-    type: "list",
-    choices: moveToChoices
-  });
-  if (!destDirPath) {
-    return;
-  }
-  return confirmSubDirMover({
-    filePaths: [filePath],
-    destDirPath,
-    vorpalInstance
-  });
+  // const { destDirPath } = await vorpalInstance.activeCommand.prompt({
+  //   message: `Where do you want to move ${filePath}?`,
+  //   name: "destDirPath",
+  //   type: "list",
+  //   choices: moveToChoices
+  // });
+  // if (!destDirPath) {
+  //   return;
+  // }
+  // return confirmSubDirMover({
+  //   filePaths: [filePath],
+  //   destDirPath,
+  //   vorpalInstance
+  // });
 };

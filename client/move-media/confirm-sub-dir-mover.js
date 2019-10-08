@@ -1,3 +1,4 @@
+const inquirer = require("inquirer");
 const assert = require("assert");
 const chalk = require("chalk");
 const fs = require("fs");
@@ -10,7 +11,7 @@ const removeCurrentWd = require("../helpers/remove-current-wd");
 
 let previousChoice;
 
-module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
+module.exports = async ({ filePaths, destDirPath }) => {
   assert(
     filePaths && filePaths.constructor === Array,
     `File paths must be an array. Was ${filePaths}`
@@ -18,45 +19,37 @@ module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
 
   printPathsService.asList(filePaths.map(entry => removeCurrentWd(entry)));
 
-  const fileNameCandidates = await promptCreateFolder(
-    destDirPath,
-    vorpalInstance
-  );
+  const fileNameCandidates = await promptCreateFolder(destDirPath);
   const destinationDirAlternatives = fileNameCandidates.filter(
     fileNameCandidate =>
       fs.statSync(path.join(destDirPath, fileNameCandidate)).isDirectory()
   );
   if (destinationDirAlternatives.length) {
-    // Add abort as an option while waiting for https://github.com/dthree/vorpal/issues/165
-    const ABORT = "Abort move";
-    destinationDirAlternatives.unshift(ABORT);
-
     const defaultChoice = destinationDirAlternatives.includes(previousChoice)
       ? previousChoice
-      : ABORT;
-    const { moveDestination } = await vorpalInstance.activeCommand.prompt({
+      : destinationDirAlternatives[0];
+    const { moveDestination } = await inquirer.prompt({
+      default: defaultChoice,
       message: `Where do you want to move the above ${chalk.yellow(
         filePaths.length
       )} files?`,
-      default: defaultChoice,
       name: "moveDestination",
       type: "list",
       choices: destinationDirAlternatives
     });
-    if (!moveDestination || moveDestination === ABORT) {
+    if (!moveDestination) {
       return;
     }
     previousChoice = moveDestination;
     destDirPath = path.resolve(destDirPath, moveDestination);
     await fileMover.moveAll({
       filePaths,
-      destDirPath,
-      vorpalInstance
+      destDirPath
     });
     return;
   } else {
     // Guard while waiting for https://github.com/dthree/vorpal/issues/165
-    const { confirmMove } = await vorpalInstance.activeCommand.prompt({
+    const { confirmMove } = await inquirer.prompt({
       message: `Confirm move of ${chalk.yellow(filePaths.length)} files`,
       name: "confirmMove",
       type: "confirm"
@@ -68,8 +61,7 @@ module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
     destDirPath = path.resolve(destDirPath);
     await fileMover.moveAll({
       filePaths,
-      destDirPath,
-      vorpalInstance
+      destDirPath
     });
   }
 };

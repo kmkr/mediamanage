@@ -39,6 +39,7 @@ module.exports = (filePath, handleBack) => {
             return handleDeleteCommand();
           }
         },
+
         ...getExtractCommands()
       ],
       context: 1
