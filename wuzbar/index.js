@@ -34,6 +34,7 @@ module.exports = async ({ commands, context = 0, prompt }) => {
         return true;
       },
       autoCompletion(line) {
+        console.log("Checking autocomplete for ", line);
         const command = getCommand(line);
         if (command && command.autoComplete) {
           return command.autoComplete();

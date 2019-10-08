@@ -24,6 +24,6 @@ test("parse with rest arguments", () => {
   expect(parser(prompt, input)).toEqual({
     key: "a",
     start: "20",
-    allthestuff: "hey man whats up"
+    allthestuff: ["hey", "man", "whats", "up"]
   });
 });

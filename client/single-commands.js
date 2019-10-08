@@ -1,9 +1,17 @@
 const path = require("path");
 const wuzbar = require("../wuzbar");
+const config = require("./config.json");
 
 const currentFilePathStore = require("./vorpals/single/current-file-path-store");
 const mediaPlayer = require("./media-player");
 const searchForExistingMedia = require("./existing-media-search/search-for-existing-media-service");
+const buildExtractCommand = require("./vorpals/single/extract");
+
+function getExtractCommands() {
+  return config.extractOptions.map(extractOption => {
+    return buildExtractCommand(extractOption);
+  });
+}
 
 module.exports = (filePath, handleBack) => {
   console.log("Play file", filePath);
@@ -22,15 +30,7 @@ module.exports = (filePath, handleBack) => {
             return -1;
           }
         },
-        {
-          prompt: "t [...something]",
-          handle({ filter }) {
-            return new Promise(resolve => {
-              console.log("Extract complete");
-              setTimeout(resolve, 1500);
-            });
-          }
-        }
+        ...getExtractCommands()
       ],
       context: 1
     }).then(exitCode => {

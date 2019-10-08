@@ -17,7 +17,7 @@ module.exports = (prompt, input) => {
     (acc, curVal, idx) => {
       const cleanKey = cleanKeyName(curVal);
       if (isRest(curVal)) {
-        acc[cleanKey] = args.slice(idx).join(" ");
+        acc[cleanKey] = args.slice(idx);
       } else {
         acc[cleanKey] = args[idx];
       }

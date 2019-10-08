@@ -28,16 +28,13 @@ function extractToTime(toAndPerformerNamesAndCategories) {
   return { performerNamesAndCategories, to };
 }
 
-module.exports = (vorpal, extractOption) => {
+module.exports = extractOption => {
   const { commandKey, destination, replaceFile, type } = extractOption;
   const commandPrompt = `${commandKey} <from> [toAndPerformerNamesAndCategories...]`;
 
-  vorpal
-    .command(commandPrompt, `Extract to ${destination}`)
-    .types({
-      string: ["_"]
-    })
-    .validate(({ from, toAndPerformerNamesAndCategories = [] }) => {
+  return {
+    prompt: commandPrompt,
+    validate({ from, toAndPerformerNamesAndCategories = [] }) {
       const { performerNamesAndCategories, to } = extractToTime(
         toAndPerformerNamesAndCategories
       );
@@ -52,11 +49,11 @@ module.exports = (vorpal, extractOption) => {
         performerNamesAndCategories
       };
       return isValid;
-    })
-    .autocomplete({
-      data: () => config.categories.concat(performerNameList.list())
-    })
-    .action(async ({ from, toAndPerformerNamesAndCategories = [] }) => {
+    },
+    autocomplete() {
+      return config.categories.concat(performerNameList.list());
+    },
+    handle: async ({ from, toAndPerformerNamesAndCategories = [] }) => {
       const { performerNamesAndCategories, to } = extractToTime(
         toAndPerformerNamesAndCategories
       );
@@ -85,45 +82,47 @@ module.exports = (vorpal, extractOption) => {
       );
 
       if (replaceFile) {
-        const { confirmReplace } = await vorpal.activeCommand.prompt({
-          message: `Do you want to replace ${chalk.yellow(
-            removeCurrentWd(filePath)
-          )} with ${removeCurrentWd(tempFilePath)}?`,
-          name: "confirmReplace",
-          type: "confirm"
-        });
+        throw new Error("NYI");
+        // const { confirmReplace } = await vorpal.activeCommand.prompt({
+        //   message: `Do you want to replace ${chalk.yellow(
+        //     removeCurrentWd(filePath)
+        //   )} with ${removeCurrentWd(tempFilePath)}?`,
+        //   name: "confirmReplace",
+        //   type: "confirm"
+        // });
 
-        if (confirmReplace) {
-          const filePathWithUpdates = categoriesAndPerformerNamesHandler(
-            trimmedPerformerNamesAndCategories,
-            filePath
-          );
-          mover(tempFilePath, filePath);
-          if (filePathWithUpdates !== filePath) {
-            logger.log(
-              "Adding changes in categories / performer names to file ..."
-            );
-            mover(filePath, filePathWithUpdates);
-            currentFilePathStore.set(filePathWithUpdates);
-          }
-        }
+        // if (confirmReplace) {
+        //   const filePathWithUpdates = categoriesAndPerformerNamesHandler(
+        //     trimmedPerformerNamesAndCategories,
+        //     filePath
+        //   );
+        //   mover(tempFilePath, filePath);
+        //   if (filePathWithUpdates !== filePath) {
+        //     logger.log(
+        //       "Adding changes in categories / performer names to file ..."
+        //     );
+        //     mover(filePath, filePathWithUpdates);
+        //     currentFilePathStore.set(filePathWithUpdates);
+        //   }
+        // }
       }
 
-      let { startsAtSeconds, endsAtSeconds } = mapToSeconds(
-        autoFillData.from,
-        autoFillData.to
-      );
-      const previousRangeSpan = endsAtSeconds - startsAtSeconds;
-      const time = secondsToTimeParser(
-        Math.min(totalSeconds, endsAtSeconds + previousRangeSpan)
-      );
-      if (secondsRemaining > 60) {
-        setTimeout(() => {
-          const autoFillInput = [autoFillData.to, time]
-            .concat(autoFillData.performerNamesAndCategories)
-            .join(" ");
-          vorpal.ui.input(`${commandKey} ${autoFillInput} `);
-        }, 10);
-      }
-    });
+      // let { startsAtSeconds, endsAtSeconds } = mapToSeconds(
+      //   autoFillData.from,
+      //   autoFillData.to
+      // );
+      // const previousRangeSpan = endsAtSeconds - startsAtSeconds;
+      // const time = secondsToTimeParser(
+      //   Math.min(totalSeconds, endsAtSeconds + previousRangeSpan)
+      // );
+      // if (secondsRemaining > 60) {
+      //   setTimeout(() => {
+      //     const autoFillInput = [autoFillData.to, time]
+      //       .concat(autoFillData.performerNamesAndCategories)
+      //       .join(" ");
+      //     vorpal.ui.input(`${commandKey} ${autoFillInput} `);
+      //   }, 10);
+      // }
+    }
+  };
 };
