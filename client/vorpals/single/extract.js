@@ -30,7 +30,7 @@ function extractToTime(toAndPerformerNamesAndCategories) {
 
 module.exports = extractOption => {
   const { commandKey, destination, replaceFile, type } = extractOption;
-  const commandPrompt = `${commandKey} <from> [toAndPerformerNamesAndCategories...]`;
+  const commandPrompt = `${commandKey} [from] [toAndPerformerNamesAndCategories...]`;
 
   return {
     prompt: commandPrompt,
