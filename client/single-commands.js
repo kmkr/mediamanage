@@ -24,7 +24,7 @@ module.exports = (filePath, handleBack) => {
 
   async function prompt() {
     const result = await wuzbar({
-      prompt: removeCurrentWd(filePath),
+      prompt: "file",
       commands: [
         {
           prompt: "n",

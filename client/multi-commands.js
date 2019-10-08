@@ -9,7 +9,7 @@ module.exports = ({ onSelectFile }) => {
   fileNamesLogger("*");
   async function prompt() {
     const result = await wuzbar({
-      prompt: "mm",
+      prompt: "directory",
       commands: [
         {
           prompt: "s [index]",
