@@ -25,9 +25,8 @@ module.exports = function(onGoToFile) {
       "l [filter]",
       'List media. Filter is a minimatch pattern. Defaults to "*".'
     )
-    .action(({ filter }) => {
+    .action(async ({ filter = "*" }) => {
       fileNamesLogger(filter);
-      return Promise.resolve();
     });
 
   vorpal.command("ll", "List recursive media").action(async () => {

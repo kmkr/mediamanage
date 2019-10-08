@@ -11,13 +11,12 @@ module.exports = vorpal => {
     .autocomplete({
       data: () => config.categories.concat(performerNameList.list())
     })
-    .action(({ names }) => {
+    .action(async ({ names }) => {
       const performerNamesAndCategories = names;
       const newPath = categoriesAndPerformerNamesHandler(
         performerNamesAndCategories,
         currentFilePathStore.get()
       );
       currentFilePathStore.set(newPath);
-      return Promise.resolve();
     });
 };

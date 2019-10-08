@@ -15,7 +15,7 @@ module.exports = async vorpalInstance => {
 
   if (!movedFiles.length) {
     logger.log("No files are moved in this session");
-    return Promise.resolve();
+    return;
   }
 
   const latestMoveTimestamp = movedFiles[movedFiles.length - 1].timestamp;
