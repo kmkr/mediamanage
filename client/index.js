@@ -24,11 +24,11 @@ async function runMulti() {
   try {
     await multiCommands({
       onSelectFile: async filePath => {
-        console.log("on select");
         await singleCommands(filePath);
         runMulti();
       }
     });
+    runMulti();
   } catch (err) {
     console.error(err);
   }

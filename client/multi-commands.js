@@ -15,6 +15,18 @@ module.exports = ({ onSelectFile }) => {
         }
       },
       {
+        prompt: "l [filter]",
+        handle({ filter = "*" }) {
+          return fileNamesLogger(filter);
+        }
+      },
+      {
+        prompt: "ll",
+        handle() {
+          return fileNamesLogger("**/**");
+        }
+      },
+      {
         prompt: "m",
         handle() {
           return moveMedia.all();
