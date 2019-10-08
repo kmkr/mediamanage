@@ -14,6 +14,8 @@ function getExtractCommands() {
   });
 }
 
+const returnToMultiSelectionSymbol = Symbol();
+
 module.exports = (filePath, handleBack) => {
   console.log("Play file", filePath);
   currentFilePathStore.set(filePath);
@@ -28,7 +30,7 @@ module.exports = (filePath, handleBack) => {
           prompt: "n",
           handle() {
             mediaPlayer.stop();
-            return -1;
+            return returnToMultiSelectionSymbol;
           }
         },
         {
@@ -41,7 +43,7 @@ module.exports = (filePath, handleBack) => {
       ],
       context: 1
     }).then(exitCode => {
-      if (exitCode !== -1) {
+      if (exitCode !== returnToMultiSelectionSymbol) {
         return prompt();
       }
     });
