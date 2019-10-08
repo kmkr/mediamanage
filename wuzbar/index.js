@@ -45,8 +45,8 @@ module.exports = async ({ commands, context = 0, prompt }) => {
       },
       autoCompletion(line) {
         const command = getCommand(line);
-        if (command && command.autoComplete) {
-          return command.autoComplete();
+        if (command && command.autocomplete) {
+          return command.autocomplete();
         }
         return commandKeys;
       },

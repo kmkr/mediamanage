@@ -36,7 +36,6 @@ module.exports = extractOption => {
     prompt: commandPrompt,
     validate({ from, toAndPerformerNamesAndCategories = [] }) {
       if (!from) {
-        logger.log("Invalid input");
         return false;
       }
       const { performerNamesAndCategories, to } = extractToTime(
