@@ -12,6 +12,7 @@ module.exports = ({ onSelectFile }) => {
       commands: [
         {
           prompt: "s [index]",
+          description: "Select file",
           handle({ index = 0 }) {
             const filePath = fileFinder.mediaFiles({ recursive: true })[
               Number(index)
@@ -21,18 +22,29 @@ module.exports = ({ onSelectFile }) => {
         },
         {
           prompt: "r [filter]",
+          description: "Select random file (non recursive)",
           handle({ filter }) {
             return onSelectFile(getRandomFilePath({ filter }));
           }
         },
         {
+          prompt: "rr [filter]",
+          description: "Select random file (recursive)",
+          handle({ filter }) {
+            return onSelectFile(getRandomFilePath({ filter, recursive: true }));
+          }
+        },
+        {
           prompt: "l [filter]",
+          description:
+            'List media. Filter is a minimatch pattern. Defaults to "*".',
           handle({ filter = "*" }) {
             return fileNamesLogger(filter);
           }
         },
         {
           prompt: "ll",
+          description: "List recursive media.",
           handle() {
             return fileNamesLogger("**/**");
           }

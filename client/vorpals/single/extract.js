@@ -34,6 +34,7 @@ module.exports = extractOption => {
 
   return {
     prompt: commandPrompt,
+    description: `Extract to ${destination}`,
     validate({ from, toAndPerformerNamesAndCategories = [] }) {
       if (!from) {
         return false;

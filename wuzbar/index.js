@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const leftPad = require("left-pad");
 
 const parser = require("./parser");
 
@@ -16,9 +17,14 @@ module.exports = async ({ commands, context = 0, prompt }) => {
   }
 
   function logHelp() {
-    console.log("Available commands");
+    const leftPadSize = Math.max(
+      ...commands.map(command => command.prompt.length)
+    );
+    console.log("\nAvailable commands\n");
     commands.forEach(command => {
-      console.log(command.prompt);
+      console.log(
+        `${leftPad(command.prompt, leftPadSize + 5)} - ${command.description}`
+      );
     });
   }
 

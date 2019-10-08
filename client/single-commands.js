@@ -28,6 +28,7 @@ module.exports = (filePath, handleBack) => {
       commands: [
         {
           prompt: "n",
+          description: "Go back",
           handle() {
             mediaPlayer.stop();
             return returnToMultiSelectionSymbol;
@@ -35,6 +36,7 @@ module.exports = (filePath, handleBack) => {
         },
         {
           prompt: "d",
+          description: "Delete file",
           handle: async () => {
             await handleDeleteCommand();
             return returnToMultiSelectionSymbol;
