@@ -18,7 +18,6 @@ function getExtractCommands() {
 const returnToMultiSelectionSymbol = Symbol();
 
 module.exports = (filePath, handleBack) => {
-  console.log("Play file", filePath);
   currentFilePathStore.set(filePath);
   mediaPlayer.play(currentFilePathStore.get());
   searchForExistingMedia(path.parse(filePath).name);
