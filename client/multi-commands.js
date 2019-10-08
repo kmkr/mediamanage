@@ -3,6 +3,7 @@ const getRandomFilePath = require("./get-random-file-path");
 const fileNamesLogger = require("./vorpals/multi/file-names-logger");
 const moveMedia = require("./move-media/move-media");
 const fileFinder = require("./file-system/finder");
+const cleanDirectory = require("./clean-directory");
 
 module.exports = ({ onSelectFile }) => {
   fileNamesLogger("*");
@@ -51,8 +52,9 @@ module.exports = ({ onSelectFile }) => {
         },
         {
           prompt: "m",
-          handle() {
-            return moveMedia.all();
+          handle: async () => {
+            await moveMedia.all();
+            cleanDirectory();
           }
         }
       ],
