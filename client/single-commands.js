@@ -36,8 +36,9 @@ module.exports = (filePath, handleBack) => {
         },
         {
           prompt: "d",
-          handle() {
-            return handleDeleteCommand();
+          handle: async () => {
+            await handleDeleteCommand();
+            return returnToMultiSelectionSymbol;
           }
         },
 
