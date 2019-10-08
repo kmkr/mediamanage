@@ -7,6 +7,7 @@ const mediaPlayer = require("./media-player");
 const searchForExistingMedia = require("./existing-media-search/search-for-existing-media-service");
 const buildExtractCommand = require("./vorpals/single/extract");
 const handleDeleteCommand = require("./vorpals/single/delete");
+const removeCurrentWd = require("./helpers/remove-current-wd");
 
 function getExtractCommands() {
   return config.extractOptions.map(extractOption => {
@@ -24,7 +25,7 @@ module.exports = (filePath, handleBack) => {
 
   async function prompt() {
     const result = await wuzbar({
-      prompt: filePath,
+      prompt: removeCurrentWd(filePath),
       commands: [
         {
           prompt: "n",
