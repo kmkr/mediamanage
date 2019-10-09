@@ -7,7 +7,7 @@ const mediaPlayer = require("./media-player");
 const searchForExistingMedia = require("./existing-media-search/search-for-existing-media-service");
 const buildExtractCommand = require("./vorpals/single/extract");
 const handleDeleteCommand = require("./vorpals/single/delete");
-const removeCurrentWd = require("./helpers/remove-current-wd");
+const setNamesCommand = require("./vorpals/single/set-performer-names");
 
 function getExtractCommands() {
   return config.extractOptions.map(extractOption => {
@@ -41,7 +41,7 @@ module.exports = (filePath, handleBack) => {
             return returnToMultiSelectionSymbol;
           }
         },
-
+        setNamesCommand(),
         ...getExtractCommands()
       ],
       context: 1
