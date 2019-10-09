@@ -20,6 +20,10 @@ const singleCommands = require("./single-commands");
 
 // showMultiFile();
 
+process.on("uncaughtException", err => {
+  throw err;
+});
+
 async function runMulti() {
   return await multiCommands({
     onSelectFile: async filePath => {
