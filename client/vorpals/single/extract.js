@@ -15,6 +15,7 @@ const performerNameList = require("../../performers/performer-name-list");
 const categoriesAndPerformerNamesHandler = require("../../performers/categories-and-performer-names-handler");
 const mover = require("../../file-system/mover");
 const removeCurrentWd = require("../../helpers/remove-current-wd");
+const { setPrompt } = require("../../../wuzbar/wuzbar-prompt");
 
 let autoFillData;
 
@@ -123,7 +124,7 @@ module.exports = extractOption => {
           const autoFillInput = [autoFillData.to, time]
             .concat(autoFillData.performerNamesAndCategories)
             .join(" ");
-          process.stdin.write(`${commandKey} ${autoFillInput} `);
+          setPrompt(`${commandKey} ${autoFillInput} `);
         }, 10);
       }
     }

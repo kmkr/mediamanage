@@ -3,7 +3,7 @@ const leftPad = require("left-pad");
 
 const parser = require("./parser");
 
-inquirer.registerPrompt("command", require("inquirer-command-prompt"));
+inquirer.registerPrompt("command", require("./wuzbar-prompt").WuzbarPrompt);
 
 function getKey(input) {
   return input.split(" ")[0];

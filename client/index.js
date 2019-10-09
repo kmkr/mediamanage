@@ -21,15 +21,13 @@ const singleCommands = require("./single-commands");
 // showMultiFile();
 
 async function runMulti() {
-  try {
-    await multiCommands({
-      onSelectFile: async filePath => {
-        await singleCommands(filePath);
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  }
+  return await multiCommands({
+    onSelectFile: async filePath => {
+      await singleCommands(filePath);
+    }
+  });
 }
 
-runMulti();
+runMulti().catch(err => {
+  console.error(err);
+});
