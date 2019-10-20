@@ -53,6 +53,7 @@ module.exports = ({ onSelectFile }) => {
         },
         {
           prompt: "m",
+          description: "Move files",
           handle: async () => {
             await moveMedia.all();
             cleanDirectory();
@@ -60,6 +61,7 @@ module.exports = ({ onSelectFile }) => {
         },
         {
           prompt: "u",
+          description: "Undo move",
           handle: async () => {
             await undoMove();
           }
