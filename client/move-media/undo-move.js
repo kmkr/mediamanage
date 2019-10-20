@@ -1,4 +1,5 @@
 const path = require("path");
+const inquirer = require("inquirer");
 const Promise = require("bluebird");
 
 const movedFilesService = require("../file-system/moved-files-service");
@@ -10,7 +11,7 @@ const { unique } = require("../helpers/array-helper");
 
 const TIME_THRESHOLD_MS = 5000;
 
-module.exports = async vorpalInstance => {
+module.exports = async () => {
   const movedFiles = movedFilesService.get();
 
   if (!movedFiles.length) {
@@ -33,7 +34,7 @@ module.exports = async vorpalInstance => {
     }
   );
 
-  const { indexes } = await vorpalInstance.activeCommand.prompt({
+  const { indexes } = await inquirer.prompt({
     message: "Which moves do you want to undo?",
     name: "indexes",
     type: "checkbox",
@@ -53,14 +54,9 @@ module.exports = async vorpalInstance => {
     .map(destDirPath => path.parse(destDirPath).dir)
     .sort()
     .filter(unique);
-  await Promise.reduce(
-    uniqueDirs,
-    (t, dir) => promptCreateFolder(dir, vorpalInstance),
-    null
-  );
+  await Promise.reduce(uniqueDirs, (t, dir) => promptCreateFolder(dir), null);
   await moveAll({
     filePaths,
-    destDirPaths,
-    vorpalInstance
+    destDirPaths
   });
 };

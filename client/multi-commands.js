@@ -2,6 +2,7 @@ const wuzbar = require("../wuzbar");
 const getRandomFilePath = require("./get-random-file-path");
 const fileNamesLogger = require("./vorpals/multi/file-names-logger");
 const moveMedia = require("./move-media/move-media");
+const undoMove = require("./move-media/undo-move");
 const fileFinder = require("./file-system/finder");
 const cleanDirectory = require("./clean-directory");
 
@@ -55,6 +56,12 @@ module.exports = ({ onSelectFile }) => {
           handle: async () => {
             await moveMedia.all();
             cleanDirectory();
+          }
+        },
+        {
+          prompt: "u",
+          handle: async () => {
+            await undoMove();
           }
         }
       ],

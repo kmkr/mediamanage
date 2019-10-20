@@ -1,11 +1,14 @@
+const inquirer = require("inquirer");
 const config = require("../../config.json");
 const currentFilePathStore = require("./current-file-path-store");
 const fileRenamer = require("../../file-system/renamer");
 const logger = require("../logger");
 
-module.exports = vorpal => {
-  vorpal.command("cat", "Set categories").action(async () => {
-    const { categories } = await vorpal.activeCommand.prompt({
+module.exports = () => ({
+  prompt: "cat",
+  description: "Set categories",
+  handle: async () => {
+    const { categories } = await inquirer.prompt({
       message: "Enter categories",
       type: "checkbox",
       name: "categories",
@@ -19,5 +22,5 @@ module.exports = vorpal => {
     } else {
       logger.log("No category set");
     }
-  });
-};
+  }
+});

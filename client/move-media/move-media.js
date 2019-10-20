@@ -1,4 +1,5 @@
 const assert = require("assert");
+const inquirer = require("inquirer");
 const path = require("path");
 const Promise = require("bluebird");
 
@@ -61,29 +62,27 @@ exports.all = () => {
   );
 };
 
-exports.single = async (vorpalInstance, filePath) => {
-  throw new Error("NYI");
-  // assert(
-  //   path.isAbsolute(filePath),
-  //   `File path must be absolute. Was ${filePath}`
-  // );
+exports.single = async filePath => {
+  assert(
+    path.isAbsolute(filePath),
+    `File path must be absolute. Was ${filePath}`
+  );
 
-  // const moveToChoices = config.moveMediaOptions.map(moveMediaOption =>
-  //   resolveToDir(moveMediaOption.toDir)
-  // );
+  const moveToChoices = config.moveMediaOptions.map(moveMediaOption =>
+    resolveToDir(moveMediaOption.toDir)
+  );
 
-  // const { destDirPath } = await vorpalInstance.activeCommand.prompt({
-  //   message: `Where do you want to move ${filePath}?`,
-  //   name: "destDirPath",
-  //   type: "list",
-  //   choices: moveToChoices
-  // });
-  // if (!destDirPath) {
-  //   return;
-  // }
-  // return confirmSubDirMover({
-  //   filePaths: [filePath],
-  //   destDirPath,
-  //   vorpalInstance
-  // });
+  const { destDirPath } = await inquirer.prompt({
+    message: `Where do you want to move ${filePath}?`,
+    name: "destDirPath",
+    type: "list",
+    choices: moveToChoices
+  });
+  if (!destDirPath) {
+    return;
+  }
+  return confirmSubDirMover({
+    filePaths: [filePath],
+    destDirPath
+  });
 };
