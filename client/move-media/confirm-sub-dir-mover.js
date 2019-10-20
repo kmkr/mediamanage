@@ -1,3 +1,4 @@
+const inquirer = require("inquirer");
 const assert = require("assert");
 const chalk = require("chalk");
 const fs = require("fs");
@@ -8,9 +9,11 @@ const promptCreateFolder = require("./prompt-create-folder");
 const printPathsService = require("../helpers/print-paths-service");
 const removeCurrentWd = require("../helpers/remove-current-wd");
 
-let previousChoice;
+inquirer.registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
 
-module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
+let previousBaseName;
+
+module.exports = async ({ filePaths, destDirPath }) => {
   assert(
     filePaths && filePaths.constructor === Array,
     `File paths must be an array. Was ${filePaths}`
@@ -18,58 +21,36 @@ module.exports = async ({ filePaths, destDirPath, vorpalInstance }) => {
 
   printPathsService.asList(filePaths.map(entry => removeCurrentWd(entry)));
 
-  const fileNameCandidates = await promptCreateFolder(
-    destDirPath,
-    vorpalInstance
-  );
-  const destinationDirAlternatives = fileNameCandidates.filter(
-    fileNameCandidate =>
-      fs.statSync(path.join(destDirPath, fileNameCandidate)).isDirectory()
-  );
-  if (destinationDirAlternatives.length) {
-    // Add abort as an option while waiting for https://github.com/dthree/vorpal/issues/165
-    const ABORT = "Abort move";
-    destinationDirAlternatives.unshift(ABORT);
-
-    const defaultChoice = destinationDirAlternatives.includes(previousChoice)
-      ? previousChoice
-      : ABORT;
-    const { moveDestination } = await vorpalInstance.activeCommand.prompt({
-      message: `Where do you want to move the above ${chalk.yellow(
-        filePaths.length
-      )} files?`,
-      default: defaultChoice,
-      name: "moveDestination",
-      type: "list",
-      choices: destinationDirAlternatives
-    });
-    if (!moveDestination || moveDestination === ABORT) {
-      return;
-    }
-    previousChoice = moveDestination;
-    destDirPath = path.resolve(destDirPath, moveDestination);
+  const fileNameCandidates = await promptCreateFolder(destDirPath);
+  const subdirectoryPaths = fileNameCandidates
+    .map(fileNameCandidate => path.join(destDirPath, fileNameCandidate))
+    .filter(filePathCandidate => fs.statSync(filePathCandidate).isDirectory());
+  if (!subdirectoryPaths.length) {
     await fileMover.moveAll({
       filePaths,
-      destDirPath,
-      vorpalInstance
+      destDirPath
     });
     return;
-  } else {
-    // Guard while waiting for https://github.com/dthree/vorpal/issues/165
-    const { confirmMove } = await vorpalInstance.activeCommand.prompt({
-      message: `Confirm move of ${chalk.yellow(filePaths.length)} files`,
-      name: "confirmMove",
-      type: "confirm"
-    });
-    if (!confirmMove) {
-      return;
-    }
-
-    destDirPath = path.resolve(destDirPath);
-    await fileMover.moveAll({
-      filePaths,
-      destDirPath,
-      vorpalInstance
-    });
   }
+
+  const defaultChoice = subdirectoryPaths.find(
+    subdirectoryPath => path.parse(subdirectoryPath).base === previousBaseName
+  );
+  const { moveDestination } = await inquirer.prompt({
+    type: "fuzzypath",
+    itemType: "directory",
+    depthLimit: 2,
+    rootPath: destDirPath,
+    default: defaultChoice,
+    message: `Where do you want to move the above ${chalk.yellow(
+      filePaths.length
+    )} files?`,
+    name: "moveDestination"
+  });
+
+  previousBaseName = path.parse(moveDestination).base;
+  await fileMover.moveAll({
+    filePaths,
+    destDirPath: moveDestination
+  });
 };

@@ -1,3 +1,4 @@
+const inquirer = require("inquirer");
 const rimraf = require("rimraf");
 const chalk = require("chalk");
 
@@ -8,7 +9,7 @@ function clean(rootDir) {
   rimraf.sync(rootDir);
 }
 
-module.exports = async vorpalInstance => {
+module.exports = async () => {
   const rootDir = process.cwd();
   const recursive = true;
   const filePaths = fileFinder.allFiles({
@@ -35,7 +36,7 @@ module.exports = async vorpalInstance => {
     videoFileNames.length
   )} video, ${chalk.bold(audioFileNames.length)} audio). Delete?`;
 
-  const { confirmDelete } = await vorpalInstance.activeCommand.prompt({
+  const { confirmDelete } = await inquirer.prompt({
     message,
     name: "confirmDelete",
     type: "confirm",

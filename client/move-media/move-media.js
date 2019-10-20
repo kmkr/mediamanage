@@ -1,4 +1,5 @@
 const assert = require("assert");
+const inquirer = require("inquirer");
 const path = require("path");
 const Promise = require("bluebird");
 
@@ -15,7 +16,7 @@ function resolveToDir(toDir) {
   return path.resolve(toDir);
 }
 
-exports.all = vorpalInstance => {
+exports.all = () => {
   // Include only those media options with fromDir. The others are used for singleFile only.
   const moveMediaOptions = config.moveMediaOptions.filter(
     moveMediaOption => moveMediaOption.fromDir
@@ -54,15 +55,14 @@ exports.all = vorpalInstance => {
 
       return confirmSubDirMover({
         filePaths,
-        destDirPath: resolveToDir(moveMediaOption.toDir),
-        vorpalInstance
+        destDirPath: resolveToDir(moveMediaOption.toDir)
       });
     },
     null
   );
 };
 
-exports.single = async (vorpalInstance, filePath) => {
+exports.single = async filePath => {
   assert(
     path.isAbsolute(filePath),
     `File path must be absolute. Was ${filePath}`
@@ -72,7 +72,7 @@ exports.single = async (vorpalInstance, filePath) => {
     resolveToDir(moveMediaOption.toDir)
   );
 
-  const { destDirPath } = await vorpalInstance.activeCommand.prompt({
+  const { destDirPath } = await inquirer.prompt({
     message: `Where do you want to move ${filePath}?`,
     name: "destDirPath",
     type: "list",
@@ -83,7 +83,6 @@ exports.single = async (vorpalInstance, filePath) => {
   }
   return confirmSubDirMover({
     filePaths: [filePath],
-    destDirPath,
-    vorpalInstance
+    destDirPath
   });
 };

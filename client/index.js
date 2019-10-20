@@ -3,16 +3,21 @@ const Promise = require("bluebird");
 Promise.promisifyAll(require("fs"));
 Promise.promisifyAll(require("mkdirp"));
 
-const singleFileVorpal = require("./vorpals/single-file-vorpal");
+const multiCommands = require("./multi-commands");
+const singleCommands = require("./single-commands");
 
-function showMultiFile() {
-  const multiFileVorpal = require("./vorpals/multi-file-vorpal")(filePath => {
-    const vorpalInstance = singleFileVorpal(filePath, showMultiFile);
-    vorpalInstance.history("mediamanage-single");
-    vorpalInstance.show();
+process.on("uncaughtException", err => {
+  throw err;
+});
+
+async function runMulti() {
+  return await multiCommands({
+    onSelectFile: async filePath => {
+      await singleCommands(filePath);
+    }
   });
-  multiFileVorpal.history("mediamanage-multi");
-  multiFileVorpal.show();
 }
 
-showMultiFile();
+runMulti().catch(err => {
+  console.error(err);
+});
