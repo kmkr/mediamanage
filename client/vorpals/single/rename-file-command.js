@@ -12,9 +12,7 @@ module.exports = () => ({
   },
   handle: async ({ newName }) => {
     if (newName) {
-      const [newPath] = fileRenamer.rename(newName, [
-        currentFilePathStore.get()
-      ]);
+      const newPath = fileRenamer.rename(newName, currentFilePathStore.get());
       currentFilePathStore.set(newPath);
     } else {
       logger.log("No rename");

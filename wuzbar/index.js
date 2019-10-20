@@ -51,7 +51,16 @@ module.exports = async ({ commands, context = 0, prompt }) => {
       autoCompletion(line) {
         const command = getCommand(line);
         if (command && command.autocomplete) {
-          return command.autocomplete();
+          const autocompleted = command.autocomplete();
+          if (Array.isArray(autocompleted)) {
+            return autocompleted;
+          }
+          if (typeof autocompleted === "string") {
+            return [autocompleted];
+          }
+          throw new Error(
+            `Unable to handle autocomplete value ${autocompleted}`
+          );
         }
         return commandKeys;
       },
