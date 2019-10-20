@@ -9,7 +9,7 @@ const cleanDirectory = require("./clean-directory");
 module.exports = ({ onSelectFile }) => {
   fileNamesLogger("*");
   async function prompt() {
-    const result = await wuzbar({
+    await wuzbar({
       prompt: ">",
       commands: [
         {

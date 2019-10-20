@@ -34,6 +34,7 @@ exports.moveAll = ({ filePaths, destDirPath, destDirPaths }) => {
 };
 
 function move(sourceFilePath, destFilePath) {
+  /* eslint-disable no-async-promise-executor */
   return new Promise(async (resolve, reject) => {
     try {
       await fs.renameAsync(sourceFilePath, destFilePath);
@@ -145,6 +146,7 @@ async function prepareMove(sourceFilePath, destFilePath) {
   switch (choice) {
     case "Indexify":
       await indexify(sourceFilePath, destFilePath);
+      break;
     case "Overwrite":
       await move(sourceFilePath, destFilePath);
       logger.log("Moved from / to (replaced existing file):");
@@ -152,8 +154,10 @@ async function prepareMove(sourceFilePath, destFilePath) {
         sourceFilePaths: [sourceFilePath],
         destFilePaths: [destFilePath]
       });
+      break;
     case "Delete file":
       await fileDeleter(sourceFilePath);
+      break;
     default:
       logger.log(`Will not replace ${destFilePath}, continuing ...`);
   }

@@ -1,4 +1,3 @@
-const chalk = require("chalk");
 const config = require("../../config.json");
 const currentFilePathStore = require("./current-file-path-store");
 const {
@@ -12,9 +11,7 @@ const secondsToTimeParser = require("../../media-extract/seconds-to-time-parser"
 );
 const logger = require("../logger");
 const performerNameList = require("../../performers/performer-name-list");
-const categoriesAndPerformerNamesHandler = require("../../performers/categories-and-performer-names-handler");
-const mover = require("../../file-system/mover");
-const removeCurrentWd = require("../../helpers/remove-current-wd");
+// const categoriesAndPerformerNamesHandler = require("../../performers/categories-and-performer-names-handler");
 const { setPrompt } = require("../../../wuzbar/wuzbar-prompt");
 
 let autoFillData;
@@ -58,18 +55,19 @@ module.exports = extractOption => {
       return config.categories.concat(performerNameList.list());
     },
     handle: async ({ from, toAndPerformerNamesAndCategories = [] }) => {
-      const { performerNamesAndCategories, to } = extractToTime(
-        toAndPerformerNamesAndCategories
-      );
+      // const { performerNamesAndCategories, to } = extractToTime(
+      //   toAndPerformerNamesAndCategories
+      // );
+      const { to } = extractToTime(toAndPerformerNamesAndCategories);
       const extractFunction = type === "video" ? extractVideo : extractAudio;
-      const trimmedPerformerNamesAndCategories = performerNamesAndCategories.map(
-        entry => entry.trim()
-      );
+      // const trimmedPerformerNamesAndCategories = performerNamesAndCategories.map(
+      //   entry => entry.trim()
+      // );
 
       const filePath = currentFilePathStore.get();
 
       const {
-        destFilePath,
+        // destFilePath,
         secondsRemaining,
         totalSeconds
       } = await extractFunction({
@@ -80,10 +78,10 @@ module.exports = extractOption => {
       });
       logger.log("Extraction complete");
 
-      const tempFilePath = categoriesAndPerformerNamesHandler(
-        trimmedPerformerNamesAndCategories,
-        destFilePath
-      );
+      // const tempFilePath = categoriesAndPerformerNamesHandler(
+      //   trimmedPerformerNamesAndCategories,
+      //   destFilePath
+      // );
 
       if (replaceFile) {
         throw new Error("NYI");

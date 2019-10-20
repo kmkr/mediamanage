@@ -25,27 +25,32 @@ module.exports = async ({ filePaths, destDirPath }) => {
   const subdirectoryPaths = fileNameCandidates
     .map(fileNameCandidate => path.join(destDirPath, fileNameCandidate))
     .filter(filePathCandidate => fs.statSync(filePathCandidate).isDirectory());
-  if (subdirectoryPaths.length) {
-    const defaultChoice = subdirectoryPaths.find(
-      subdirectoryPath => path.parse(subdirectoryPath).base === previousBaseName
-    );
-    const { moveDestination } = await inquirer.prompt({
-      type: "fuzzypath",
-      itemType: "directory",
-      depthLimit: 2,
-      rootPath: destDirPath,
-      default: defaultChoice,
-      message: `Where do you want to move the above ${chalk.yellow(
-        filePaths.length
-      )} files?`,
-      name: "moveDestination"
+  if (!subdirectoryPaths.length) {
+    await fileMover.moveAll({
+      filePaths,
+      destDirPath
     });
-
-    previousBaseName = path.parse(moveDestination).base;
-    destDirPath = moveDestination;
+    return;
   }
+
+  const defaultChoice = subdirectoryPaths.find(
+    subdirectoryPath => path.parse(subdirectoryPath).base === previousBaseName
+  );
+  const { moveDestination } = await inquirer.prompt({
+    type: "fuzzypath",
+    itemType: "directory",
+    depthLimit: 2,
+    rootPath: destDirPath,
+    default: defaultChoice,
+    message: `Where do you want to move the above ${chalk.yellow(
+      filePaths.length
+    )} files?`,
+    name: "moveDestination"
+  });
+
+  previousBaseName = path.parse(moveDestination).base;
   await fileMover.moveAll({
     filePaths,
-    destDirPath
+    destDirPath: moveDestination
   });
 };

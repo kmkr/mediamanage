@@ -6,7 +6,7 @@ const {
   getTitle
 } = require("../existing-media-parser");
 
-exports.cleanFilePath = uncleanedFilePath => {
+exports.cleanFilePath = () => {
   throw new Error("NYI");
 };
 
@@ -28,7 +28,7 @@ exports.setCategories = (categories, filePath) => {
   );
 };
 
-exports.indexify = filePath => {
+exports.indexify = () => {
   throw new Error("NYI");
 };
 
