@@ -39,7 +39,8 @@ module.exports = async ({ filePaths, destDirPath }) => {
   const { moveDestination } = await inquirer.prompt({
     type: "fuzzypath",
     itemType: "directory",
-    depthLimit: 2,
+    depthLimit: 1,
+    pageSize: 20,
     rootPath: destDirPath,
     default: defaultChoice,
     message: `Where do you want to move the above ${chalk.yellow(
