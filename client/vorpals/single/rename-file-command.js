@@ -5,7 +5,7 @@ const fileRenamer = require("../../file-system/renamer");
 const logger = require("../logger");
 
 module.exports = () => ({
-  prompt: "rename [newName]",
+  prompt: "rename <newName>",
   description: "Rename file",
   autocomplete() {
     return path.parse(currentFilePathStore.get()).name;

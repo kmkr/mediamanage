@@ -28,15 +28,12 @@ function extractToTime(toAndPerformerNamesAndCategories) {
 
 module.exports = extractOption => {
   const { commandKey, destination, replaceFile, type } = extractOption;
-  const commandPrompt = `${commandKey} [from] [...toAndPerformerNamesAndCategories]`;
+  const commandPrompt = `${commandKey} <from> <...toAndPerformerNamesAndCategories>`;
 
   return {
     prompt: commandPrompt,
     description: `Extract to ${destination}`,
     validate({ from, toAndPerformerNamesAndCategories = [] }) {
-      if (!from) {
-        return "Missing required 'from' argument";
-      }
       const { performerNamesAndCategories, to } = extractToTime(
         toAndPerformerNamesAndCategories
       );

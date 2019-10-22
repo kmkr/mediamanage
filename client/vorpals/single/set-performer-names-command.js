@@ -4,14 +4,8 @@ const performerNameList = require("../../performers/performer-name-list");
 const categoriesAndPerformerNamesHandler = require("../../performers/categories-and-performer-names-handler");
 
 module.exports = () => ({
-  prompt: "names [names]",
+  prompt: "names <names>",
   description: "Set performer names and/or categories",
-  validate({ names }) {
-    if (!names) {
-      return "Missing required 'names' argument";
-    }
-    return true;
-  },
   autocomplete() {
     return config.categories.concat(performerNameList.list());
   },
