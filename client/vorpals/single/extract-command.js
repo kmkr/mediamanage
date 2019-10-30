@@ -1,3 +1,8 @@
+const inquirer = require("inquirer");
+const chalk = require("chalk");
+
+const removeCurrentWd = require("../../helpers/remove-current-wd");
+const mover = require("../../file-system/mover");
 const config = require("../../config.json");
 const currentFilePathStore = require("./current-file-path-store");
 const {
@@ -79,35 +84,37 @@ module.exports = extractOption => {
         trimmedPerformerNamesAndCategories,
         destFilePath
       );
-      // const tempFilePath = categoriesAndPerformerNamesHandler(
-      //   trimmedPerformerNamesAndCategories,
-      //   destFilePath
-      // );
 
       if (replaceFile) {
-        throw new Error("NYI");
-        // const { confirmReplace } = await vorpal.activeCommand.prompt({
-        //   message: `Do you want to replace ${chalk.yellow(
-        //     removeCurrentWd(filePath)
-        //   )} with ${removeCurrentWd(tempFilePath)}?`,
-        //   name: "confirmReplace",
-        //   type: "confirm"
-        // });
+        const tempFilePath = categoriesAndPerformerNamesHandler(
+          trimmedPerformerNamesAndCategories,
+          destFilePath
+        );
+        const { confirmReplace } = await inquirer.prompt({
+          message: `Do you want to replace ${chalk.yellow(
+            removeCurrentWd(filePath)
+          )} with ${removeCurrentWd(tempFilePath)}?`,
+          name: "confirmReplace",
+          type: "confirm"
+        });
 
-        // if (confirmReplace) {
-        //   const filePathWithUpdates = categoriesAndPerformerNamesHandler(
-        //     trimmedPerformerNamesAndCategories,
-        //     filePath
-        //   );
-        //   mover(tempFilePath, filePath);
-        //   if (filePathWithUpdates !== filePath) {
-        //     logger.log(
-        //       "Adding changes in categories / performer names to file ..."
-        //     );
-        //     mover(filePath, filePathWithUpdates);
-        //     currentFilePathStore.set(filePathWithUpdates);
-        //   }
-        // }
+        if (confirmReplace) {
+          const filePathWithUpdates = categoriesAndPerformerNamesHandler(
+            trimmedPerformerNamesAndCategories,
+            filePath
+          );
+          mover(tempFilePath, filePath);
+          if (filePathWithUpdates !== filePath) {
+            logger.log(
+              "Adding changes in categories / performer names to file ..."
+            );
+            mover(filePath, filePathWithUpdates);
+            currentFilePathStore.set(filePathWithUpdates);
+          }
+          return;
+        } else {
+          logger.log("Won't replace file");
+        }
       }
 
       let { startsAtSeconds, endsAtSeconds } = mapToSeconds(
